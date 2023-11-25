@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Forms - Clearblooded Animal Species Collection{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Forms</h1>
+
+    <!-- Display attributes in a well-structured table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through attributes and display them in rows -->
+                {% for form in forms %}
+                <tr>
+                    <td>{{ form.form_name }}</td>
+                    <td>
+                        <!-- Update button using a form with a hidden input -->
+                        <form method="get" action="{% url 'user_forms_view' form.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>    
+    </div>
+</div>
+
+<!-- Add Bootstrap JavaScript dependencies if needed -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock %}

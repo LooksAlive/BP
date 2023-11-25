@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  {% if gallery %}Edit Gallery{% else %}Create Gallery{% endif %} - Clearblooded Animal Species Collection
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center mb-4">{% if gallery %}Edit Gallery{% else %}New Gallery{% endif %}</h1>
+  
+  <div class="card">
+    <div class="card-body">
+      <form method="post" action="{% if gallery.id %}{% url 'admin_create_galery' gallery.id %}{% else %}{% url 'admin_create_galery' %}{% endif %}">
+        {% csrf_token %}
+        
+        <!-- Form Selection Dropdown -->
+        <div class="form-group">
+          <label for="formSelect">Select Form:</label>
+          <select id="formSelect" name="form" class="form-control" {% if gallery %}disabled{% endif %}>
+            {% for form in forms %}
+              <option value="{{ form.id }}" {% if gallery and form.id == gallery.form.id %}selected{% endif %}>
+                {{ form.form_name }}
+              </option>
+            {% endfor %}
+          </select>
+          {% if gallery %}
+            <input type="hidden" name="form" value="{{ gallery.form.id }}">
+          {% endif %}
+        </div>
+    <label for="formName">Gallery Name:</label>
+    <input type="text" id="GalleryName" name="gallery_name" class="form-control mb-3" value="{{ gallery_name }}" required>
+
+    <!-- Form Attributes Display On/Off -->
+    <div class="form-attributes">
+      <h3>Form Attributes</h3>
+      {% if form_attributes %}
+        {% for attribute in form_attributes %}
+            <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="attribute{{ attribute.id }}"
+                    name="attribute_{{ attribute.id }}"
+                    value="{{ attribute.id }}"
+                    {% if attribute.display_in_gallery %}checked{% endif %}>
+            <label class="form-check-label" for="attribute{{ attribute.id }}">
+                {{ attribute.attribute.name }}
+            </label>
+            </div>
+        {% endfor %}
+        {% endif %}
+
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-success mt-2">
+      {% if gallery %}Update Gallery{% else %}Create Gallery{% endif %}
+    </button>
+  </form>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const formSelect = document.getElementById('formSelect');
+        formSelect.addEventListener('change', function() {
+            const formId = this.value;
+            fetchAttributes(formId);
+        });
+    
+        function fetchAttributes(formId) {
+            // Use AJAX to fetch attributes for the selected form
+            const url = `{% url 'admin_create_galery' %}?form_id=${formId}`;
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',  // Important for Django to recognize the AJAX request
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateAttributesList(data.attributes);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        
+    
+        function updateAttributesList(attributes) {
+            const attributesContainer = document.querySelector('.form-attributes');
+            attributesContainer.innerHTML = ''; // Clear current attributes
+            attributes.forEach(attr => {
+                const checked = attr.display_in_gallery ? 'checked' : '';
+                const attributeRow = `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="attribute${attr.id}" name="attribute_${attr.id}" value="${attr.id}" ${checked}>
+                        <label class="form-check-label" for="attribute${attr.id}">
+                            ${attr.name}
+                        </label>
+                    </div>`;
+                attributesContainer.innerHTML += attributeRow;
+            });
+        }
+    });
+
+
+
+  $(document).ready(function() {
+        // Call the showBackButton function from the parent template
+        showBackButton();
+    });
+
+</script>
+    
+
+    
+{% endblock %}

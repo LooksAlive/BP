@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Form - Clearblooded Animal Species Collection{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for attribute in attributes %}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="{{ attribute.name }}" class="form-label text-primary font-weight-bold">{{ attribute.name }}</label>
+                <small class="text-muted">Type: {{ attribute.type }}</small>
+            </div>
+            <div class="col-md-6">
+                <input type="{% if attribute.type == 'text' %}text{% elif attribute.type == 'number' %}number{% elif attribute.type == 'boolean' %}checkbox{% endif %}" name="{{ attribute.name }}" value="{{ form.attribute.name.value }}" {% if attribute.type == 'boolean' and form.attribute.name.value %}checked{% endif %} class="form-control">
+            </div>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+</div>
+
+{% endblock %}

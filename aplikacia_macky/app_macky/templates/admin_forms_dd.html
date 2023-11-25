@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Builder - Clearblooded Animal Species Collection</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+
+        {% include "navigation.html" %}
+
+        <h1 class="mb-4">Form Builder</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Available Fields</h3>
+                <ul class="list-group">
+                    <!-- List of available form fields -->
+                    <li class="list-group-item" draggable="true">Text Field</li>
+                    <li class="list-group-item" draggable="true">Textarea</li>
+                    <li class="list-group-item" draggable="true">Dropdown</li>
+                    <!-- Add more field types as needed -->
+                </ul>
+            </div>
+
+            <div class="col-md-6">
+                <h3>Form Preview</h3>
+                <form>
+                    <!-- Form preview area to which fields can be dragged -->
+                    <div id="form-preview" class="border p-3" style="min-height: 200px;">
+                        <!-- Placeholder for styled form fields -->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JavaScript dependencies if needed -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Add your custom JavaScript for drag-and-drop functionality -->
+    <script>
+        const availableFields = document.querySelectorAll('.list-group-item');
+        const formPreview = document.getElementById('form-preview');
+
+        availableFields.forEach(field => {
+            field.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', field.textContent);
+            });
+        });
+
+        formPreview.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        formPreview.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const fieldText = e.dataTransfer.getData('text/plain');
+            const fieldElement = document.createElement('div');
+            fieldElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+            fieldElement.innerHTML = `
+                <span>${fieldText}</span>
+                <span class="badge badge-secondary">Field Type</span>
+            `;
+
+            // Add a delete button for each field
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.classList.add('btn', 'btn-link'); // Apply btn-link class for link appearance
+            deleteButton.style.textDecoration = 'none'; // Remove underline
+            deleteButton.style.color = 'blue'; // Change text color
+            deleteButton.style.cursor = 'pointer'; // Change cursor to pointer
+            deleteButton.addEventListener('click', () => {
+                formPreview.removeChild(fieldElement);
+            });
+
+            fieldElement.appendChild(deleteButton);
+            formPreview.appendChild(fieldElement);
+        });
+    </script>
+</body>
+</html>
+

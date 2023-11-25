@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Users - Clearblooded Animal Species Collection{% endblock %}
+
+{% block content %}
+<style>
+    .truncate-cell {
+        max-width: 150px; /* Adjust the max-width as needed */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .truncate-cell:hover::before {
+        content: attr(data-content);
+        display: block;
+        position: absolute;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        white-space: normal;
+        width: auto;
+        max-width: 300px; /* Adjust the max-width as needed */
+        word-break: break-word;
+    }
+</style>
+<h1 class="mb-4">Admin Users</h1>
+
+<!-- Add Table for displaying users -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Loop through users and display them in rows -->
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.username }}</td>
+                <td class="truncate-cell" data-content="{{ user.password }}">{{ user.password }}</td>
+                <td>
+                    {% for group in user.groups.all %}
+                        {{ group.name }}
+                    {% empty %}
+                        None
+                    {% endfor %}
+                </td>
+                <td>
+                    <!-- Update button using a form with a hidden input -->
+                    <form method="get" action="{% url 'admin_edit_user' user.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-primary btn-update" value="Edit">
+                    </form>
+
+                    <!-- Delete button using a form with a hidden input -->
+                    <form method="post" action="{% url 'admin_delete_user' user.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-danger btn-delete" value="Delete">
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Button to toggle the input fields for adding a new user -->
+<button id="addUserButton" class="btn btn-success">Add User</button>
+
+<!-- Input fields for adding a new user (initially hidden) -->
+<div id="addUserFields" style="display: none">
+    <form method="post" action="{% url 'admin_create_user' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="" placeholder="Enter first name" required>
+        </div>
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="" placeholder="Enter last name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="" placeholder="Enter email" required>
+        </div>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" value="" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Choose a password" required>
+        </div>
+        <div class="form-group">
+            <label for="group">Role</label>
+            <select class="form-control" id="group" name="group">
+                <!-- <option value="">Select a Role</option> -->
+                {% for group in groups %}
+                    <option value="{{ group.name }}">{{ group.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+</div>
+
+<!-- Add Bootstrap JavaScript dependencies if needed -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- JavaScript to toggle the visibility of input fields -->
+<script>
+    document.getElementById('addUserButton').addEventListener('click', function () {
+        const addUserFields = document.getElementById('addUserFields');
+        addUserFields.style.display = addUserFields.style.display === 'none' ? 'block' : 'none';
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,224 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+{% if form_id %}Edit Form - {{ form.form_name }}{% else %}Create New Form{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center mb-4">Form Builder</h1>
+
+  <div class="row">
+    <!-- Left side: Table of attributes -->
+    <div class="col-md-6 mb-3">
+      <h2>Attributes</h2>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th>Attribute Name</th>
+              <th>Attribute Type</th>
+              <th>Add</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for attribute in attributes %}
+            <tr class="attribute-row" data-attribute-id="{{ attribute.id }}" data-attribute-name="{{ attribute.name }}" data-attribute-type="{{ attribute.type }}">
+              <td>{{ attribute.name }}</td>
+              <td>{{ attribute.type }}</td>
+              <td>
+                <button type="button" class="btn btn-primary add-attribute-btn">Add</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right side: Table for the form preview -->
+    <div class="col-md-6 mb-3">
+      <h2>Form Preview</h2>
+      <form id="form-builder" method="post" action="{% if form_id %}{% url 'admin_create_form' form_id %}{% else %}{% url 'admin_create_form' %}{% endif %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="formName">Form Name:</label>
+          <input type="text" id="formName" name="form_name" class="form-control mb-3" value="{{ form.form_name }}" required>
+          <div id="form-preview" class="table-responsive">
+            <table class="table table-striped mb-3">
+              <thead class="thead-dark">
+                <tr>
+                  <th>Field Name</th>
+                  <th>Field Type</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="form-fields">
+                {% if form_id %}
+                  {% for form_attribute in form_attributes %}
+                    <tr data-attribute-id="{{ form_attribute.attribute.id }}">
+                      <td>{{ form_attribute.attribute.name }}</td>
+                      <td>{{ form_attribute.attribute.type }}</td>
+                      <td>
+                        <button type="button" class="btn btn-secondary move-up-btn">↑</button>
+                        <button type="button" class="btn btn-secondary move-down-btn">↓</button>
+                        <button type="button" class="btn btn-danger remove-attribute-btn" onclick="removeAttribute(this);">Remove</button>
+                        <input type="hidden" name="attribute_{{ form_attribute.attribute.id }}" value="{{ form_attribute.attribute.id }}">
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% endif %}
+              </tbody>
+            </table>
+          <input type="hidden" name="form_id" value="{{ form_id }}">
+          <button type="submit" class="btn btn-success mt-2">{% if form_id %}Update Form{% else %}Create Form{% endif %}</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Include JavaScript file -->
+<script src="{% static 'js/form-builder.js' %}"></script>
+{% endblock %}
+
+
+
+
+<!--
+    <h1 class="mb-4">Form Builder</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Available Fields</h3>
+            <ul class="list-group">
+                {% for attribute in attributes %}
+                <li class="list-group-item field-option" data-field-name="{{ attribute.name }}">{{ attribute.name }} ({{ attribute.type|lower }})</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Form Preview</h3>
+            <form>
+                <div id="form-preview" class="border p-3" style="min-height: 200px;"></div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .field-option {
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .field-option:hover {
+            background-color: #f0f0f0;
+        }
+
+        .field-option.selected {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .field-action-button {
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .field-actions {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+
+    <script>
+        const formPreview = document.getElementById('form-preview');
+        const fieldOptions = document.querySelectorAll('.field-option');
+        const selectedFields = [];
+
+        // Function to add a field to the form preview
+        function addField(fieldName) {
+            const fieldElement = document.createElement('div');
+            fieldElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+            fieldElement.innerHTML = `
+                <span>${fieldName}</span>
+                <span class="badge badge-secondary">Field Type</span>
+            `;
+
+            // Add move up and move down buttons for each field
+            const moveUpButton = createActionButton('Move Up', () => moveFieldUp(fieldElement));
+            moveUpButton.type = 'button'; // Set the type to 'button'
+            const moveDownButton = createActionButton('Move Down', () => moveFieldDown(fieldElement));
+            moveDownButton.type = 'button'; // Set the type to 'button'
+
+            // Add a delete button for each field
+            const deleteButton = createActionButton('Delete', () => {
+                formPreview.removeChild(fieldElement);
+                selectedFields.splice(selectedFields.indexOf(fieldName), 1); // Remove the field from selectedFields
+                updateFieldOptions(); // Update field options after deleting
+            });
+
+            fieldElement.appendChild(moveUpButton);
+            fieldElement.appendChild(moveDownButton);
+            fieldElement.appendChild(deleteButton);
+
+            formPreview.appendChild(fieldElement);
+            selectedFields.push(fieldName);
+            updateFieldOptions();
+        }
+
+        // Function to create an action button with a callback
+        function createActionButton(label, callback) {
+            const button = document.createElement('button');
+            button.textContent = label;
+            button.classList.add('btn', 'btn-secondary', 'btn-sm', 'field-action-button');
+            button.addEventListener('click', callback);
+            return button;
+        }
+
+        // Function to move a field up within the form preview
+        function moveFieldUp(fieldElement) {
+            const index = Array.from(formPreview.children).indexOf(fieldElement);
+            if (index > 0) {
+                formPreview.insertBefore(fieldElement, formPreview.children[index - 1]);
+                const movedField = selectedFields.splice(index, 1)[0];
+                selectedFields.splice(index - 1, 0, movedField);
+                updateFieldOptions();
+            }
+        }
+
+        // Function to move a field down within the form preview
+        function moveFieldDown(fieldElement) {
+            const index = Array.from(formPreview.children).indexOf(fieldElement);
+            if (index < formPreview.children.length - 1) {
+                formPreview.insertBefore(formPreview.children[index + 1], fieldElement);
+                const movedField = selectedFields.splice(index, 1)[0];
+                selectedFields.splice(index + 1, 0, movedField);
+                updateFieldOptions();
+            }
+        }
+
+        // Function to update field options based on selected fields
+        function updateFieldOptions() {
+            fieldOptions.forEach(option => {
+                if (selectedFields.includes(option.getAttribute('data-field-name'))) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+
+        // Add click event listeners for field options
+        fieldOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const fieldName = option.getAttribute('data-field-name');
+                if (!selectedFields.includes(fieldName)) {
+                    addField(fieldName);
+                }
+            });
+        });
+    </script>
+-->

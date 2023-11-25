@@ -1,0 +1,148 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Clearblooded Animal Species Collection{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Add Bootstrap JavaScript dependencies if needed -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ... other head elements ... -->
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <style>
+        .user-info-box {
+            display: inline-block;
+            margin-left: auto;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000; /* Ensure it's above other content */
+            display: none; /* Initially hide the button */
+        }
+    </style>
+
+    <!-- Include the header navigation here -->
+    <header class="bg-primary text-white py-4">
+        <div class="header-container">
+            <h1>Clearblooded Animal Species Collection</h1>
+            <nav class="navbar navbar-expand-lg navbar-dark">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="d-flex justify-content-end">
+                    {% if user.is_authenticated %}
+                      <div class="user-info-box bg-primary p-2 text-white rounded">
+                        <strong>{{ user.username }}</strong>
+                      </div>
+                    {% endif %}
+                  </div>
+                                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                        <!-- <li class="nav-item"><a class="nav-link" href="#">Contact</a></li> -->
+                        <!-- Add the logic to display admin or user links based on user roles -->
+                        {% if user.is_authenticated %}
+                            {% if request.session.admin_view %}
+                                <!-- Show admin-related links if admin_view is set -->
+                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_attributes' %}">Admin Attributes</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_users' %}">Admin Users</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_forms' %}">Admin Forms</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_galeries' %}">Admin Galery</a></li>
+                            {% endif %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'user_galeries' %}">Galeries</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'user_forms' %}">Forms</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'user_records' %}">My Records</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                        {% else %}
+                            <!-- <li class="nav-item"><a class="nav-link" href="{% url 'user_collection_formular' %}">Collection Formular</a></li> -->
+                            <li class="nav-item"><a class="nav-link" href="{% url 'user_galeries' %}">Galeries</a></li>
+                            <li class="nav-item ml-auto"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+
+    <!-- Main content block -->
+    <div class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}
+        {% endblock %}
+    </div>    
+
+
+    <button type="button" class="btn btn-secondary back-button" id="back-button">Back</button>
+
+    <script>
+        $(document).ready(function() {
+            window.setTimeout(function() {
+                $(".alert").fadeTo(500, 0).slideUp(500, function(){
+                    $(this).remove(); 
+                });
+            }, 4000);
+        });
+
+        function showBackButton() {
+            const backButton = document.getElementById('back-button');
+            if (backButton) {
+                backButton.style.display = 'block';
+            }
+        }
+    
+        function hideBackButton() {
+            const backButton = document.getElementById('back-button');
+            if (backButton) {
+                backButton.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const backButton = document.getElementById('back-button');
+            if (backButton) {
+                backButton.addEventListener('click', function() {
+                    window.history.back(); // Go back to the previous page
+                });
+            }
+    
+        });
+
+        
+
+    </script>
+
+</body>
+</html>
+

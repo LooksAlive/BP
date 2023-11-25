@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Clearblooded Animal Species Collection{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Welcome, <span id="username">{{ username }}</span>!</h2>
+                <p>Discover a world of fascinating animal species.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Carousel arrows */
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-size: 100%, 100%;
+        background-image: none !important;
+    }
+
+    .carousel-control-prev-icon:after,
+    .carousel-control-next-icon:after {
+        content: '❮'; /* Left arrow character */
+        font-size: 40px; /* Arrow size */
+        color: #333; /* Arrow color */
+    }
+
+    .carousel-control-next-icon:after {
+        content: '❯'; /* Right arrow character */
+    }
+
+    /* Card styling */
+    .carousel .card {
+        box-shadow: 0 4px 8px rgba(0,0,0,.15);
+        transition: box-shadow .3s ease;
+        border: none;
+    }
+
+    .carousel .card:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,.3);
+    }
+
+    .carousel .card-img-top {
+        /*height: 200px; *//* Adjust the image height as needed */
+        object-fit: cover; /* Ensures the image covers the area */
+    }
+
+    .carousel .card-body {
+        padding: 15px;
+    }
+
+    .carousel-indicators li {
+        background-color: #333; /* Match indicator color with arrow color */
+    }
+
+    .carousel-indicators .active {
+        background-color: #555; /* Active indicator color */
+    }
+
+    /* Card styling */
+    .carousel .card {
+        box-shadow: 0 4px 8px rgba(0,0,0,.15);
+        transition: box-shadow .3s ease;
+        border: none;
+        min-height: 300px; /* Consistent minimum height for cards */
+    }
+
+    .carousel .card:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,.3);
+    }
+
+    .carousel .card-img-top,
+    .card-img-top {
+        width: 100%; /* Full width of the card */
+        height: 300px;
+        object-fit: contain; /* Entire image visible without cropping */
+        background: #f8f9fa; /* Background color for empty space around the image */
+        display: block; /* Ensure the image takes the full card width */
+        margin: 0 auto; /* Center the image horizontally */
+    }
+
+    .carousel-item {
+        height: auto; /* Adaptive height for each carousel item */
+    }
+
+    .card {
+        min-height: 300px; /* Minimum height for the card */
+    }
+
+    .carousel-item {
+        height: auto; /* Adaptive height for each carousel item */
+    }
+</style>
+
+<!-- Recent Records Carousel -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center">Recent Records</h2>
+        <div id="recentRecordsCarousel" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                {% for record in recent_records %}
+                <li data-target="#recentRecordsCarousel" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
+                {% endfor %}
+            </ol>
+
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+                {% for record in recent_records %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="row">
+                        <div class="col-md-8 mx-auto">
+                            <div class="card">
+                                {% if record.image %}
+                                    <img src="{{ record.image }}" class="card-img-top" alt="Record Image">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">Record #{{ record.id }}</h5>
+                                    {% for attribute in record.attributes|slice:":3" %}
+                                        <p><strong>{{ attribute.name }}:</strong> {{ attribute.value }}</p>
+                                    {% endfor %}
+                                    <div>
+                                        <span class="badge badge-success">{{ record.thumb_up }} 👍 </span>
+                                        <span class="badge badge-danger">{{ record.thumb_down }} 👎 </span>
+                                    </div>
+                                    <a href="{% url 'user_record_detail' record.id 0 %}" class="btn btn-primary mt-2">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Controls -->
+            <a class="carousel-control-prev" href="#recentRecordsCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#recentRecordsCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+<!-- Recent Species Section -->
+<section class="py-5">
+    <div class="container">
+        <h2>Recent Species</h2>
+        <div class="row">
+            {% for species in recent_species %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <img src="{{ species.image.url }}" class="card-img-top" alt="{{ species.name }} Image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ species.name }}</h5>
+                        <p class="card-text">{{ species.description | truncatewords:20 }}</p>
+                        <a href="#" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Project Statistics Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2>Project Statistics</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Number of Records
+                        <span class="badge badge-primary badge-pill">{{ num_records }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Number of Registered Users
+                        <span class="badge badge-primary badge-pill">{{ num_users }}</span>
+                    </li>
+                    <!-- Add more project statistics -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5">
+    <div class="container text-center">
+        <h2>Join Our Community</h2>
+        <p>Be a part of our growing community of animal lovers and researchers.</p>
+        <a href="{% url 'registration' %}" class="btn btn-lg btn-success">Sign Up Now</a>
+    </div>
+</section>
+
+<!-- Bootstrap Carousel JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

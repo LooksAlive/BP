@@ -1,0 +1,178 @@
+/* style.css */
+
+/* General Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+}
+
+/* Header Styles */
+header.bg-primary {
+    background: #007bff; /* Bootstrap primary color */
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+header h1 {
+    margin-bottom: 0; /* Removes default margin */
+}
+
+/* Navbar Styles */
+.navbar {
+    padding: 0;
+}
+
+.nav-link {
+    color: #fff !important; /* Ensures text is white */
+    margin-right: 1rem; /* Spacing between nav items */
+}
+
+.nav-link:hover {
+    color: #f8f9fa !important; /* Slightly lighter color on hover */
+}
+
+/* Main Content Styles */
+.container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+/* Header specific styling */
+.header-container {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    /* Adjust the max-width according to your design needs */
+    max-width: 1140px; 
+}
+
+/* Header Styles */
+header.bg-primary {
+    background: #007bff; /* Bootstrap primary color */
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+/* Adjusting link colors */
+a {
+    color: #007bff;
+    text-decoration: none; /* Removes underline */
+}
+
+a:hover {
+    color: #0056b3;
+}
+
+/* Footer Styles */
+footer {
+    background: #007bff;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 576px) {
+    .nav-link {
+        margin-right: 0.5rem; /* Smaller spacing on smaller screens */
+    }
+}
+
+
+
+/* User Records styles */
+.record-list {
+    margin-top: 1rem;
+}
+
+.list-group-item {
+    background: var(--secondary-background-color); /* Adjust the variable according to your color scheme */
+    color: var(--text-color); /* Adjust the variable according to your color scheme */
+    border: 1px solid var(--border-color); /* Adjust the variable according to your color scheme */
+    margin-bottom: 0.5rem;
+}
+
+
+
+
+
+
+/*
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #121212;
+    color: #e0e0e0;
+}
+
+header.bg-primary {
+    background: #1a1a1a;
+    box-shadow: 0 2px 4px rgba(255,255,255,.1);
+}
+
+header h1 {
+    margin-bottom: 0;
+    color: #e0e0e0;
+}
+
+.navbar {
+    padding: 0;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #e0e0e0 !important;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #b3b3b3 !important;
+}
+
+.container {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(255,255,255,.1);
+}
+
+a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0a58ca;
+}
+
+footer {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    text-align: center;
+    padding: 1rem 0;
+    bottom: 0;
+    width: 100%;
+}
+
+@media (max-width: 576px) {
+    .nav-link {
+        margin-right: 0.5rem;
+    }
+}
+
+.header-container {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 1140px; 
+}
+
+*/

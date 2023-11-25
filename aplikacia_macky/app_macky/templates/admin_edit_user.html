@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Attribute - Clearblooded Animal Species Collection{% endblock %}
+
+{% block page_title %}Update Attribute{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+        </div>
+        <div class="form-group">
+            <label for="type">Last Name</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+        </div>
+        <div class="form-group">
+            <label for="type">Email</label>
+            <input type="text" class="form-control" id="email" name="email" value="{{ user.email }}">
+        </div>
+        <div class="form-group">
+            <label for="type">Username</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}">
+        </div>
+        <div class="form-group">
+            <label for="type">Password</label>
+            <input type="text" class="form-control" id="password" name="password" value="{{ user.password }}">
+        </div>
+        <div class="form-group">
+            <label for="role">Role</label>
+            <select class="form-control" id="role" name="role">
+                {% for group in groups %}
+                    <option value="{{ group.name }}" {% if existing_group and group.name == existing_group.name %}selected{% endif %}>
+                        {{ group.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Attribute</button>
+    </form>
+
+ <script>
+    $(document).ready(function() {
+        // Call the showBackButton function from the parent template
+        showBackButton();
+    });
+ </script>
+{% endblock %}

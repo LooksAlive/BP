@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Form - Clearblooded Animal Species Collection{% end block %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="form_name">Form Name</label>
+            <input type="text" class="form-control" id="form_name" name="form_name" value="{{ form.name }}">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description">{{ form.description }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="fields">Fields</label>
+            <input type="text" class="form-control" id="fields" name="fields" value="{{ form.fields }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Update Form</button>
+    </form>
+{% end block %}
+
+
+
+
+{% extends "base.html" %}
+
+{% block title %}Form Builder - Clearblooded Animal Species Collection{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Form Builder</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Available Fields</h3>
+            <ul class="list-group">
+                <!-- List of available form fields -->
+                <li class="list-group-item" onclick="addField('Text Field')">Text Field</li>
+                <li class="list-group-item" onclick="addField('Textarea')">Textarea</li>
+                <li class="list-group-item" onclick="addField('Dropdown')">Dropdown</li>
+                <!-- Add more field types as needed -->
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Form Preview</h3>
+            <form>
+                <!-- Form preview area to which fields can be added and re-ordered -->
+                <div id="form-preview" class="border p-3" style="min-height: 200px;"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Bootstrap JavaScript dependencies if needed -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    const formPreview = document.getElementById('form-preview');
+
+    // Function to add a field to the form preview
+    function addField(fieldName) {
+        const fieldElement = document.createElement('div');
+        fieldElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+        fieldElement.innerHTML = `
+            <span>${fieldName}</span>
+            <span class="badge badge-secondary">Field Type</span>
+        `;
+
+        // Add move up and move down buttons for each field
+        const moveUpButton = document.createElement('button');
+        moveUpButton.textContent = 'Move Up';
+        moveUpButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+        moveUpButton.addEventListener('click', () => moveFieldUp(fieldElement));
+
+        const moveDownButton = document.createElement('button');
+        moveDownButton.textContent = 'Move Down';
+        moveDownButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+        moveDownButton.addEventListener('click', () => moveFieldDown(fieldElement));
+
+        // Add a delete button for each field
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.classList.add('btn', 'btn-link', 'btn-sm');
+        deleteButton.style.textDecoration = 'none';
+        deleteButton.style.color = 'blue';
+        deleteButton.style.cursor = 'pointer';
+        deleteButton.addEventListener('click', () => {
+            formPreview.removeChild(fieldElement);
+        });
+
+        fieldElement.appendChild(moveUpButton);
+        fieldElement.appendChild(moveDownButton);
+        fieldElement.appendChild(deleteButton);
+
+        formPreview.appendChild(fieldElement);
+    }
+
+    // Function to move a field up within the form preview
+    function moveFieldUp(fieldElement) {
+        const previousSibling = fieldElement.previousElementSibling;
+        if (previousSibling) {
+            formPreview.insertBefore(fieldElement, previousSibling);
+        }
+    }
+
+    // Function to move a field down within the form preview
+    function moveFieldDown(fieldElement) {
+        const nextSibling = fieldElement.nextElementSibling;
+        if (nextSibling) {
+            formPreview.insertBefore(nextSibling, fieldElement);
+        }
+    }
+
+
+    $(document).ready(function() {
+        // Call the showBackButton function from the parent template
+        showBackButton();
+    });
+</script>
+{% endblock %}

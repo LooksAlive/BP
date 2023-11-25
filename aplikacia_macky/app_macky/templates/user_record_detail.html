@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Record Details{% endblock %}
+
+{% block content %}
+
+<style>
+    .attribute-input {
+        max-width: 400px; /* Shorten input fields */
+    }
+    .comments-section {
+        margin-top: 20px;
+    }
+    .comment-card {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+    .comment-meta {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    .add-comment-btn {
+        float: right; /* Position the Add Comment button to the right */
+    }
+    .attribute-label {
+        font-weight: bold;
+        margin-bottom: 0;
+    }
+    .attribute-type {
+        font-size: 0.8rem;
+        color: #6c757d;
+        font-style: italic;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="mb-4">Record Details</h2>
+        {% if request.session.admin_view or for_user %}
+            <a href="{% url 'user_record_delete' record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Delete Record</a>
+        {% endif %}
+    </div>
+     <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Record #{{ record.id }}</h5>
+            {% if request.session.admin_view or for_user %}
+                <form method="post" action="{% url 'user_record_update' record.id for_user %}">
+                    {% csrf_token %}
+                    {% for attribute in form_attributes %}
+                    {% if attribute.form_attribute.attribute.type == "image_url" %}
+                        <div class="form-group attribute-input">
+                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
+                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                            </label>
+                            <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive"/>
+                            <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">
+                        </div>
+                    {% else %}
+                        <div class="form-group attribute-input">
+                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
+                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                            </label>
+                            <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">
+                        </div>
+                        <!-- Input field for other attribute types -->
+                    {% endif %}
+                        
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    {% else %}
+                    <!-- Display form attributes -->
+                    {% for attribute in form_attributes %}
+                    {% if attribute.form_attribute.attribute.type == "image_url" %}
+                        <div class="form-group attribute-input">
+                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
+                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                            </label>
+                            <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive"/>
+                            <p class="card-text">{{ attribute.value }}</p>
+                        </div>
+                    {% else %}
+                        <div class="form-group attribute-input">
+                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
+                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                            </label>
+                            <p class="card-text">{{ attribute.value }}</p>
+                        </div>
+                        <!-- Input field for other attribute types -->
+                    {% endif %}
+                    {% endfor %}
+                {% endif %}
+                </form>
+        </div>
+    </div>
+    
+    <div class="comments-section">
+        <h5>Comments</h5>
+        {% for comment in record_comments %}
+            <div class="comment-card">
+                <p>{{ comment.comment }}</p>
+                <div class="comment-meta">
+                    Commented by {{ comment.user.username }} on {{ comment.created_at|date:"Y-m-d H:i" }}
+                </div>
+                {% if request.session.admin_view %} <!--  or for_user -->
+                    <form method="post" action="{% url 'remove_comment' comment.id for_user %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Remove Comment</button>
+                    </form>
+                {% elif user.is_authenticated and comment.user == request.user %}
+                    <form method="post" action="{% url 'remove_comment' comment.id for_user %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Remove Comment</button>
+                    </form>
+                {% else %}
+
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>No comments yet.</p>
+        {% endfor %}
+        {% if request.session.admin_view %} <!--  or for_user -->
+            <button id="addCommentBtn" class="btn btn-secondary mb-3 add-comment-btn">Add Comment</button>
+            <div id="commentForm" style="display:none;">
+                <form method="post" action="{% url 'user_record_update' record.id for_user %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea name="comment" class="form-control" placeholder="Enter your comment here..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Comment</button>
+                </form>
+            </div>
+        {% elif user.is_authenticated and record.user != request.user %}
+            <button id="addCommentBtn" class="btn btn-secondary mb-3 add-comment-btn">Add Comment</button>
+            <div id="commentForm" style="display:none;">
+                <form method="post" action="{% url 'user_record_update' record.id for_user %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea name="comment" class="form-control" placeholder="Enter your comment here..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Comment</button>
+                </form>
+            </div>
+        {% else %}
+         
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('addCommentBtn').addEventListener('click', function() {
+        var commentForm = document.getElementById('commentForm');
+        commentForm.style.display = commentForm.style.display === 'none' ? 'block' : 'none';
+    });
+
+
+    $(document).ready(function() {
+        // Call the showBackButton function from the parent template
+        showBackButton();
+    });
+ 
+</script>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Attributes - Clearblooded Animal Species Collection{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Admin Attributes</h1>
+
+    <!-- Display attributes in a well-structured table -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop through attributes and display them in rows -->
+            {% for attribute in attributes %}
+            <tr>
+                <td>{{ attribute.id }}</td>
+                <td>{{ attribute.name }}</td>
+                <td>{{ attribute.type }}</td>
+                <td>{{ attribute.created_at }}</td>
+                <td>
+                    <!-- Update button using a form with a hidden input -->
+                    <form method="get" action="{% url 'admin_edit_attribute' attribute.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-primary btn-sm" value="Edit">
+                    </form>
+
+                    <!-- Delete button using a form with a hidden input -->
+                    <form method="post" action="{% url 'admin_delete_attribute' attribute.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-danger btn-sm" value="Delete">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Button to toggle the input fields for adding a new attribute -->
+    <button id="addAttributeButton" class="btn btn-success">Add Attribute</button>
+
+    <!-- Input fields for adding a new attribute (initially hidden) -->
+    <div id="addAttributeFields" style="display: none">
+        <form method="post" action="{% url 'admin_create_attribute' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Attribute Name</label>
+                <input type="text" class="form-control" id="name" name="name">
+            </div>
+            <div class="form-group">
+                <label for="type">Attribute Type</label>
+                <input type="text" class="form-control" id="type" name="type">
+            </div>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+        
+    </div>    
+</div>
+
+<!-- Add Bootstrap JavaScript dependencies if needed -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- JavaScript to toggle the visibility of input fields -->
+<script>
+    document.getElementById('addAttributeButton').addEventListener('click', function () {
+        const addAttributeFields = document.getElementById('addAttributeFields');
+        addAttributeFields.style.display = addAttributeFields.style.display === 'none' ? 'block' : 'none';
+    });
+</script>
+{% endblock %}

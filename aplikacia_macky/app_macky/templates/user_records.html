@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Records{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Your Records</h2>
+    <div class="row">
+        {% for item in records_with_details %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 border-primary">
+                    <div class="card-header bg-primary text-white">
+                        Record #{{ item.record.id }}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Form: {{ item.form_name }}</h5>
+                        {% if item.gallery_name %}
+                            <p class="card-text">Gallery: {{ item.gallery_name }}</p>
+                        {% endif %}
+                        <div class="btn-group">
+                            <a href="{% url 'user_record_detail' item.record.id 1 %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                            <a href="{% url 'user_record_delete' item.record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Delete</a>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <small class="text-muted">Submitted on: {{ item.record.created_at|date:"M d, Y" }}</small>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col">
+                <div class="alert alert-info" role="alert">
+                    You have not submitted any records yet.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

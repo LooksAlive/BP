@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Gallery - Clearblooded Animal Species Collection{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Galleries</h1>
+
+    <!-- Display galleries in a well-structured table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through galleries and display them in rows -->
+                {% for gallery in galleries %}
+                <tr>
+                    <td>{{ gallery.gallery_name }}</td>
+                    <td>
+                        <!-- View button using a form with a hidden input -->
+                        <form method="get" action="{% url 'user_galery_view' gallery.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>    
+    </div>
+</div>
+
+<!-- Add Bootstrap JavaScript dependencies if needed -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Optional: Include Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+{% endblock %}

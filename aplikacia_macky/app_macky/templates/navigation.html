@@ -1,0 +1,36 @@
+<header class="bg-primary text-white py-4">
+    <div class="container">
+        <h1>Clearblooded Animal Species Collection</h1>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                    {% if request.session.admin_view %}
+                        <!-- Show admin-related links if admin_view is set -->
+                        <li class="nav-item"><a class="nav-link" href="{% url 'admin_attributes' %}">Admin Attributes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'admin_users' %}">Admin Users</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'admin_forms' %}">Admin Forms</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'admin_galery' %}">Admin Gallery</a></li>
+                    {% else %}
+                        <!-- Show admin-related links if admin_view is set -->
+                        <li class="nav-item"><a class="nav-link" href="{% url 'user_forms' %}">Forms</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'user_galery' %}">Galleries</a></li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <!-- Show logout link if the user is authenticated -->
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                        <!-- Show login and register links on the right if not authenticated -->
+                        <li class="nav-item ml-auto"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </div>
+</header>

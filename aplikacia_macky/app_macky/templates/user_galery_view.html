@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Gallery - {{ gallery.form.form_name }}{% endblock %}
+
+{% block content %}
+<style>
+    .vote-btn {
+        font-size: 14px;
+    }
+    .vote-btn.voted {
+        font-weight: bold;
+        color: #4CAF50;
+    }
+    .vote-btn.voted[data-vote="down"] {
+        color: #FF0000;
+    }
+    .modal-img {
+        max-width: 100%;
+        height: auto;
+    }
+    .card-img-top-show {
+        cursor: pointer;
+        object-fit: contain; /* Preserve aspect ratio and cover the container */
+        height: 200px; /* Maximum height for the image */
+        width: 100%; /* Full width of the card */
+        display: block; /* Ensure the image takes the full card width */
+        margin: 0 auto; /* Center the image horizontally */
+    }
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 300px; /* Optional: Minimum height for uniformity */
+    }
+    .card {
+        min-height: 400px; /* Minimum height for uniformity */
+    }
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .modal-content {
+        position: relative;
+        margin: auto;
+        width: 80%;
+        max-width: 800px;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    .modal-img.img-center {
+        display: block;
+        margin: 0 auto;
+    }
+
+</style>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Gallery: {{ gallery.form.form_name }}</h1>
+
+    <div class="row">
+        {% for record in gallery_page %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Record #{{ record.record.id }}</h5>
+                        {% for attribute in record.attributes %}
+                            {% if attribute.type == 'image_url' %}
+                                <img src="{{ attribute.value }}" alt="Record Image" class="img-fluid m-2 clickable-image card-img-top-show">
+                            {% endif %}
+                        {% endfor %}
+                        <div class="card-footer">
+                            <small>Added by: {{ record.username }}</small><br>
+                            <small>Added on: {{ record.created_at|date:"Y-m-d H:i" }}</small><br>
+                            <small>Last updated: {{ record.updated_at|date:"Y-m-d H:i" }}</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                             <!-- Voting buttons -->
+                             {% if request.session.admin_view or record.record.user != request.user and user.is_authenticated %}
+                             <div>
+                                 <button type="button" class="btn btn-outline-success btn-sm vote-btn {% if record.user_vote == 'up' %}voted{% endif %}" data-record="{{ record.record.id }}" data-vote="up">👍 ({{ record.thumb_up }})</button>
+                                 <button type="button" class="btn btn-outline-danger btn-sm vote-btn {% if record.user_vote == 'down' %}voted{% endif %}" data-record="{{ record.record.id }}" data-vote="down">👎 ({{ record.thumb_down }})</button>
+                             </div>
+                         {% else %}
+                             <div>
+                                 <!-- Disabled voting buttons for guests or non-logged-in users -->
+                                 <button type="button" class="btn btn-outline-success btn-sm vote-btn" disabled>👍 ({{ record.thumb_up }})</button>
+                                 <button type="button" class="btn btn-outline-danger btn-sm vote-btn" disabled>👎 ({{ record.thumb_down }})</button>
+                             </div>
+                         {% endif %}
+                         <a href="{% url 'user_record_detail' record.record.id 0 %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     {% empty %}
+         <p>No records available in this gallery.</p>
+     {% endfor %}
+    </div>
+
+
+
+
+    <!-- Pagination -->
+    <div class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if gallery_page.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ gallery_page.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+            <li class="page-item disabled">
+                <span class="page-link">Page {{ gallery_page.number }} of {{ gallery_page.paginator.num_pages }}</span>
+            </li>
+            {% if gallery_page.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ gallery_page.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ gallery_page.paginator.num_pages }}">Last</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+
+<!-- Add this modal for displaying larger images -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Record Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="Record Image" class="img-fluid modal-img clickable-image img-center" id="modalImage">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    // JavaScript for the image modal and other event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        const clickableImages = document.querySelectorAll('.clickable-image');
+
+        clickableImages.forEach(image => {
+            image.addEventListener('click', function() {
+                const imageUrl = this.src;
+                const modalImage = document.getElementById('modalImage');
+                modalImage.src = imageUrl;
+                $('#imageModal').modal('show'); // Open the modal
+            });
+        });
+
+        $('#imageModal').on('hidden.bs.modal', function() {
+            // Close the modal when clicking outside of it
+            $('#imageModal').modal('hide');
+        });
+
+        // ... your existing code for voting buttons
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.vote-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const recordId = this.dataset.record;
+                const voteType = this.dataset.vote;
+                fetch(`/vote/${recordId}/${voteType}/`, {
+                    method: 'POST',
+                    headers: {
+                        "X-CSRFToken": csrftoken,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ vote_type: voteType })
+                })
+                .then(response => {
+                    if(response.ok) {
+                        return response.json();
+                    } else {
+                        console.error('Server responded with a non-200 status:', response.status);
+                        return Promise.reject(response);
+                    }
+                })
+                .then(data => {
+                    // Use arrow emojis instead of text
+                    this.innerHTML = voteType === 'up' ? '👍' : '👎';
+                    updateVoteButtons(recordId, voteType, data.thumb_up, data.thumb_down);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Voting failed, please try again.');
+                });
+            });
+        });
+    });
+
+    function updateVoteButtons(recordId, voteType, thumbUpCount, thumbDownCount) {
+        // Update the button classes
+        document.querySelectorAll(`[data-record='${recordId}']`).forEach(button => {
+            if(button.dataset.vote == voteType) {
+                button.classList.add('voted');
+            } else {
+                button.classList.remove('voted');
+            }
+        });
+
+        // Update vote counts
+        document.querySelector(`[data-record='${recordId}'][data-vote='up']`).textContent = `👍 (${thumbUpCount})`;
+        document.querySelector(`[data-record='${recordId}'][data-vote='down']`).textContent = `👎 (${thumbDownCount})`;
+    }
+    
+    // Get the CSRF token from the cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+
+    $(document).ready(function() {
+        // Call the showBackButton function from the parent template if needed
+    });
+
+</script>
+    
+{% endblock %}

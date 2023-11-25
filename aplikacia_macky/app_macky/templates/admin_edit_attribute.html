@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Attributes - Clearblooded Animal Species Collection{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Update Attribute</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Attribute Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ attribute.name }}">
+        </div>
+        <div class="form-group">
+            <label for="type">Attribute Type</label>
+            <input type="text" class="form-control" id="type" name="type" value="{{ attribute.type }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Update Attribute</button>
+    </form>
+    
+
+    <!-- Add Bootstrap JavaScript dependencies if needed -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+ <script>
+    $(document).ready(function() {
+        // Call the showBackButton function from the parent template
+        showBackButton();
+    });
+ </script>
+{% endblock %}

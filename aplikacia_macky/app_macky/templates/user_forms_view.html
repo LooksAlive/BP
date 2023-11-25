@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Forms - Clearblooded Animal Species Collection{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-primary">{{ form_name }}</h1>
+    <form method="post" action="{% url 'user_forms_record_add' form_id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {% for attr in form_attrs %}
+            <div class="form-group">
+                {% if attr.type == "image_url" %}
+                    <label for="attr_{{ attr.id }}" class="font-weight-bold">{{ attr.name }}
+                        <sub class="text-muted" style="font-size: smaller;">{{ attr.type }}</sub>
+                    </label>
+                    <input type="file" class="form-control-file" id="attr_{{ attr.id }}" name="attr_{{ attr.id }}" accept="image/*">
+                {% else %}
+                    <label for="attr_{{ attr.id }}" class="font-weight-bold">{{ attr.name }}
+                        <sub class="text-muted" style="font-size: smaller;">{{ attr.type }}</sub>
+                    </label>
+                    <input type="text" class="form-control" id="attr_{{ attr.id }}" name="attr_{{ attr.id }}">
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="form-group">
+            <label for="comment" class="font-weight-bold">Comment</label>
+            <textarea class="form-control" id="comment" name="comment"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+</div>
+{% endblock %}
