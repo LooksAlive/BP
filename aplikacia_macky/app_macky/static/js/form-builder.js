@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('.add-attribute-btn').forEach(btn => {
       btn.addEventListener('click', function() {        
+        alert(`attributeId: ${attributeId}, attributeName: ${attributeName}, attributeType: ${attributeType}, required: ${required}`);
+        console.log(`attributeId: ${attributeId}, attributeName: ${attributeName}, attributeType: ${attributeType}, required: ${required}`);
+  
         // Disable the button after adding the attribute
         //btn.disabled = false;
       });
@@ -48,16 +51,23 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Function to add an attribute to the form preview
-  function addAttributeToForm(attributeId, attributeName, attributeType) {
+  function addAttributeToForm(attributeId, attributeName, attributeType, required) {
     if (addedAttributeIds.has(attributeId)) {
       return; // Don't add the attribute if it's already added
     }
 
     const row = document.createElement('tr');
-    row.setAttribute('data-attribute-id', attributeId); // Set attribute ID on the row for easy access
+    row.setAttribute('data-attribute-id', attributeId);
     row.innerHTML = `
       <td>${attributeName}</td>
       <td>${attributeType}</td>
+      <td>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="attribute${attributeId}"
+            name="attr_req_${attributeId}"
+            value="${required}" ${required ? 'checked' : ''}>
+        </div>
+      </td>
       <td>
         <button type="button" class="btn btn-secondary move-up-btn">↑</button>
         <button type="button" class="btn btn-secondary move-down-btn">↓</button>
@@ -66,11 +76,12 @@ document.addEventListener('DOMContentLoaded', function() {
       </td>
     `;
 
-    // Add event listeners for the move and remove buttons
+
     bindRowEvents(row);
 
+
     formFields.appendChild(row);
-    addedAttributeIds.add(attributeId); // Mark the attribute as added
+    addedAttributeIds.add(attributeId);
   }
 
   // Bind event listeners to the move and remove buttons
@@ -92,10 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const attributeId = attributeRow.getAttribute('data-attribute-id');
       const attributeName = attributeRow.getAttribute('data-attribute-name');
       const attributeType = attributeRow.getAttribute('data-attribute-type');
-      addAttributeToForm(attributeId, attributeName, attributeType);
-      
-      // Disable the button after adding the attribute
-      //btn.disabled = true;
+      addAttributeToForm(attributeId, attributeName, attributeType, true);
     });
   });
 });

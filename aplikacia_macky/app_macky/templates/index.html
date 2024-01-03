@@ -115,19 +115,37 @@
                     <div class="row">
                         <div class="col-md-8 mx-auto">
                             <div class="card">
-                                {% if record.image %}
-                                    <img src="{{ record.image }}" class="card-img-top" alt="Record Image">
-                                {% endif %}
-                                <div class="card-body">
+                                <div class="card-header">
                                     <h5 class="card-title">Record #{{ record.id }}</h5>
-                                    {% for attribute in record.attributes|slice:":3" %}
-                                        <p><strong>{{ attribute.name }}:</strong> {{ attribute.value }}</p>
+                                    {% for attribute in record.attributes %}
+                                        {% if attribute.type == 'image_url' %}
+                                            <img src="{{ attribute.value }}" alt="Record Image" class="img-fluid m-2 mx-auto d-block"> <!-- card-img-top -->
+                                        {% endif %}
                                     {% endfor %}
-                                    <div>
-                                        <span class="badge badge-success">{{ record.thumb_up }} 👍 </span>
-                                        <span class="badge badge-danger">{{ record.thumb_down }} 👎 </span>
+                                    <div class="card-body">
+                                        <textarea id="formName" name="record_description" class="form-control mb-3" rows="4" required readonly>{{ record.description }}</textarea>
                                     </div>
-                                    <a href="{% url 'user_record_detail' record.id 0 %}" class="btn btn-primary mt-2">Details</a>
+                                    <div class="card-footer">
+                                        <small>Added by: {{ record.username }}</small><br>
+                                        <small>Added on: {{ record.created_at|date:"Y-m-d H:i" }}</small><br>
+                                        <small>Last updated: {{ record.updated_at|date:"Y-m-d H:i" }}</small>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <!-- Voting buttons -->
+                                            {% if request.session.admin_view or record.record.user != request.user and user.is_authenticated %}
+                                            <div>
+                                                <button type="button" class="btn btn-outline-success btn-sm vote-btn" disabled>👍 ({{ record.thumb_up }})</button>
+                                                <button type="button" class="btn btn-outline-danger btn-sm vote-btn" disabled>👎 ({{ record.thumb_down }})</button>
+                                            </div>
+                                        {% else %}
+                                            <div>
+                                                <!-- Disabled voting buttons for guests or non-logged-in users -->
+                                                <button type="button" class="btn btn-outline-success btn-sm vote-btn" disabled>👍 ({{ record.thumb_up }})</button>
+                                                <button type="button" class="btn btn-outline-danger btn-sm vote-btn" disabled>👎 ({{ record.thumb_down }})</button>
+                                            </div>
+                                        {% endif %}
+                                        <a href="{% url 'user_record_detail' record.id 0 %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -150,31 +168,6 @@
 </section>
 
 
-
-
-
-
-<!-- Recent Species Section -->
-<section class="py-5">
-    <div class="container">
-        <h2>Recent Species</h2>
-        <div class="row">
-            {% for species in recent_species %}
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <img src="{{ species.image.url }}" class="card-img-top" alt="{{ species.name }} Image">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ species.name }}</h5>
-                        <p class="card-text">{{ species.description | truncatewords:20 }}</p>
-                        <a href="#" class="btn btn-primary">Learn More</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-
 <!-- Project Statistics Section -->
 <section class="py-5 bg-light">
     <div class="container">
@@ -190,7 +183,14 @@
                         Number of Registered Users
                         <span class="badge badge-primary badge-pill">{{ num_users }}</span>
                     </li>
-                    <!-- Add more project statistics -->
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Number of Forms
+                        <span class="badge badge-primary badge-pill">{{ num_forms }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Number of Galeries
+                        <span class="badge badge-primary badge-pill">{{ num_galeries }}</span>
+                    </li>
                 </ul>
             </div>
         </div>

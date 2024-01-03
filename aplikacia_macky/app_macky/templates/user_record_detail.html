@@ -33,121 +33,157 @@
         color: #6c757d;
         font-style: italic;
     }
+
+    textarea:readonly {
+        border: 1px solid #ccc; /* Add a small border for disabled textareas */
+        background-color: transparent; /* Keep the background transparent */
+    }
 </style>
 
-<div class="container mt-4">
+
     <div class="d-flex justify-content-between align-items-center">
         <h2 class="mb-4">Record Details</h2>
         {% if request.session.admin_view or for_user %}
             <a href="{% url 'user_record_delete' record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Delete Record</a>
         {% endif %}
     </div>
-     <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Record #{{ record.id }}</h5>
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Record #{{ record.id }}</h5>
+        <form method="post" action="{% url 'user_record_update' record.id for_user %}">
+            {% csrf_token %}
             {% if request.session.admin_view or for_user %}
-                <form method="post" action="{% url 'user_record_update' record.id for_user %}">
-                    {% csrf_token %}
-                    {% for attribute in form_attributes %}
-                    {% if attribute.form_attribute.attribute.type == "image_url" %}
-                        <div class="form-group attribute-input">
-                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
-                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
-                            </label>
-                            <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive"/>
-                            <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">
-                        </div>
-                    {% else %}
-                        <div class="form-group attribute-input">
-                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
-                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
-                            </label>
-                            <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">
-                        </div>
-                        <!-- Input field for other attribute types -->
-                    {% endif %}
-                        
-                    {% endfor %}
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    {% else %}
-                    <!-- Display form attributes -->
-                    {% for attribute in form_attributes %}
-                    {% if attribute.form_attribute.attribute.type == "image_url" %}
-                        <div class="form-group attribute-input">
-                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
-                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
-                            </label>
-                            <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive"/>
-                            <p class="card-text">{{ attribute.value }}</p>
-                        </div>
-                    {% else %}
-                        <div class="form-group attribute-input">
-                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
-                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
-                            </label>
-                            <p class="card-text">{{ attribute.value }}</p>
-                        </div>
-                        <!-- Input field for other attribute types -->
-                    {% endif %}
-                    {% endfor %}
+                <div class="form-group attribute-input">
+                    <label class="attribute-label">Description
+                        <span class="attribute-type">(text)</span>
+                    </label>
+                    <textarea id="formName" name="record_description" class="form-control mb-3" rows="4" required>{{ record.description }}</textarea>
+                </div>
+
+                {% for attribute in form_attributes %}
+                {% if attribute.form_attribute.attribute.type == "image_url" %}
+                    <div class="form-group attribute-input">
+                        <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
+                            <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                        </label>
+                        <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive"/>
+                        <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">
+                    </div>
+                {% else %}
+                    <div class="form-group attribute-input">
+                        <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
+                            <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                        </label>
+                        <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">
+                    </div>
+                    <!-- Input field for other attribute types -->
                 {% endif %}
-                </form>
-        </div>
+                    
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                {% else %}
+                <!-- Display form attributes -->
+
+                <div class="form-group attribute-input">
+                    <label class="attribute-label">Description
+                        <span class="attribute-type">(text)</span>
+                    </label>
+                    <textarea id="formName" name="record_description" class="form-control mb-3" rows="4" required readonly>{{ record.description }}</textarea>
+                </div>
+
+                {% for attribute in form_attributes %}
+                {% if attribute.form_attribute.attribute.type == "image_url" %}
+                    <div class="form-group attribute-input">
+                        <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
+                            <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                        </label>
+                        <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive"/>
+                        <p class="card-text">{{ attribute.value }}</p>
+                    </div>
+                {% else %}
+                    <div class="form-group attribute-input">
+                        <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
+                            <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                        </label>
+                        <p class="card-text">{{ attribute.value }}</p>
+                    </div>
+                    <!-- Input field for other attribute types -->
+                {% endif %}
+                {% endfor %}
+            {% endif %}
+        </form>
     </div>
+</div>
     
     <div class="comments-section">
         <h5>Comments</h5>
-        {% for comment in record_comments %}
-            <div class="comment-card">
-                <p>{{ comment.comment }}</p>
-                <div class="comment-meta">
-                    Commented by {{ comment.user.username }} on {{ comment.created_at|date:"Y-m-d H:i" }}
-                </div>
-                {% if request.session.admin_view %} <!--  or for_user -->
-                    <form method="post" action="{% url 'remove_comment' comment.id for_user %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Remove Comment</button>
-                    </form>
-                {% elif user.is_authenticated and comment.user == request.user %}
-                    <form method="post" action="{% url 'remove_comment' comment.id for_user %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Remove Comment</button>
-                    </form>
+        <div class="comment-card" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; padding-top: 10px;">
+            {% for comment in record_comments %}
+                <form method="post" action="{% url 'user_record_update' record.id for_user %}">
+                {% csrf_token %}
+                {% if request.session.admin_view %}
+                    <input type="hidden" name="comment_{{ comment.id }}" value="{{ comment.comment }}">
+                    <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required>{{ comment.comment }}</textarea>
+                    <div class="comment-meta" style="font-size: 0.8em; color: #666;">
+                        Commented by {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.created_at|date:"Y-m-d H:i" }}
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Update Comment</button>
+                {% elif user.is_authenticated and comment.user == request.user and comment.aproved_by_admin %}
+                    <input type="hidden" name="comment_{{ comment.id }}" value="{{ comment.comment }}">
+                    <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required>{{ comment.comment }}</textarea>
+                    <div class="comment-meta" style="font-size: 0.8em; color: #666;">
+                        Commented by {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.created_at|date:"Y-m-d H:i" }}
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Update Comment</button>
+                {% elif comment.aproved_by_admin %}
+                    <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required readonly>{{ comment.comment }}</textarea>
+                    <div class="comment-meta" style="font-size: 0.8em; color: #666;">
+                        Commented by {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.created_at|date:"Y-m-d H:i" }}
+                    </div>
                 {% else %}
-
+                    <!-- not approved by admin -> not showing -->
                 {% endif %}
-            </div>
-        {% empty %}
-            <p>No comments yet.</p>
-        {% endfor %}
-        {% if request.session.admin_view %} <!--  or for_user -->
-            <button id="addCommentBtn" class="btn btn-secondary mb-3 add-comment-btn">Add Comment</button>
-            <div id="commentForm" style="display:none;">
-                <form method="post" action="{% url 'user_record_update' record.id for_user %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <textarea name="comment" class="form-control" placeholder="Enter your comment here..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Comment</button>
                 </form>
-            </div>
-        {% elif user.is_authenticated and record.user != request.user %}
-            <button id="addCommentBtn" class="btn btn-secondary mb-3 add-comment-btn">Add Comment</button>
-            <div id="commentForm" style="display:none;">
-                <form method="post" action="{% url 'user_record_update' record.id for_user %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <textarea name="comment" class="form-control" placeholder="Enter your comment here..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Comment</button>
-                </form>
-            </div>
-        {% else %}
-         
-        {% endif %}
+                <div class="btn-group d-block">
+                    {% if user.is_authenticated and comment.user == request.user and comment.aproved_by_admin %}
+                    <form method="post" action="{% url 'remove_comment' comment.id for_user %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Remove Comment</button>
+                    </form>
+                    {% elif request.session.admin_view %}
+                        <form method="post" action="{% url 'remove_comment' comment.id for_user %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Remove Comment</button>
+                        </form>
+                    {% endif %}
+                    {% if request.session.admin_view %}
+                        <form method="post" action="{% url 'aprove_comment' comment.id for_user %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm" style="display: {% if request.session.admin_view and not comment.aproved_by_admin %}inline-block{% else %}none{% endif %};">Approve Comment</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>No comments yet.</p>
+            {% endfor %}
+        </div>
     </div>
-</div>
-
+    {% if record.user != request.user or request.session.admin_view %} <!--  or for_user -->
+        <button id="addCommentBtn" class="btn btn-secondary mb-3 add-comment-btn">Add Comment</button>
+        <div id="commentForm" style="display:none;">
+            <form method="post" action="{% url 'user_record_update' record.id for_user %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% if request.user.is_authenticated %}
+                    <textarea name="comment" class="form-control" placeholder="Enter your comment here..."></textarea>
+                    {% else %}
+                    <textarea name="commentU" class="form-control" placeholder="Enter your comment here..."></textarea>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Comment</button>
+            </form>
+        </div>
+        {% endif %}
 <script>
     document.getElementById('addCommentBtn').addEventListener('click', function() {
         var commentForm = document.getElementById('commentForm');

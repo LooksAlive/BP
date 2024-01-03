@@ -73,6 +73,7 @@ class RecordComment(TimeStampedModel):
 class FormAttribute(TimeStampedModel):
     form = models.ForeignKey(Form, on_delete=models.CASCADE)
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    required = models.BooleanField(default=True)
     # A new field to indicate if the attribute should be displayed in the gallery
     display_in_gallery = models.BooleanField(default=False)
 

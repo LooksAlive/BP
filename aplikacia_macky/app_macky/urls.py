@@ -47,7 +47,7 @@ urlpatterns = [
     path('user_record_update/<int:record_id>/<int:for_user>/', views.user_record_update, name='user_record_update'),
     
     path('remove_comment/<int:comment_id>/<int:for_user>/', views.remove_comment, name='remove_comment'),
-    
+    path('aprove_comment/<int:comment_id>/<int:for_user>/', views.aprove_comment, name='aprove_comment'),
     
     
     # gallery view    

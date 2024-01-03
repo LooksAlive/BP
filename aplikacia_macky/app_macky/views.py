@@ -34,8 +34,12 @@ def index(request):
         # Collecting only necessary details for display, such as images and attribute values
         record_details = {
             'id': record.id,
+            'description': record.description,
             'thumb_up': Vote.objects.filter(record = record, vote_type="up").count(),
             'thumb_down': Vote.objects.filter(record = record, vote_type="down").count(),
+            'created_at': record.created_at,
+            'updated_at': record.updated_at,
+            'username': record.user.username if record.user else "Unknown",
             'attributes': [{
                 'name': data.form_attribute.attribute.name,
                 'value': data.value,
@@ -53,6 +57,9 @@ def index(request):
     num_records = Record.objects.count()
     num_users = User.objects.count()
     num_galleries = Gallery.objects.count()
+    num_forms = Form.objects.count()
+    
+    
 
     # Pass the data to the template
     context = {
@@ -60,7 +67,8 @@ def index(request):
         'featured_galleries': featured_galleries,
         'num_records': num_records,
         'num_users': num_users,
-        'num_galleries': num_galleries,
+        'num_forms' : num_forms, 
+        'num_galeries': num_galleries,
         'username': request.user.username if request.user.is_authenticated else 'Guest'
     }
 
@@ -209,16 +217,21 @@ def admin_create_form(request, form_id=None):
         for key, value in request.POST.items():
             if key.startswith('attribute_'):
                 attribute_id = value
+                req = request.POST.get('attr_req_'+str(attribute_id))
+                if not req:
+                    req = False
+                else:
+                    req = True
                 try:
                     attribute = Attribute.objects.get(id=int(attribute_id))
                     FormAttribute.objects.create(
                         form=form,
-                        attribute=attribute
+                        attribute=attribute,
+                        required=req
                     )
                 except (Attribute.DoesNotExist, ValueError):
                     print("ERROR ", attribute)
                     pass
-        
         # Redirect after POST
         return redirect('admin_forms')
     
@@ -257,17 +270,28 @@ def admin_create_user(request):
             group = Group.objects.get(name=group_name)
             request.user.groups.add(group)
         
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username is already taken.")
+            return redirect('admin_users')
+        
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email is already registered.")
+            clear_messages(request)  # Clear messages before redirecting
+            return render('admin_users')
+
         # Create and save the new Form
         try:
             user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password)
             user.save()
+            messages.success(request, "Registration successful. You can now log in.")
             return redirect('admin_users')
         except Exception as e:
             error_message = str(e)
             print(e)
             messages.error(request, f'Error creating user: {error_message}')
-            
+
     return redirect('admin_users')
+
 """
 def admin_edit_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
@@ -313,13 +337,14 @@ def admin_edit_user(request, user_id):
         # FIXME: 
         #if request.POST.get('password'):
         #    user.set_password(request.POST.get('password'))  # Securely set password
+        user.password = request.POST.get('password')
 
         # Handling role (group) assignment
         selected_group_name = request.POST.get('role')
         selected_group = Group.objects.get(name=selected_group_name)
         user.groups.clear()  # Remove the user from any existing groups
         user.groups.add(selected_group)  # Add the user to the selected group
-
+        
         try:
             user.save()
             messages.success(request, 'User updated successfully.')
@@ -404,7 +429,7 @@ def admin_create_galery(request, gallery_id=None):
         # TODO filter, fix
         for key, value in request.POST.items():
             if key.startswith('attribute_'):
-                print(key, value, "--------------------------------------------------------------")
+                #print(key, value, "--------------------------------------------------------------")
                 attr_id = value
                 FormAttribute.objects.filter(id=attr_id, form=form).update(display_in_gallery=True)
 
@@ -444,12 +469,6 @@ def admin_delete_galery(request, gallery_id):
     return redirect('admin_galeries')
 
 
-
-# TODO: admin updating real cat data in normal gallery view where we have all forms listed
-# TODO: + button and fiunc. for edit, delete.
-
-
-
 def user_collection_formular(request):
     attributes = Attribute.objects.all()
     return render(request, 'user_collection_formular.html', {'attributes': attributes})
@@ -465,7 +484,10 @@ def user_forms(request):
 def user_forms_view(request, form_id):
     form_data = FormAttribute.objects.filter(form=form_id)
     form_name = get_object_or_404(Form, id=form_id).form_name
-    form_attrs = [attr.attribute for attr in form_data]
+    form_attrs = []
+    for x in form_data:
+        form_attrs.append({'attr': x.attribute, 'req': x.required})
+    #form_attrs = [attr.attribute for attr, req in form_data]
     return render(request, 'user_forms_view.html', {
         'form_attrs': form_attrs,
         'form_name': form_name,
@@ -477,7 +499,13 @@ def user_forms_record_add(request, form_id):
     if request.method == 'POST':
         user = request.user
         record = Record.objects.create(user=user)
-
+        
+        # description
+        desc = request.POST.get('description', '')
+        if desc:
+            record.description = desc
+            record.save()
+            
         # Process text fields
         for key, value in request.POST.items():
             if key.startswith("attr_"):
@@ -522,12 +550,26 @@ def user_records(request):
         # Check if there is a gallery associated with the form
         gallery = Gallery.objects.filter(form=form).first() if form else None
         gallery_name = gallery.gallery_name if gallery else None
-
+        
+        attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True) # TODO: when in user records could be false
+        # Get all FormAttributeData entries linked to the selected attributes
+        attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
+        record_attributes = attributes_data.filter(record_id=record.id)
+        image_url = record_attributes.filter(form_attribute__attribute__type='image_url').first()
+        image_url = image_url.value if image_url else None
+        
         records_with_details.append({
             'record': record,
+            'image' : image_url, 
             'form_name': form_name,
-            'gallery_name': gallery_name
+            'gallery_name': gallery_name, 
+            'description' : record.description
         })
+        
+    # Paginate the gallery data
+    page = request.GET.get('page')
+    paginator = Paginator(records_with_details, 6)  # 3 cards in a row, 2 rows on a page
+    records_with_details = paginator.get_page(page)
 
     return render(request, 'user_records.html', {'records_with_details': records_with_details})
 
@@ -569,7 +611,7 @@ def user_record_detail(request, record_id, for_user):
     for f in fa:
         if f.form_attribute.display_in_gallery == True:
             form_attributes.append(f)
-    record_comments = RecordComment.objects.filter(record=record)
+    record_comments = RecordComment.objects.filter(record=record).order_by('updated_at')
 
     return render(request, 'user_record_detail.html', {
         'record': record,
@@ -579,45 +621,65 @@ def user_record_detail(request, record_id, for_user):
     })
 
 
-@login_required
 def user_record_update(request, record_id, for_user):
     #clear_messages(request)
     record = get_object_or_404(Record, pk=record_id)
+
     
     if request.method == 'POST':
-        if (request.user.is_superuser or request.session['admin_view'] == True) or record.user == request.user or request.user.is_authenticated:
-            print("--------------------")
-            for key, value in request.POST.items():
-                if key.startswith('attribute_'):
-                    attr_id = key.split('_')[1]
-                    attribute_data = FormAttributeData.objects.get(id=attr_id)
-                    attribute_data.value = value
-                    attribute_data.save()
-            messages.success(request, "Record updated successfully.")
+        for key, value in request.POST.items():
+            if key.startswith('attribute_'):
+                attr_id = key.split('_')[1]
+                attribute_data = FormAttributeData.objects.get(id=attr_id)
+                attribute_data.value = value
+                attribute_data.save()
+                
+        for key, value in request.POST.items():
+            if key.startswith('comment_'):
+                comment_id = key.split('_')[1]
+                comment_data = RecordComment.objects.get(id=comment_id)
+                comment_data.comment = value
+                comment_data.save()
+                
+        messages.success(request, "Record updated successfully.")
         
-            comment = request.POST.get('comment')
-            if comment:
-                RecordComment.objects.create(record=record, user=request.user, comment=comment)
-                messages.success(request, 'Your comment has been added.')
-            
-            return redirect('user_record_detail', record_id=record_id, for_user=for_user)
+        descr = request.POST.get('record_description')
+        if descr:
+            record.description = descr
+            record.save()
+    
+        comment = request.POST.get('comment')
+        if comment:
+            RecordComment.objects.create(record=record, user=request.user, comment=comment)
+            messages.success(request, 'Your comment has been added.')
+        
+    
+        commentU = request.POST.get('commentU')
+        if commentU:
+            RecordComment.objects.create(record=record, user=None, comment=commentU, aproved_by_admin=False)
+            messages.success(request, 'Your comment has been added.')
+
+        return redirect('user_record_detail', record_id=record_id, for_user=for_user)
 
     else:
         return redirect('user_record_detail', record_id=record_id, for_user=for_user)
     
-    print("--------------------")
-    
-    return "hello"
 
 
-@login_required
 def remove_comment(request, comment_id, for_user):
     comment = get_object_or_404(RecordComment, pk=comment_id)
+    print("------------------------")
     if request.session.get('admin_view', False) or for_user or (request.user.is_authenticated and comment.user == request.user):
         comment.delete()
         messages.success(request, 'Comment removed successfully.')
     return redirect('user_record_detail', record_id=comment.record.id, for_user=for_user)
 
+def aprove_comment(request, comment_id, for_user):
+    comment = get_object_or_404(RecordComment, pk=comment_id)
+    comment.aproved_by_admin = True
+    comment.save()
+    messages.success(request, 'Comment Approved.')
+    return redirect('user_record_detail', record_id=comment.record.id, for_user=for_user)
 
 
 
@@ -699,7 +761,7 @@ def user_galery_view(request, gallery_id):
             user_vote_obj = Vote.objects.filter(user=request.user, record=record).first()
             if user_vote_obj:
                 user_vote = user_vote_obj.vote_type
-
+                
         record_details = {
             'record': record,
             'thumb_up': Vote.objects.filter(record = record_id, vote_type="up").count(),

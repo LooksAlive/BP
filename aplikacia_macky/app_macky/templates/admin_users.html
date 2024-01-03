@@ -5,28 +5,26 @@
 {% block content %}
 <style>
     .truncate-cell {
-        max-width: 150px; /* Adjust the max-width as needed */
+        max-width: 200px; /* Adjust as needed */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         cursor: pointer;
         position: relative;
     }
-
-    .truncate-cell:hover::before {
-        content: attr(data-content);
-        display: block;
-        position: absolute;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-        white-space: normal;
-        width: auto;
-        max-width: 300px; /* Adjust the max-width as needed */
-        word-break: break-word;
+    
+    .truncate-cell:hover {
+        white-space: normal; /* Allow text to wrap */
+        overflow: visible; /* Show overflowed text */
+        max-height: none; /* Remove max height restriction */
+        z-index: 1; /* Ensure it's above other content */
+        position: absolute; /* Take out of normal flow */
+        background-color: #fff; /* Optional: for better visibility */
+        padding: 5px; /* Optional: for spacing */
+        border: 1px solid #ccc; /* Optional: for border */
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Optional: for shadow */
+        max-width: 100%; /* Ensure it doesn't exceed the parent width */
+        box-sizing: border-box; /* Include padding and border in width */
     }
 </style>
 <h1 class="mb-4">Admin Users</h1>

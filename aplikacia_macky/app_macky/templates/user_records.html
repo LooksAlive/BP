@@ -3,7 +3,53 @@
 {% block title %}Your Records{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+
+    <style>
+        .truncate-cell {
+            max-width: 100%;
+            white-space: nowrap; /* Keep content in a single line */
+            overflow: hidden; /* Hide content that overflows */
+            text-overflow: ellipsis; /* Show ellipsis for overflowed content */
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 10px; /* Space at the bottom */
+        }
+
+        .truncate-cell:hover {
+            white-space: normal; /* Allow content to wrap */
+            overflow: visible; /* Show overflowed text */
+            position: static; /* Keep it in normal document flow */
+        }
+
+        .card {
+            /* Additional styles for the card */
+            box-shadow: 0 2px 4px rgba(0,0,0,.1); /* subtle shadow for depth */
+            transition: box-shadow .3s; /* smooth transition for shadow */
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,.2); /* larger shadow on hover for emphasis */
+        }
+
+        .card-img-top-show {
+            /* Styles for the image */
+            width: 100%; /* full width */
+            height: auto; /* maintain aspect ratio */
+            object-fit: cover; /* cover the container, keeping aspect ratio */
+        }
+
+        .card-header, .card-footer {
+            /* Styles for header and footer */
+            background-color: #f8f9fa; /* light background */
+            border-bottom: 1px solid #eaecef; /* subtle border */
+        }
+
+        .card-body {
+            padding: 15px; /* padding inside card body */
+        }
+    </style>
+
+
     <h2 class="mb-4 text-center">Your Records</h2>
     <div class="row">
         {% for item in records_with_details %}
@@ -11,19 +57,25 @@
                 <div class="card h-100 border-primary">
                     <div class="card-header bg-primary text-white">
                         Record #{{ item.record.id }}
-                    </div>
-                    <div class="card-body">
                         <h5 class="card-title">Form: {{ item.form_name }}</h5>
                         {% if item.gallery_name %}
                             <p class="card-text">Gallery: {{ item.gallery_name }}</p>
                         {% endif %}
-                        <div class="btn-group">
-                            <a href="{% url 'user_record_detail' item.record.id 1 %}" class="btn btn-sm btn-outline-secondary">View Details</a>
-                            <a href="{% url 'user_record_delete' item.record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Delete</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-auto">
+                            <img src="{{ item.image }}" alt="Record Image" class="img-fluid m-2 clickable-image card-img-top-show">
+                            <div class="btn-group m-2">
+                                <a href="{% url 'user_record_detail' item.record.id 1 %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                                <a href="{% url 'user_record_delete' item.record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Delete</a>
+                            </div>
                         </div>
+
+                        <p class="truncate-cell" data-content="{{ item.description }}">{{ item.description }}</p>
                     </div>
                     <div class="card-footer bg-white">
-                        <small class="text-muted">Submitted on: {{ item.record.created_at|date:"M d, Y" }}</small>
+                        <small class="text-muted">Submitted on: {{ item.record.created_at|date:"M d, Y" }}</small> <br>
+                        <small class="text-muted">Updated at: {{ item.record.updated_at|date:"M d, Y" }}</small>
                     </div>
                 </div>
             </div>
@@ -35,7 +87,31 @@
             </div>
         {% endfor %}
     </div>
-</div>
+
+    <!-- Pagination -->
+    <div class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if records_with_details.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ records_with_details.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+            <li class="page-item disabled">
+                <span class="page-link">Page {{ records_with_details.number }} of {{ records_with_details.paginator.num_pages }}</span>
+            </li>
+            {% if records_with_details.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ records_with_details.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ records_with_details.paginator.num_pages }}">Last</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 
 
 {% endblock %}

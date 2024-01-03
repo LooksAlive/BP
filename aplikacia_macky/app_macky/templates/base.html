@@ -101,48 +101,46 @@
         
         {% block content %}
         {% endblock %}
-    </div>    
+    </div>
+   
 
 
     <button type="button" class="btn btn-secondary back-button" id="back-button">Back</button>
-
-    <script>
-        $(document).ready(function() {
-            window.setTimeout(function() {
-                $(".alert").fadeTo(500, 0).slideUp(500, function(){
-                    $(this).remove(); 
-                });
-            }, 4000);
-        });
-
-        function showBackButton() {
-            const backButton = document.getElementById('back-button');
-            if (backButton) {
-                backButton.style.display = 'block';
-            }
-        }
-    
-        function hideBackButton() {
-            const backButton = document.getElementById('back-button');
-            if (backButton) {
-                backButton.style.display = 'none';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const backButton = document.getElementById('back-button');
-            if (backButton) {
-                backButton.addEventListener('click', function() {
-                    window.history.back(); // Go back to the previous page
-                });
-            }
-    
-        });
-
-        
-
-    </script>
-
 </body>
+
+<script>
+    $(document).ready(function() {
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function(){
+                $(this).remove(); 
+            });
+        }, 4000);
+    });
+
+    function showBackButton() {
+        const backButton = document.getElementById('back-button');
+        if (backButton) {
+            backButton.style.display = 'block';
+        }
+    }
+
+    function hideBackButton() {
+        const backButton = document.getElementById('back-button');
+        if (backButton) {
+            backButton.style.display = 'none';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const backButton = document.getElementById('back-button');
+        if (backButton) {
+            backButton.addEventListener('click', function() {
+                window.history.back(); // Go back to the previous page
+            });
+        }
+
+    });
+</script>
+
 </html>
 

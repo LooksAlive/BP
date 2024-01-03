@@ -30,10 +30,11 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        min-height: 300px; /* Optional: Minimum height for uniformity */
+        height: 200px; /* Optional: Minimum height for uniformity */
     }
     .card {
         min-height: 400px; /* Minimum height for uniformity */
+        max-height: 900;
     }
     .close {
         position: absolute;
@@ -65,23 +66,81 @@
         margin: 0 auto;
     }
 
+    .card-img-top-show {
+        /* ... existing styles ... */
+        height: 200px; /* Fixed height for image container */
+    }
+
+    .card-img-placeholder {
+        height: 200px; /* Same height as the image container */
+        width: 100%; /* Full width */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0; /* Placeholder background */
+        color: #666; /* Placeholder text color */
+        font-size: 16px;
+    }
+
+    .truncate-cell {
+        max-width: 100%;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        position: relative;
+        height: auto;
+        max-height: 100%;
+        margin-bottom: 10px;
+    }
+
+    .truncate-cell:hover {
+        max-height: none;
+        white-space: normal;
+        position: static;
+    }
+    
+
+    /*
+    .truncate-cell {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        position: relative;
+        margin-bottom: 10px;
+    }
+
+    .truncate-cell:hover {
+        white-space: normal;
+        position: static;
+        max-height: none;
+    }
+
+    */
+
 </style>
 
-<div class="container mt-5">
     <h1 class="mb-4">Gallery: {{ gallery.form.form_name }}</h1>
 
     <div class="row">
         {% for record in gallery_page %}
             <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-header">
                         <h5 class="card-title">Record #{{ record.record.id }}</h5>
                         {% for attribute in record.attributes %}
-                            {% if attribute.type == 'image_url' %}
-                                <img src="{{ attribute.value }}" alt="Record Image" class="img-fluid m-2 clickable-image card-img-top-show">
-                            {% endif %}
+                            {% if attribute.type == 'image_url' and attribute.value %}
+                            <img src="{{ attribute.value }}" alt="Record Image" class="img-fluid m-2 clickable-image card-img-top-show">
+                        {% else %}
+                            <div class="card-img-placeholder">No Image Available</div>
+                        {% endif %}
                         {% endfor %}
-                        <div class="card-footer">
+                        <div class="card-body">
+                            <p class="truncate-cell" data-content="{{ record.record.description }}">{{ record.record.description }}</p>
+                        </div>
+                        <div class="card-footer m-2">
                             <small>Added by: {{ record.username }}</small><br>
                             <small>Added on: {{ record.created_at|date:"Y-m-d H:i" }}</small><br>
                             <small>Last updated: {{ record.updated_at|date:"Y-m-d H:i" }}</small>
@@ -137,24 +196,23 @@
             {% endif %}
         </ul>
     </div>
-</div>
 
-<!-- Add this modal for displaying larger images -->
-<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="imageModalLabel">Record Image</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <img src="" alt="Record Image" class="img-fluid modal-img clickable-image img-center" id="modalImage">
+    <!-- Add this modal for displaying larger images -->
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Record Image</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img src="" alt="Record Image" class="img-fluid modal-img clickable-image img-center" id="modalImage">
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
 
