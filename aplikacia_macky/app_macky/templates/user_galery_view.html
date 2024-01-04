@@ -130,13 +130,12 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">Record #{{ record.record.id }}</h5>
-                        {% for attribute in record.attributes %}
-                            {% if attribute.type == 'image_url' and attribute.value %}
-                            <img src="{{ attribute.value }}" alt="Record Image" class="img-fluid m-2 clickable-image card-img-top-show">
+                        {% if record.image %}
+                            <img src="{{ record.image }}" alt="Record Image" class="img-fluid m-2 clickable-image card-img-top-show">
+
                         {% else %}
                             <div class="card-img-placeholder">No Image Available</div>
                         {% endif %}
-                        {% endfor %}
                         <div class="card-body">
                             <p class="truncate-cell" data-content="{{ record.record.description }}">{{ record.record.description }}</p>
                         </div>

@@ -769,7 +769,7 @@ def user_galery_view(request, gallery_id):
             'created_at': record.created_at,
             'updated_at': record.updated_at,
             'username': record.user.username if record.user else "Unknown",
-            'attributes': [{'name': attr.form_attribute.attribute.name, 'value': attr.value, 'type' : attr.form_attribute.attribute.type} for attr in record_attributes],
+            'attributes': [{'name': attr.form_attribute.attribute.name, 'value': attr.value, 'type' : attr.form_attribute.attribute.type} for attr in record_attributes if attr.form_attribute.attribute.type != 'image_url'],
             'image': image_url,
             'user_vote': user_vote
         }
