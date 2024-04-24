@@ -38,34 +38,6 @@
         box-shadow: 0 4px 8px rgba(0,0,0,.15);
         transition: box-shadow .3s ease;
         border: none;
-    }
-
-    .carousel .card:hover {
-        box-shadow: 0 8px 16px rgba(0,0,0,.3);
-    }
-
-    .carousel .card-img-top {
-        /*height: 200px; *//* Adjust the image height as needed */
-        object-fit: cover; /* Ensures the image covers the area */
-    }
-
-    .carousel .card-body {
-        padding: 15px;
-    }
-
-    .carousel-indicators li {
-        background-color: #333; /* Match indicator color with arrow color */
-    }
-
-    .carousel-indicators .active {
-        background-color: #555; /* Active indicator color */
-    }
-
-    /* Card styling */
-    .carousel .card {
-        box-shadow: 0 4px 8px rgba(0,0,0,.15);
-        transition: box-shadow .3s ease;
-        border: none;
         min-height: 300px; /* Consistent minimum height for cards */
     }
 
@@ -87,12 +59,12 @@
         height: auto; /* Adaptive height for each carousel item */
     }
 
-    .card {
-        min-height: 300px; /* Minimum height for the card */
+    .carousel-indicators li {
+        background-color: #333; /* Match indicator color with arrow color */
     }
 
-    .carousel-item {
-        height: auto; /* Adaptive height for each carousel item */
+    .carousel-indicators .active {
+        background-color: #555; /* Active indicator color */
     }
 </style>
 
@@ -167,7 +139,7 @@
     </div>
 </section>
 
-
+{% if user.is_authenticated %}
 <!-- Project Statistics Section -->
 <section class="py-5 bg-light">
     <div class="container">
@@ -196,8 +168,9 @@
         </div>
     </div>
 </section>
-
+{% endif %}
 <!-- Call to Action Section -->
+{% if not user.is_authenticated %}
 <section class="py-5">
     <div class="container text-center">
         <h2>Join Our Community</h2>
@@ -205,6 +178,7 @@
         <a href="{% url 'registration' %}" class="btn btn-lg btn-success">Sign Up Now</a>
     </div>
 </section>
+{% endif %}
 
 <!-- Bootstrap Carousel JavaScript -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>

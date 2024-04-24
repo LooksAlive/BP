@@ -127,14 +127,14 @@
                     <div class="comment-meta" style="font-size: 0.8em; color: #666;">
                         Commented by {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.created_at|date:"Y-m-d H:i" }}
                     </div>
-                    <button type="submit" class="btn btn-primary btn-sm">Update Comment</button>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">Update Comment</button>
                 {% elif user.is_authenticated and comment.user == request.user and comment.aproved_by_admin %}
                     <input type="hidden" name="comment_{{ comment.id }}" value="{{ comment.comment }}">
                     <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required>{{ comment.comment }}</textarea>
                     <div class="comment-meta" style="font-size: 0.8em; color: #666;">
                         Commented by {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.created_at|date:"Y-m-d H:i" }}
                     </div>
-                    <button type="submit" class="btn btn-primary btn-sm">Update Comment</button>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">Update Comment</button>
                 {% elif comment.aproved_by_admin %}
                     <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required readonly>{{ comment.comment }}</textarea>
                     <div class="comment-meta" style="font-size: 0.8em; color: #666;">
@@ -144,7 +144,7 @@
                     <!-- not approved by admin -> not showing -->
                 {% endif %}
                 </form>
-                <div class="btn-group d-block">
+                <div class="btn-group mt-2 mb-5">
                     {% if user.is_authenticated and comment.user == request.user and comment.aproved_by_admin %}
                     <form method="post" action="{% url 'remove_comment' comment.id for_user %}" class="d-inline">
                         {% csrf_token %}
@@ -159,7 +159,7 @@
                     {% if request.session.admin_view %}
                         <form method="post" action="{% url 'aprove_comment' comment.id for_user %}" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-success btn-sm" style="display: {% if request.session.admin_view and not comment.aproved_by_admin %}inline-block{% else %}none{% endif %};">Approve Comment</button>
+                            <button type="submit" class="btn btn-success btn-sm ml-2" style="display: {% if request.session.admin_view and not comment.aproved_by_admin %}inline-block{% else %}none{% endif %};">Approve Comment</button>
                         </form>
                     {% endif %}
                 </div>

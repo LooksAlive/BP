@@ -82,6 +82,7 @@ def login_view(request):
         password = request.POST.get('password')
 
         user = authenticate(request, username=username, password=password)
+        group = Group.objects.get(user_id = user.pk).name
 
         if user is not None:
             login(request, user)
@@ -89,16 +90,27 @@ def login_view(request):
             if username == 'admin':
                 request.session['admin_view'] = True
                 user.is_superuser = True
+                messages.success(request, f"Welcome back, {username}!")
+                return redirect('index')
+            elif group == "posudzovateľ":
+                request.session['admin_view'] = False
+                user.is_superuser = False
+                messages.success(request, f"Welcome back, {username}!")
+                return redirect('user_galeries')
             else:
                 request.session['admin_view'] = False
                 user.is_superuser = False
+                messages.success(request, f"Welcome back, {username}!")
+                return redirect('user_forms')
 
-            messages.success(request, f"Welcome back, {username}!")
-            return redirect('index')
+            #messages.success(request, f"Welcome back, {username}!")
+            #return redirect('index')
         else:
             messages.error(request, "Invalid username or password.")
 
-    return render(request, 'login.html')
+
+    return redirect('index')
+    #return render(request, 'login.html')
 
 def logout_user(request):
     logout(request)
@@ -371,8 +383,44 @@ def admin_delete_user(request, user_id):
 
 
 
+'''
+# for admin make a view for all records with pagination and other stuff like in other functions
+def admin_records(request):
+    records = Record.objects.all().order_by('-created_at')
+    paginator = Paginator(records, 20)  # Show 20 records per page
 
+    page = request.GET.get('page')
+    records = paginator.get_page(page)
 
+    records_with_details = []
+
+    for record in records:
+        # Fetch the first FormAttributeData instance related to the record to determine the form
+        first_attribute_data = FormAttributeData.objects.filter(record=record).first()
+        form = first_attribute_data.form_attribute.form if first_attribute_data else None
+        form_name = form.form_name if form else "Unknown Form"
+
+        # Check if there is a gallery associated with the form
+        gallery = Gallery.objects.filter(form=form).first() if form else None
+        gallery_name = gallery.gallery_name if gallery else None
+
+        attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True) # TODO: when in user records could be false
+        # Get all FormAttributeData entries linked to the selected attributes
+        attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
+        record_attributes = attributes_data.filter(record_id=record.id)
+        image_url = record_attributes.filter(form_attribute__attribute__type='image_url').first()
+        image_url = image_url.value if image_url else None
+
+        records_with_details.append({
+            'record': record,
+            'image' : image_url, 
+            'form_name': form_name,
+            'gallery_name': gallery_name, 
+            'description' : record.description
+        })
+
+    return render(request, 'admin_records.html', {'records_with_details': records_with_details})
+'''
 
 def admin_galeries(request):
     galleries = Gallery.objects.all().order_by('-created_at')

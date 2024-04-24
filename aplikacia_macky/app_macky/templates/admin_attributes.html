@@ -8,11 +8,12 @@
 
     <!-- Display attributes in a well-structured table -->
     <table class="table table-striped">
-        <thead>
+        <thead class="thead-light">
             <tr>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Type</th>
+                <th>created at</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -43,7 +44,7 @@
     </table>
 
     <!-- Button to toggle the input fields for adding a new attribute -->
-    <button id="addAttributeButton" class="btn btn-success">Add Attribute</button>
+    <button id="addAttributeButton" class="btn btn-success mb-4">Add Attribute</button>
 
     <!-- Input fields for adding a new attribute (initially hidden) -->
     <div id="addAttributeFields" style="display: none">
