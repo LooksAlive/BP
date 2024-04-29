@@ -82,7 +82,9 @@ def login_view(request):
         password = request.POST.get('password')
 
         user = authenticate(request, username=username, password=password)
-        group = Group.objects.get(user_id = user.pk).name
+        
+        group = Group.objects.get(id = user.pk).name if user else None
+        print("GROUP: ", group, "\n")
 
         if user is not None:
             login(request, user)
@@ -108,8 +110,7 @@ def login_view(request):
         else:
             messages.error(request, "Invalid username or password.")
 
-
-    return redirect('index')
+    return render(request, 'login.html')
     #return render(request, 'login.html')
 
 def logout_user(request):
@@ -515,6 +516,50 @@ def admin_delete_galery(request, gallery_id):
     gallery.delete()
     messages.success(request, 'Gallery deleted successfully!')
     return redirect('admin_galeries')
+
+@login_required
+def admin_all_records(request):
+    records_with_details = []
+
+    records = Record.objects.all()
+    for record in records:
+        if record.user == None:
+            print("ERROR, rec not exists")
+            continue
+        # Fetch the first FormAttributeData instance related to the record to determine the form
+        first_attribute_data = FormAttributeData.objects.filter(record=record).first()
+        form = first_attribute_data.form_attribute.form if first_attribute_data else None
+        form_name = form.form_name if form else "Unknown Form"
+
+        # Check if there is a gallery associated with the form
+        gallery = Gallery.objects.filter(form=form).first() if form else None
+        gallery_name = gallery.gallery_name if gallery else None
+        
+        attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True) # TODO: when in user records could be false
+        # Get all FormAttributeData entries linked to the selected attributes
+        attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
+        record_attributes = attributes_data.filter(record_id=record.id)
+        image_url = record_attributes.filter(form_attribute__attribute__type='image_url').first()
+        image_url = image_url.value if image_url else None
+        
+        records_with_details.append({
+            'record': record,
+            'image' : image_url, 
+            'form_name': form_name,
+            'gallery_name': gallery_name, 
+            'description' : record.description
+        })
+        
+    # Paginate the gallery data
+    page = request.GET.get('page')
+    paginator = Paginator(records_with_details, 6)  # 3 cards in a row, 2 rows on a page
+    records_with_details = paginator.get_page(page)
+
+    return render(request, 'admin_all_records.html', {'records_with_details': records_with_details})
+
+
+
+
 
 
 def user_collection_formular(request):

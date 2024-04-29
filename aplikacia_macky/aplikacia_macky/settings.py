@@ -35,7 +35,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'app_macky',
-    'debug_toolbar',
+    #'debug_toolbar',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware', 
+    #'debug_toolbar.middleware.DebugToolbarMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -106,7 +106,7 @@ DATABASES = {
         'NAME': 'app_macky',  # Replace with your database name
         'USER': 'postgres',  # Replace with your database username
         'PASSWORD': 'postgres',  # Replace with your database password
-        'HOST': '0.0.0.0',  # 192.168.1.82, wm: 147.175.150.172
+        'HOST': '0.0.0.0',  # for local{0.0.0.0}, for docker{wlan ip}->192.168.1.82, wm: 147.175.150.172
         'PORT': '5432',  # Replace with your database port (if not using the default port 5432)
     }
 }

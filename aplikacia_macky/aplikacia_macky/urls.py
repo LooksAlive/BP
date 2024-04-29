@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #path('app_macky/', include('app_macky.urls')),
     path('', include('app_macky.urls')),
-    path('__debug__/', include(debug_toolbar.urls)),    
+    #path('__debug__/', include(debug_toolbar.urls)),    
 ]
 
 if settings.DEBUG:

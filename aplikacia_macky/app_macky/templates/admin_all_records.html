@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Records{% endblock %}
+
+{% block content %}
+<h2 class="mb-4 text-center">Your Records</h2>
+
+<div class="row">
+    {% for item in records_with_details %}
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100 border-primary shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Record #{{ item.record.id }}</h5>
+                <small class="d-block">Form: {{ item.form_name }}</small>
+                {% if item.gallery_name %}
+                <small class="d-block">Gallery: {{ item.gallery_name }}</small>
+                {% endif %}
+            </div>
+            <img src="{{ item.image }}" alt="Record Image" class="card-img-top">
+            <div class="card-body">
+                <p class="card-text">{{ item.description }}</p>
+            </div>
+            <div class="card-footer bg-white d-flex justify-content-between">
+                <div>
+                    <small class="text-muted">Submitted on: {{ item.record.created_at|date:"M d, Y" }}</small> <br>
+                    <small class="text-muted">Updated at: {{ item.record.updated_at|date:"M d, Y" }}</small>
+                </div>
+                <div class="btn-group flex-column align-self-start">
+                    <a href="{% url 'user_record_detail' item.record.id 1 %}" class="btn btn-sm btn-outline-secondary mb-2">View Details</a>
+                    <a href="{% url 'user_record_delete' item.record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <div class="alert alert-info" role="alert">
+            You have not submitted any records yet.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+<div class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if records_with_details.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1">First</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ records_with_details.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+        <li class="page-item disabled">
+            <span class="page-link">Page {{ records_with_details.number }} of {{ records_with_details.paginator.num_pages }}</span>
+        </li>
+        {% if records_with_details.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ records_with_details.next_page_number }}">Next</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ records_with_details.paginator.num_pages }}">Last</a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+
+{% endblock %}
