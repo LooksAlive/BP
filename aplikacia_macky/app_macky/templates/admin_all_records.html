@@ -3,8 +3,13 @@
 {% block title %}Your Records{% endblock %}
 
 {% block content %}
-<h2 class="mb-4 text-center">Your Records</h2>
-
+<div class="row justify-content-center">
+    <h2 class="mb-4 text-center">All Records</h2>
+    <form method="post" action="{% url 'user_forms' %}">
+        {% csrf_token %}
+        <button id="addUserButton" class="btn btn-success mb-4 justify-content-end">Add Record</button>
+    </form>
+</div>
 <div class="row">
     {% for item in records_with_details %}
     <div class="col-lg-4 col-md-6 mb-4">
@@ -26,7 +31,7 @@
                     <small class="text-muted">Updated at: {{ item.record.updated_at|date:"M d, Y" }}</small>
                 </div>
                 <div class="btn-group flex-column align-self-start">
-                    <a href="{% url 'user_record_detail' item.record.id 1 %}" class="btn btn-sm btn-outline-secondary mb-2">View Details</a>
+                    <a href="{% url 'user_record_detail' item.record.id 0 %}" class="btn btn-sm btn-outline-secondary mb-2">View Details</a>
                     <a href="{% url 'user_record_delete' item.record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Delete</a>
                 </div>
             </div>

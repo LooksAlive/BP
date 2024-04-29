@@ -82,8 +82,9 @@ def login_view(request):
         password = request.POST.get('password')
 
         user = authenticate(request, username=username, password=password)
-        
-        group = Group.objects.get(id = user.pk).name if user else None
+        #group = Group.objects.get(id = user.pk).name if user else None
+        #print("g. objects: ", user.groups, "\n")
+        group = user.groups.name
         print("GROUP: ", group, "\n")
 
         if user is not None:
@@ -305,61 +306,29 @@ def admin_create_user(request):
 
     return redirect('admin_users')
 
-"""
 def admin_edit_user(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
-    
-    if request.method == 'GET':
-        return render(request, 'admin_edit_user.html', {'user': user})
-
-    if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-
-        user.first_name = first_name
-        user.last_name = last_name
-        user.email = email
-        user.username = username
-        user.password = password
-        
-        try:
-            user.save()
-            return redirect('admin_users')
-        except Exception as e:
-            error_message = str(e)
-            print(e)
-            messages.error(request, f'Error creating user: {error_message}')
-            
-        return redirect('admin_users')  # Redirect to the user list page
-"""
-
-def admin_edit_user(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    user1 = get_object_or_404(User, pk=user_id)
     groups = Group.objects.all()  # Fetch all available groups
 
     if request.method == 'POST':
-        # User details update
-        user.first_name = request.POST.get('first_name')
-        user.last_name = request.POST.get('last_name')
-        user.email = request.POST.get('email')
-        user.username = request.POST.get('username')
+        # user1 details update
+        user1.first_name = request.POST.get('first_name')
+        user1.last_name = request.POST.get('last_name')
+        user1.email = request.POST.get('email')
+        user1.username = request.POST.get('username')
         # FIXME: 
         #if request.POST.get('password'):
         #    user.set_password(request.POST.get('password'))  # Securely set password
-        user.password = request.POST.get('password')
+        user1.password = request.POST.get('password')
 
         # Handling role (group) assignment
         selected_group_name = request.POST.get('role')
         selected_group = Group.objects.get(name=selected_group_name)
-        user.groups.clear()  # Remove the user from any existing groups
-        user.groups.add(selected_group)  # Add the user to the selected group
+        user1.groups.clear()  # Remove the user from any existing groups
+        user1.groups.add(selected_group)  # Add the user to the selected group
         
         try:
-            user.save()
+            user1.save()
             messages.success(request, 'User updated successfully.')
         except Exception as e:
             messages.error(request, f'Error updating user: {str(e)}')
@@ -367,8 +336,8 @@ def admin_edit_user(request, user_id):
         return redirect('admin_users')
     else:
         # Pass existing group names to the template
-        existing_group = user.groups.first() if user.groups.exists() else None
-        return render(request, 'admin_edit_user.html', {'user': user, 'groups': groups, 'existing_group': existing_group})
+        existing_group = user1.groups.first() if user1.groups.exists() else None
+        return render(request, 'admin_edit_user.html', {'user1': user1, 'groups': groups, 'existing_group': existing_group})
 
  
 def admin_delete_user(request, user_id):
@@ -540,6 +509,7 @@ def admin_all_records(request):
         attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
         record_attributes = attributes_data.filter(record_id=record.id)
         image_url = record_attributes.filter(form_attribute__attribute__type='image_url').first()
+        #print("image url: ", image_url, "\n")
         image_url = image_url.value if image_url else None
         
         records_with_details.append({
