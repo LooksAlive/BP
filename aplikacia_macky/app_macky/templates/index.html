@@ -139,6 +139,37 @@
     </div>
 </section>
 
+<!-- Recent Galleries Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center">Featured Galleries</h2>
+        <div class="row">
+            {% for gallery in gallery_data %}
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">{{ gallery.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Form:</strong> {{ gallery.form_name }}</p>
+                        <p><strong>Created On:</strong> {{ gallery.created_at }}</p>
+                        {% if gallery.image_url %}
+                            <img src="{{ gallery.image_url }}" class="img-fluid mb-2" alt="Gallery Image">
+                        {% else %}
+                            <p>No images available</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+
+
 {% if user.is_authenticated %}
 <!-- Project Statistics Section -->
 <section class="py-5 bg-light">

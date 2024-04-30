@@ -86,6 +86,35 @@ def index(request):
 
     # Fetch galleries to be highlighted
     featured_galleries = Gallery.objects.order_by('-created_at')[:5]
+    
+    gallery_data = []
+    for gallery in featured_galleries:
+        # Get the associated form for the gallery
+        form = gallery.form
+        if form:
+            form_name = form.form_name
+            # Get all form attributes marked to be displayed in the gallery
+            attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True)
+            # Get all attribute data entries linked to the selected attributes and the gallery's form
+            attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
+            # Filter attribute data entries for the current gallery's form
+            record_attributes = attributes_data
+            # Find the first image URL attribute data entry for the current gallery
+            image_url_attribute = record_attributes.filter(form_attribute__attribute__type='image_url').first()
+            # Get the image URL value if it exists
+            image_url = image_url_attribute.value if image_url_attribute else None
+        else:
+            form_name = "Unknown Form"
+            image_url = None
+
+        gallery_info = {
+            'name': gallery.gallery_name,
+            'form_name': form_name,
+            'created_at': gallery.created_at.strftime('%Y-%m-%d'),
+            'image_url': image_url
+        }
+        gallery_data.append(gallery_info)
+
 
     # Get counts for statistics
     num_records = Record.objects.count()
@@ -101,6 +130,7 @@ def index(request):
     context = {
         'recent_records': recent_records_data,
         'featured_galleries': featured_galleries,
+        'gallery_data': gallery_data,
         'num_records': num_records,
         'num_users': num_users,
         'num_forms': num_forms,
