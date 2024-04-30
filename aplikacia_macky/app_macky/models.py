@@ -45,6 +45,12 @@ class Record(TimeStampedModel):
     def __str__(self):
         return f'Record {self.id}'
     
+# TODO: migrate
+class RecordImages(models.Model):
+    record = models.ForeignKey(Record, on_delete=models.CASCADE, related_name='images')
+    name = models.CharField(max_length=255)
+    image_data = models.BinaryField()
+    
 class Vote(TimeStampedModel):
     VOTE_TYPE_CHOICES = (
         ('up', 'Upvote'),

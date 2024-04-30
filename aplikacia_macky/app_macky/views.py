@@ -23,9 +23,43 @@ def clear_messages(request):
     storage = messages.get_messages(request)
     storage.used = True
 
+
+from datetime import datetime, timedelta
+from django.utils import timezone
+from django.db.models import Count
+from django.db.models.functions import TruncDate
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+
 def index(request):
     # Fetch recent records
     recent_records = Record.objects.order_by('-created_at')[:6]
+    
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=30)  # Display data for the last 30 days
+    
+    data = []
+    dates = []
+    labels = ['Records', 'Users', 'Forms', 'Galleries']
+    
+    current_date = start_date
+    while current_date <= end_date:
+        num_records = Record.objects.filter(created_at__date=current_date).count()
+        num_users = User.objects.filter(date_joined__date=current_date).count()
+        num_forms = Form.objects.filter(created_at__date=current_date).count()
+        num_galleries = Gallery.objects.filter(created_at__date=current_date).count()
+
+        data.append([num_records, num_users, num_forms, num_galleries])
+        dates.append(current_date.strftime('%Y-%m-%d'))
+
+        current_date += timedelta(days=1)
+
+    # Aggregate records by date (count records created per day)
+    records_per_day = (
+        recent_records
+        .values('created_at')
+        .annotate(num_records=models.Count('id'))
+    )
 
     # For each recent record, fetch related FormAttributeData
     recent_records_data = []
@@ -35,8 +69,8 @@ def index(request):
         record_details = {
             'id': record.id,
             'description': record.description,
-            'thumb_up': Vote.objects.filter(record = record, vote_type="up").count(),
-            'thumb_down': Vote.objects.filter(record = record, vote_type="down").count(),
+            'thumb_up': Vote.objects.filter(record=record, vote_type="up").count(),
+            'thumb_down': Vote.objects.filter(record=record, vote_type="down").count(),
             'created_at': record.created_at,
             'updated_at': record.updated_at,
             'username': record.user.username if record.user else "Unknown",
@@ -58,8 +92,10 @@ def index(request):
     num_users = User.objects.count()
     num_galleries = Gallery.objects.count()
     num_forms = Form.objects.count()
-    
-    
+
+    # Prepare chart data
+    chart_labels = [item['created_at'].strftime('%Y-%m-%d') for item in records_per_day]
+    chart_data = [item['num_records'] for item in records_per_day]
 
     # Pass the data to the template
     context = {
@@ -67,8 +103,11 @@ def index(request):
         'featured_galleries': featured_galleries,
         'num_records': num_records,
         'num_users': num_users,
-        'num_forms' : num_forms, 
-        'num_galeries': num_galleries,
+        'num_forms': num_forms,
+        'num_galleries': num_galleries,
+        'labels': labels,
+        'dates': dates,
+        'data': json.dumps(data, cls=DjangoJSONEncoder),  # Convert data to JSON
         'username': request.user.username if request.user.is_authenticated else 'Guest'
     }
 
@@ -77,42 +116,40 @@ def index(request):
 
 def login_view(request):
     clear_messages(request)
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
 
         user = authenticate(request, username=username, password=password)
-        #group = Group.objects.get(id = user.pk).name if user else None
-        #print("g. objects: ", user.groups, "\n")
-        group = user.groups.name
-        print("GROUP: ", group, "\n")
 
         if user is not None:
             login(request, user)
 
-            if username == 'admin':
+            # Retrieve user's groups
+            user_groups = user.groups.all()  # Retrieve all groups the user belongs to
+            for group in user_groups:
+                    print("group: ", group)
+                    
+            if any(group.name == "admin" for group in user_groups):
                 request.session['admin_view'] = True
                 user.is_superuser = True
                 messages.success(request, f"Welcome back, {username}!")
                 return redirect('index')
-            elif group == "posudzovateľ":
-                request.session['admin_view'] = False
-                user.is_superuser = False
-                messages.success(request, f"Welcome back, {username}!")
-                return redirect('user_galeries')
-            else:
-                request.session['admin_view'] = False
-                user.is_superuser = False
-                messages.success(request, f"Welcome back, {username}!")
-                return redirect('user_forms')
-
-            #messages.success(request, f"Welcome back, {username}!")
-            #return redirect('index')
+            elif any(group.name == "posudzovateľ" for group in user_groups):
+                    request.session['admin_view'] = False
+                    user.is_superuser = False
+                    messages.success(request, f"Welcome back, {username}!")
+                    return redirect('user_galeries')
+            elif any(group.name == "prihlásený použivateľ" for group in user_groups):
+                    request.session['admin_view'] = False
+                    user.is_superuser = False
+                    messages.success(request, f"Welcome back, {username}!")
+                    return redirect('user_forms')
         else:
             messages.error(request, "Invalid username or password.")
 
     return render(request, 'login.html')
-    #return render(request, 'login.html')
 
 def logout_user(request):
     logout(request)
@@ -277,34 +314,40 @@ def admin_create_user(request):
         email = request.POST.get('email')
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
-        group_name = request.POST.get('group')  # Expecting a single group name from the form
-        request.user.groups.clear()  # Clear existing groups
-        if group_name:
+        group_name = request.POST.get('group')  # Get selected group name from form
+
+        # Validate group name and retrieve corresponding Group object
+        try:
             group = Group.objects.get(name=group_name)
-            request.user.groups.add(group)
+        except Group.DoesNotExist:
+            group = None
         
+        if not group:
+            messages.error(request, "Invalid group selection.")
+            return redirect('admin_users')
+
+        # Check if username or email already exist
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username is already taken.")
             return redirect('admin_users')
         
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email is already registered.")
-            clear_messages(request)  # Clear messages before redirecting
-            return render('admin_users')
+            return redirect('admin_users')
 
-        # Create and save the new Form
+        # Create and save the new user
         try:
-            user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password)
-            user.save()
-            messages.success(request, "Registration successful. You can now log in.")
+            user2 = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password)
+            user2.groups.add(group)  # Add user to the selected group
+            messages.success(request, "User created successfully.")
             return redirect('admin_users')
         except Exception as e:
             error_message = str(e)
-            print(e)
             messages.error(request, f'Error creating user: {error_message}')
 
     return redirect('admin_users')
+
+from django.contrib.auth.hashers import make_password
 
 def admin_edit_user(request, user_id):
     user1 = get_object_or_404(User, pk=user_id)
@@ -319,7 +362,9 @@ def admin_edit_user(request, user_id):
         # FIXME: 
         #if request.POST.get('password'):
         #    user.set_password(request.POST.get('password'))  # Securely set password
-        user1.password = request.POST.get('password')
+        new_password = request.POST.get('password')
+        if new_password:
+            user1.password = make_password(new_password)  # Hash the password securely
 
         # Handling role (group) assignment
         selected_group_name = request.POST.get('role')
