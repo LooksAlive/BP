@@ -1,0 +1,9 @@
+version: '3'
+services:
+  web:
+    image: my_django_app
+    volumes:
+      - ./media:/media   # Mount the media directory
+    ports:
+      - "80:80"
+

@@ -659,10 +659,13 @@ def user_forms_record_add(request, form_id):
                 attr_id = key.split("_")[1]
                 attribute = get_object_or_404(Attribute, id=attr_id)
                 form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)
-                fs = FileSystemStorage()
+                fs = FileSystemStorage(location=settings.MEDIA_ROOT) # pridane...
                 filename = fs.save(image_file.name, image_file)
                 image_url = fs.url(filename)
                 FormAttributeData.objects.create(record=record, form_attribute=form_attr, value=image_url)
+                #logger.info(f"Uploaded file: {image_file.name}")
+                #logger.info(f"File URL: {image_url}")
+
 
         # Process comment
         comment = request.POST.get('comment', '')
