@@ -3,13 +3,34 @@
 {% block title %}Your Records{% endblock %}
 
 {% block content %}
+
+<style>
+    .card-img-placeholder {
+        height: 200px; /* Same height as the image container */
+        width: 100%; /* Full width */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0; /* Placeholder background */
+        color: #666; /* Placeholder text color */
+        font-size: 16px;
+    }
+</style>
+
 <div class="row justify-content-center">
-    <h2 class="mb-4 text-center">All Records</h2>
+    <div class="text-center">
+        <h2 class="mb-4 text-center">All Records</h2>
+    </div>
+</div>
+
+<div class="row justify-content-end">
     <form method="post" action="{% url 'user_forms' %}">
         {% csrf_token %}
-        <button id="addUserButton" class="btn btn-success mb-4 justify-content-end">Add Record</button>
+        <button id="addRecordButton" class="btn btn-success mb-4">Add Record</button>
     </form>
 </div>
+
+
 <div class="row">
     {% for item in records_with_details %}
     <div class="col-lg-4 col-md-6 mb-4">
@@ -21,7 +42,13 @@
                 <small class="d-block">Gallery: {{ item.gallery_name }}</small>
                 {% endif %}
             </div>
-            <img src="{{ item.image }}" alt="Record Image" class="card-img-top">
+            <div class="card-header">
+                {% if item.image %}
+                <img src="{{ item.image }}" alt="Record Image" class="card-img-top">
+                {% else %}
+                    <div class="card-img-placeholder card-img-top">No Image Available</div>     
+                {% endif %}
+            </div>
             <div class="card-body">
                 <p class="card-text">{{ item.description }}</p>
             </div>
@@ -70,5 +97,49 @@
         {% endif %}
     </ul>
 </div>
+
+<!-- Add this modal for displaying larger images -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Record Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="Record Image" class="img-fluid modal-img clickable-image img-center" id="modalImage">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript for the image modal and other event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        const clickableImages = document.querySelectorAll('.clickable-image');
+
+        clickableImages.forEach(image => {
+            image.addEventListener('click', function() {
+                const imageUrl = this.src;
+                const modalImage = document.getElementById('modalImage');
+                modalImage.src = imageUrl;
+                $('#imageModal').modal('show'); // Open the modal
+            });
+        });
+
+        $('#imageModal').on('hidden.bs.modal', function() {
+            // Close the modal when clicking outside of it
+            $('#imageModal').modal('hide');
+        });
+    });
+
+    $(document).ready(function() {
+        // Call the showBackButton function from the parent template
+        showBackButton();
+    });
+ 
+</script>
 
 {% endblock %}

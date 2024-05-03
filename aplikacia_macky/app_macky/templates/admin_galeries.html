@@ -10,6 +10,7 @@
     <thead class="thead-light">
         <tr>
             <th>ID</th>
+            <th>Gallery name</th>
             <th>Form Name</th>
             <th>Created At</th>
             <th>Updated At</th>
@@ -21,6 +22,7 @@
         {% for gallery in galleries %}
         <tr>
             <td>{{ gallery.id }}</td>
+            <td>{{ gallery.gallery_name }}</td>
             <td>{{ gallery.form.form_name }}</td>
             <td>{{ gallery.created_at }}</td>
             <td>{{ gallery.updated_at }}</td>

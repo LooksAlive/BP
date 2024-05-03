@@ -38,6 +38,18 @@
         border: 1px solid #ccc; /* Add a small border for disabled textareas */
         background-color: transparent; /* Keep the background transparent */
     }
+
+    .card-img-placeholder {
+        height: 200px; /* Same height as the image container */
+        width: 100%; /* Full width */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0; /* Placeholder background */
+        color: #666; /* Placeholder text color */
+        font-size: 16px;
+    }
+
 </style>
 
 
@@ -66,7 +78,13 @@
                         <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
                             <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
                         </label>
-                        <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive"/>
+                        {% if attribute.value %}
+                        <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive clickable-image">
+                        {% else %}
+                        <div class="card-header">
+                            <div class="card-img-placeholder">No Image Available</div>
+                        </div>
+                        {% endif %}
                         <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">
                     </div>
                 {% else %}
@@ -184,7 +202,51 @@
             </form>
         </div>
         {% endif %}
+
+
+<!-- Add this modal for displaying larger images -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Record Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="Record Image" class="img-fluid modal-img clickable-image img-center" id="modalImage">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
 <script>
+    // JavaScript for the image modal and other event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        const clickableImages = document.querySelectorAll('.clickable-image');
+
+        clickableImages.forEach(image => {
+            image.addEventListener('click', function() {
+                const imageUrl = this.src;
+                const modalImage = document.getElementById('modalImage');
+                modalImage.src = imageUrl;
+                $('#imageModal').modal('show'); // Open the modal
+            });
+        });
+
+        $('#imageModal').on('hidden.bs.modal', function() {
+            // Close the modal when clicking outside of it
+            $('#imageModal').modal('hide');
+        });
+    });
+
+
     document.getElementById('addCommentBtn').addEventListener('click', function() {
         var commentForm = document.getElementById('commentForm');
         commentForm.style.display = commentForm.style.display === 'none' ? 'block' : 'none';

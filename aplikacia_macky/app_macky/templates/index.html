@@ -142,7 +142,7 @@
 <!-- Recent Galleries Section -->
 <section class="py-5">
     <div class="container">
-        <h2 class="text-center">Featured Galleries</h2>
+        <h2 class="text-center">Galleries</h2>
         <div class="row">
             {% for gallery in gallery_data %}
             <div class="col-md-3 mb-4">
@@ -170,7 +170,7 @@
 
 
 
-{% if user.is_authenticated %}
+{% if user.is_authenticated and request.session.admin_view %}
 <!-- Project Statistics Section -->
 <section class="py-5 bg-light">
     <div class="container">

@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 class TimeStampedModel(models.Model):
     created_at = models.DateTimeField(default=timezone.now, editable=False)
@@ -29,6 +31,7 @@ class Record(TimeStampedModel):
     # Linking each record to a User
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     description = models.TextField(default="")
+    form = models.ForeignKey(Form, on_delete=models.CASCADE, null=True)  # Link Record to Form
     
     def upvote(self, user):
         Vote.objects.create(record=self, user=user, vote_type='up')
@@ -45,11 +48,11 @@ class Record(TimeStampedModel):
     def __str__(self):
         return f'Record {self.id}'
     
-# TODO: migrate
-class RecordImages(models.Model):
-    record = models.ForeignKey(Record, on_delete=models.CASCADE, related_name='images')
-    name = models.CharField(max_length=255)
-    image_data = models.BinaryField()
+    # Define a signal handler for pre-delete of Form
+@receiver(pre_delete, sender=Form)
+def delete_records_with_form(sender, instance, **kwargs):
+    records_to_delete = Record.objects.filter(form=instance)
+    records_to_delete.delete()
     
 class Vote(TimeStampedModel):
     VOTE_TYPE_CHOICES = (

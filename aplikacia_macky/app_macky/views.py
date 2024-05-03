@@ -195,6 +195,8 @@ def registration_view(request):
         confirm_password = request.POST.get('confirm_password')
         email = request.POST.get('email')
         username = request.POST.get('username')
+        
+        group = Group.objects.get(name="prihlásený použivateľ")
 
         if password != confirm_password:
             messages.error(request, "Passwords do not match.")
@@ -210,6 +212,7 @@ def registration_view(request):
             return render(request, 'registration.html')
 
         user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
+        user.groups.add(group)
         user.save()
         messages.success(request, "Registration successful. You can now log in.")
         return redirect('login')
@@ -503,8 +506,13 @@ def admin_create_galery(request, gallery_id=None):
     if request.method == 'POST':
         form_id = request.POST.get('form')
         g_name = request.POST.get('gallery_name')
-        form = get_object_or_404(Form, pk=form_id)
-
+        try:
+            form = Form.objects.get(id=form_id)
+        except Form.DoesNotExist:
+            # error, no form for gallery is set
+            messages.error(request, 'A form for the gallery was not found.')    
+            return redirect('admin_galeries')
+        
         # If we're creating a new gallery, instantiate it
         if not gallery_id:
             gallery = Gallery(form=form)
@@ -526,7 +534,11 @@ def admin_create_galery(request, gallery_id=None):
                 attr_id = value
                 FormAttribute.objects.filter(id=attr_id, form=form).update(display_in_gallery=True)
 
-        messages.success(request, 'Gallery has been updated successfully.')
+        if gallery_id:
+            messages.success(request, 'Gallery has been updated successfully.')
+        else:
+            messages.success(request, 'Gallery has been created successfully.')
+            
         return redirect('admin_galeries')
 
     # If it's a GET request, we render the page with the form selection
@@ -637,6 +649,7 @@ def user_forms_record_add(request, form_id):
     if request.method == 'POST':
         user = request.user
         record = Record.objects.create(user=user)
+        record.form = Form.objects.get(id=form_id)
         
         # description
         desc = request.POST.get('description', '')
@@ -651,22 +664,42 @@ def user_forms_record_add(request, form_id):
                 attribute = get_object_or_404(Attribute, id=attr_id)
                 if attribute.type != "image_url":  # Only process non-image fields here
                     form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)
+                    if form_attr.required:
+                        if not value:
+                            messages.error(request, f"Required field {attribute.name} is empty")
+                            return #redirect("user_forms")
                     FormAttributeData.objects.create(record=record, form_attribute=form_attr, value=value)
-        
+                
+                    
         # Process file fields (images)
+        added_image = False
         for key, image_file in request.FILES.items():
             if key.startswith("attr_"):
                 attr_id = key.split("_")[1]
                 attribute = get_object_or_404(Attribute, id=attr_id)
+                if attribute.type == "image_url":
+                    form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)
+                    if form_attr.required:
+                        if not value:
+                            messages.error(request, f"Required field {attribute.name} is empty")
+                            return #redirect("user_forms")
+                        
+                    fs = FileSystemStorage(location=settings.MEDIA_ROOT) # pridane...
+                    filename = fs.save(image_file.name, image_file)
+                    image_url = fs.url(filename)
+                    FormAttributeData.objects.create(record=record, form_attribute=form_attr, value=image_url)
+                    added_image = True
+                    #logger.info(f"Uploaded file: {image_file.name}")
+                    #logger.info(f"File URL: {image_url}")
+
+        if not added_image:
+            try:
+                attribute = Attribute.objects.get(type="image_url")
                 form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)
-                fs = FileSystemStorage(location=settings.MEDIA_ROOT) # pridane...
-                filename = fs.save(image_file.name, image_file)
-                image_url = fs.url(filename)
-                FormAttributeData.objects.create(record=record, form_attribute=form_attr, value=image_url)
-                #logger.info(f"Uploaded file: {image_file.name}")
-                #logger.info(f"File URL: {image_url}")
-
-
+                #print("------------------no files, but image_url\n")
+                FormAttributeData.objects.create(record=record, form_attribute=form_attr, value="")
+            except FormAttribute.DoesNotExist:
+                pass    # this is OK
         # Process comment
         comment = request.POST.get('comment', '')
         if comment:
@@ -717,7 +750,7 @@ def user_records(request):
 
 @login_required
 def user_record_delete(request, record_id):
-    record = get_object_or_404(Record, id=record_id, user=request.user)
+    record = get_object_or_404(Record, id=record_id) #, user=request.user
 
     # Find and delete the image file associated with the record
     image_attribute_data = FormAttributeData.objects.filter(record=record, form_attribute__attribute__type='image_url')
@@ -733,6 +766,8 @@ def user_record_delete(request, record_id):
 
     record.delete()
     messages.success(request, 'Record deleted successfully.')
+    if request.session['admin_view'] == True:
+        return redirect('admin_all_records')
     return redirect('user_records')
 
 
