@@ -7,12 +7,15 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <h2>Welcome, <span id="username">{{ username }}</span>!</h2>
+                <h2 class="display-6 font-weight-bold text-primary">Welcome, <span id="username">{{ username }}</span>!</h2>
                 <p>Discover a world of fascinating animal species.</p>
+                <p class="lead text-muted mb-4">Embark on a journey to discover the fascinating world of animal species.</p>
+
             </div>
         </div>
     </div>
 </section>
+
 
 <style>
     /* Carousel arrows */
@@ -142,29 +145,64 @@
 <!-- Recent Galleries Section -->
 <section class="py-5">
     <div class="container">
-        <h2 class="text-center">Galleries</h2>
-        <div class="row">
+        <h2 class="text-center mb-5">Galleries</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
             {% for gallery in gallery_data %}
-            <div class="col-md-3 mb-4">
-                <div class="card">
-                    <div class="card-header">
+            <a href="{% url 'user_galery_view' gallery.id %}" class="col text-decoration-none">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-header bg-light border-0">
                         <h5 class="card-title">{{ gallery.name }}</h5>
                     </div>
-                    <div class="card-body">
-                        <p><strong>Form:</strong> {{ gallery.form_name }}</p>
-                        <p><strong>Created On:</strong> {{ gallery.created_at }}</p>
-                        {% if gallery.image_url %}
-                            <img src="{{ gallery.image_url }}" class="img-fluid mb-2" alt="Gallery Image">
-                        {% else %}
-                            <p>No images available</p>
-                        {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <p class="card-text"><strong>Form:</strong> {{ gallery.form_name }}</p>
+                        <p class="card-text"><strong>Created On:</strong> {{ gallery.created_at }}</p>
+                        <div class="gallery-image-container mb-3">
+                            {% if gallery.image_url %}
+                                <img src="{{ gallery.image_url }}" class="gallery-image" alt="Gallery Image">
+                            {% else %}
+                                <p class="card-text text-muted">No images available</p>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
             {% endfor %}
         </div>
     </div>
 </section>
+
+<style>
+    .gallery-image-container {
+        height: 200px; /* Fixed height for images */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .gallery-image {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: cover; /* This will cover the area without stretching the image */
+    }
+    .card {
+        transition: transform 0.3s ease;
+        cursor: pointer; /* Changes the mouse cursor to indicate clickable */
+    }
+    .card:hover {
+        transform: translateY(-5px); /* Slight raise effect on hover */
+    }
+    /* Ensure text and other elements are not highlighted on click */
+    a.col {
+        color: inherit; /* Inherits text color from parent */
+    }
+    a.col:hover {
+        text-decoration: none; /* Removes underline on hover */
+    }
+</style>
+
+
+
+
 
 
 
@@ -174,7 +212,7 @@
 <!-- Project Statistics Section -->
 <section class="py-5 bg-light">
     <div class="container">
-        <h2>Project Statistics</h2>
+        <h2 class="text-center mb-5">Project Statistics</h2>
         <div class="row">
             <div class="col-md-6">
                 <ul class="list-group">
@@ -197,8 +235,7 @@
                 </ul>
             </div>
             <div class="col-md-6">
-                <h3>Statistics Chart</h3>
-                <canvas id="statisticsChart" width="400" height="400"></canvas>
+               <canvas id="statisticsChart" width="400" height="400"></canvas>
             </div>
         </div>
     </div>

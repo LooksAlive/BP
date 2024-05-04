@@ -56,7 +56,11 @@
             </div>
             <div class="form-group">
                 <label for="type">Attribute Type</label>
-                <input type="text" class="form-control" id="type" name="type">
+                <select class="form-control" id="type" name="type">
+                    {% for type in attribute_types %}
+                    <option value="{{ type }}">{{ type }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <button type="submit" class="btn btn-success">Submit</button>
         </form>

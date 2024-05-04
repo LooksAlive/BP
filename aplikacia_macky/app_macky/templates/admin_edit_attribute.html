@@ -12,8 +12,11 @@
             <input type="text" class="form-control" id="name" name="name" value="{{ attribute.name }}">
         </div>
         <div class="form-group">
-            <label for="type">Attribute Type</label>
-            <input type="text" class="form-control" id="type" name="type" value="{{ attribute.type }}">
+            <select class="form-control" id="type" name="type">
+                {% for type in attribute_types %}
+                <option value="{{ type }}" {% if type == attribute.type %}selected{% endif %}>{{ type }}</option>
+                {% endfor %}
+            </select>
         </div>
         <button type="submit" class="btn btn-primary">Update Attribute</button>
     </form>

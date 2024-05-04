@@ -108,6 +108,7 @@ def index(request):
             image_url = None
 
         gallery_info = {
+            'id': gallery.id,
             'name': gallery.gallery_name,
             'form_name': form_name,
             'created_at': gallery.created_at.strftime('%Y-%m-%d'),
@@ -222,11 +223,11 @@ def registration_view(request):
 
 
 
-
+attribute_types = ['int', 'float', 'str', 'bool', 'image_url', 'date', 'datetime', 'time']
 
 def admin_attributes(request):
     attributes = Attribute.objects.all()
-    return render(request, 'admin_attributes.html', {'attributes': attributes})
+    return render(request, 'admin_attributes.html', {'attributes': attributes, 'attribute_types': attribute_types})
 
 def admin_create_attribute(request):
     if request.method == 'POST':
@@ -257,7 +258,7 @@ def admin_edit_attribute(request, attribute_id):
 
     if request.method == 'GET':
         # Here, you should render the form for editing the attribute
-        return render(request, 'admin_edit_attribute.html', {'attribute': attribute})
+        return render(request, 'admin_edit_attribute.html', {'attribute': attribute, 'attribute_types': attribute_types})
 
     # Handle POST request for updating the attribute
     if request.method == 'POST':
@@ -500,7 +501,7 @@ def admin_create_galery(request, gallery_id=None):
             }
             for attr in attributes
         ]
-        print("returning here -----------------------------")
+        #print("returning here -----------------------------")
         return JsonResponse({'attributes': attributes_data})
 
     if request.method == 'POST':
@@ -542,11 +543,16 @@ def admin_create_galery(request, gallery_id=None):
         return redirect('admin_galeries')
 
     # If it's a GET request, we render the page with the form selection
-    # TODO filter, but fix it first
     if not g_name:
         if selected_form:
             g_name = selected_form.form_name
     forms = Form.objects.filter(included_in_gallery=False)
+    #print("forms: ", forms, "\n")
+    #print("selected_form: ", selected_form, "\n")
+    #print("gallery_id: ", gallery_id, "\n")
+    if not forms.exists() and gallery_id != None and selected_form != None:
+        forms = []
+        forms.append(selected_form)
     return render(request, 'admin_create_galery.html', {
         'gallery': gallery,
         'selected_form': selected_form,
@@ -844,7 +850,7 @@ def user_record_update(request, record_id, for_user):
 
 def remove_comment(request, comment_id, for_user):
     comment = get_object_or_404(RecordComment, pk=comment_id)
-    print("------------------------")
+    #print("------------------------")
     if request.session.get('admin_view', False) or for_user or (request.user.is_authenticated and comment.user == request.user):
         comment.delete()
         messages.success(request, 'Comment removed successfully.')

@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
+    <link rel="icon" type="image/png" href="https://icons8.com/icons/set/cat-favicon">
+
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <!-- Bootstrap JS -->
@@ -42,33 +45,26 @@
         }
     </style>
 
-    <!-- Include the header navigation here -->
-    <header class="bg-primary text-white py-4">
+    <header class="bg-primary text-white py-4 mb-4" style="position: relative;">
         <div class="header-container">
-            <div class="col-md-12 text-center"> <!-- Change the column width and add text-center class -->
-                <h1>Clearblooded Animal Species Collection</h1>
+            <div class="col-md-12 text-center">
+                <h1 style="margin-bottom: 0;">Clearblooded Animal Species Collection</h1>
+            </div>
+            <div style="position: absolute; top: 10px; left: 20px;">
+                {% if user.is_authenticated %}
+                    <strong class="user-info-box bg-primary p-2 text-white rounded">{{ user.username }}</strong>
+                {% endif %}
             </div>
             <nav class="navbar navbar-expand-lg navbar-dark mt-4">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="d-flex justify-content-end">
-                    {% if user.is_authenticated %}
-                      <div class="user-info-box bg-primary p-2 text-white rounded">
-                        <strong>{{ user.username }}</strong>
-                      </div>
-                    {% endif %}
-                  </div>
-                                
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav" style="position: relative; top: 100%; right: 0;">
+                    <ul class="navbar-nav">
                         <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
-                        <!-- <li class="nav-item"><a class="nav-link" href="#">Contact</a></li> -->
-                        <!-- Add the logic to display admin or user links based on user roles -->
                         {% if user.is_authenticated %}
                             {% if request.session.admin_view %}
-                                <!-- Show admin-related links if admin_view is set -->
                                 <li class="nav-item"><a class="nav-link" href="{% url 'admin_attributes' %}">Admin Attributes</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{% url 'admin_users' %}">Admin Users</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{% url 'admin_forms' %}">Admin Forms</a></li>
@@ -80,7 +76,6 @@
                             <li class="nav-item"><a class="nav-link" href="{% url 'user_records' %}">My Records</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                         {% else %}
-                            <!-- <li class="nav-item"><a class="nav-link" href="{% url 'user_collection_formular' %}">Collection Formular</a></li> -->
                             <li class="nav-item"><a class="nav-link" href="{% url 'user_galeries' %}">Galeries</a></li>
                             <li class="nav-item ml-auto"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Register</a></li>
@@ -90,6 +85,19 @@
             </nav>
         </div>
     </header>
+    
+
+    <style>
+        .user-info-box {
+            display: inline-block; /* Make the username box inline */
+            margin: 0; /* Remove any default margin */
+        }
+        @media (min-width: 768px) { /* Adjustments for larger screens */
+            .user-info-box {
+                margin-right: -15px; /* Align with the container's padding */
+            }
+        }
+    </style>
 
 
     <!-- Main content block -->

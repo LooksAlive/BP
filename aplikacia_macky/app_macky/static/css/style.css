@@ -42,7 +42,8 @@ header h1 {
 }
 
 /* Header specific styling */
-.header-container {
+header.container {
+    background: #201515;
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
@@ -167,6 +168,7 @@ footer {
     }
 }
 
+*/
 .header-container {
     padding-right: 15px;
     padding-left: 15px;
@@ -174,5 +176,3 @@ footer {
     margin-left: auto;
     max-width: 1140px; 
 }
-
-*/
