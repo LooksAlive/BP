@@ -36,15 +36,16 @@
       <h3>Form Attributes</h3>
       {% if form_attributes %}
         {% for attribute in form_attributes %}
-            <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="attribute{{ attribute.id }}"
-                    name="attribute_{{ attribute.id }}"
-                    value="{{ attribute.id }}"
-                    {% if attribute.display_in_gallery %}checked{% endif %}>
-            <label class="form-check-label" for="attribute{{ attribute.id }}">
-                {{ attribute.attribute.name }}
-            </label>
-            </div>
+        <div class="form-check custom-checkbox">
+          <input class="form-check-input" type="checkbox" id="attribute{{ attribute.id }}"
+                  name="attribute_{{ attribute.id }}"
+                  value="{{ attribute.id }}"
+                  {% if attribute.display_in_gallery %}checked{% endif %}>
+          <label class="form-check-label" for="attribute{{ attribute.id }}">
+              {{ attribute.attribute.name }}
+          </label>
+      </div>
+      
         {% endfor %}
         {% endif %}
 
@@ -57,6 +58,30 @@
   </form>
 </div>
 
+<style>
+  input[type="checkbox"]  {
+    display: none;
+ }
+ 
+  .custom-checkbox .form-check-input {
+    cursor: pointer; /* Makes the cursor a pointer when hovering over the checkbox */
+}
+
+.custom-checkbox .form-check-label {
+    cursor: pointer; /* Makes the cursor a pointer when hovering over the label */
+    padding: 0.5rem 1rem; /* Adds padding to the label */
+    border: 1px solid #ddd; /* Adds a border to the label */
+    border-radius: 5px; /* Rounds the corners of the border */
+    margin-bottom: 0; /* Removes the default bottom margin */
+    transition: background-color 0.2s, color 0.2s; /* Smooth transition for background and text color */
+}
+
+.custom-checkbox .form-check-input:checked + .form-check-label {
+    background-color: #007bff; /* Changes the background color when checked */
+    color: white; /* Changes the text color when checked */
+}
+
+</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

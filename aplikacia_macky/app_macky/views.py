@@ -66,6 +66,10 @@ def index(request):
     for record in recent_records:
         form_data = FormAttributeData.objects.filter(record=record)
         # Collecting only necessary details for display, such as images and attribute values
+        image_attribute = form_data.filter(form_attribute__attribute__type='image_url').first()
+        # Determine if image is available for this record
+        image_available = bool(image_attribute)
+        
         record_details = {
             'id': record.id,
             'description': record.description,
@@ -80,12 +84,13 @@ def index(request):
                 'type': data.form_attribute.attribute.type,
                 'display_in_gallery': data.form_attribute.display_in_gallery
             } for data in form_data],
-            'image': form_data.filter(form_attribute__attribute__type='image_url').first().value if form_data.filter(form_attribute__attribute__type='image_url').exists() else None
+            'image': form_data.filter(form_attribute__attribute__type='image_url').first().value if form_data.filter(form_attribute__attribute__type='image_url').exists() else None,
+            'image_available': image_available  # Include image availability flag
         }
         recent_records_data.append(record_details)
 
     # Fetch galleries to be highlighted
-    featured_galleries = Gallery.objects.order_by('-created_at')[:5]
+    featured_galleries = Gallery.objects.order_by('-created_at')[:4]
     
     gallery_data = []
     for gallery in featured_galleries:
@@ -662,7 +667,7 @@ def user_forms_record_add(request, form_id):
         if desc:
             record.description = desc
             record.save()
-            
+                
         # Process text fields
         for key, value in request.POST.items():
             if key.startswith("attr_"):
@@ -670,13 +675,8 @@ def user_forms_record_add(request, form_id):
                 attribute = get_object_or_404(Attribute, id=attr_id)
                 if attribute.type != "image_url":  # Only process non-image fields here
                     form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)
-                    if form_attr.required:
-                        if not value:
-                            messages.error(request, f"Required field {attribute.name} is empty")
-                            return #redirect("user_forms")
                     FormAttributeData.objects.create(record=record, form_attribute=form_attr, value=value)
                 
-                    
         # Process file fields (images)
         added_image = False
         for key, image_file in request.FILES.items():
@@ -684,12 +684,7 @@ def user_forms_record_add(request, form_id):
                 attr_id = key.split("_")[1]
                 attribute = get_object_or_404(Attribute, id=attr_id)
                 if attribute.type == "image_url":
-                    form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)
-                    if form_attr.required:
-                        if not value:
-                            messages.error(request, f"Required field {attribute.name} is empty")
-                            return #redirect("user_forms")
-                        
+                    form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)                        
                     fs = FileSystemStorage(location=settings.MEDIA_ROOT) # pridane...
                     filename = fs.save(image_file.name, image_file)
                     image_url = fs.url(filename)
@@ -707,6 +702,7 @@ def user_forms_record_add(request, form_id):
             except FormAttribute.DoesNotExist:
                 pass    # this is OK
         # Process comment
+        
         comment = request.POST.get('comment', '')
         if comment:
             RecordComment.objects.create(user=user, record=record, comment=comment)
@@ -866,53 +862,46 @@ def aprove_comment(request, comment_id, for_user):
 
 
 def user_galeries(request):
-    galleries = Gallery.objects.all()
-    return render(request, 'user_galery.html', {'galleries': galleries})
-
-
-"""
-@login_required
-def user_galery_view(request, gallery_id):
-    gallery = get_object_or_404(Gallery, id=gallery_id)
-    form = gallery.form
-
-    # Get attributes marked to display in the gallery
-    attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True)
-
-    # Get all FormAttributeData entries linked to the selected attributes
-    attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
-
-    # Extracting unique record IDs from attributes_data
-    unique_record_ids = set(attributes_data.values_list('record_id', flat=True))
     
-    print("-------------- ", unique_record_ids)
-
-    # Preparing data for each unique record
+    featured_galleries = Gallery.objects.order_by('-created_at')#[:4]
     gallery_data = []
-    for record_id in unique_record_ids:
-        record = Record.objects.get(id=record_id)
-        record_attributes = attributes_data.filter(record_id=record_id)
+    for gallery in featured_galleries:
+        # Get the associated form for the gallery
+        form = gallery.form
+        if form:
+            form_name = form.form_name
+            # Get all form attributes marked to be displayed in the gallery
+            attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True)
+            # Get all attribute data entries linked to the selected attributes and the gallery's form
+            attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
+            # Filter attribute data entries for the current gallery's form
+            record_attributes = attributes_data
+            # Find the first image URL attribute data entry for the current gallery
+            image_url_attribute = record_attributes.filter(form_attribute__attribute__type='image_url').first()
+            # Get the image URL value if it exists
+            image_url = image_url_attribute.value if image_url_attribute else None
+        else:
+            form_name = "Unknown Form"
+            image_url = None
 
-        # Extract image URL if available
-        image_url = record_attributes.filter(form_attribute__attribute__type='image_url').first()
-        image_url = image_url.value if image_url else None
-
-        record_details = {
-            'id': record.id,
-            'thumb_up': record.thumb_up,
-            'thumb_down': record.thumb_down,
-            'attributes': [{'name': attr.form_attribute.attribute.name, 'value': attr.value} for attr in record_attributes],
-            'image': image_url
+        gallery_info = {
+            'id': gallery.id,
+            'name': gallery.gallery_name,
+            'form_name': form_name,
+            'created_at': gallery.created_at.strftime('%Y-%m-%d'),
+            'image_url': image_url
         }
-        gallery_data.append(record_details)
-
-    print("GD-------------- ", gallery_data)
+        gallery_data.append(gallery_info)
+        
+    # Paginate the gallery data
+    page = request.GET.get('page')
+    paginator = Paginator(gallery_data, 4)  # 3 cards in a row, 2 rows on a page
+    gallery_page = paginator.get_page(page)
     
-    return render(request, 'user_galery_view.html', {
-        'gallery': gallery,
-        'gallery_data': gallery_data
-    })
-"""
+    
+    #galleries = Gallery.objects.all()
+    return render(request, 'user_galery.html', {'gallery_data': gallery_data, 'gallery_page': gallery_page})
+
 
 def user_galery_view(request, gallery_id):
     gallery = get_object_or_404(Gallery, id=gallery_id)

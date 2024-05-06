@@ -61,7 +61,7 @@
     </div>
 <div class="card mb-4">
     <div class="card-body">
-        <h5 class="card-title">Record #{{ record.id }}</h5>
+        <!--<h5 class="card-title">Record #{{ record.id }}</h5>-->
         <form method="post" action="{% url 'user_record_update' record.id for_user %}">
             {% csrf_token %}
             {% if request.session.admin_view or for_user %}

@@ -69,6 +69,17 @@
     .carousel-indicators .active {
         background-color: #555; /* Active indicator color */
     }
+
+    .card-img-placeholder {
+        height: 200px; /* Same height as the image container */
+        width: 100%; /* Full width */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0; /* Placeholder background */
+        color: #666; /* Placeholder text color */
+        font-size: 16px;
+    }
 </style>
 
 <!-- Recent Records Carousel -->
@@ -91,19 +102,24 @@
                         <div class="col-md-8 mx-auto">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="card-title">Record #{{ record.id }}</h5>
-                                    {% for attribute in record.attributes %}
-                                        {% if attribute.type == 'image_url' %}
-                                            <img src="{{ attribute.value }}" alt="Record Image" class="img-fluid m-2 mx-auto d-block"> <!-- card-img-top -->
-                                        {% endif %}
-                                    {% endfor %}
+                                    {% if record.image_available %}
+                                        <!--<h5 class="card-title">Record #{{ record.id }}</h5>-->
+                                        {% for attribute in record.attributes %}
+                                            {% if attribute.type == 'image_url' %}
+                                                <img src="{{ attribute.value }}" alt="Record Image" class="img-fluid m-2 mx-auto d-block"> <!-- card-img-top -->
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="card-img-placeholder">No Image Available</div>
+                                    {% endif %}
+                                    
                                     <div class="card-body">
                                         <textarea id="formName" name="record_description" class="form-control mb-3" rows="4" required readonly>{{ record.description }}</textarea>
                                     </div>
                                     <div class="card-footer">
                                         <small>Added by: {{ record.username }}</small><br>
                                         <small>Added on: {{ record.created_at|date:"Y-m-d H:i" }}</small><br>
-                                        <small>Last updated: {{ record.updated_at|date:"Y-m-d H:i" }}</small>
+                                        <!--<small>Last updated: {{ record.updated_at|date:"Y-m-d H:i" }}</small>-->
                                         <div class="d-flex justify-content-between align-items-center">
                                             <!-- Voting buttons -->
                                             {% if request.session.admin_view or record.record.user != request.user and user.is_authenticated %}
@@ -151,11 +167,11 @@
             <a href="{% url 'user_galery_view' gallery.id %}" class="col text-decoration-none">
                 <div class="card h-100 border-0 shadow">
                     <div class="card-header bg-light border-0">
-                        <h5 class="card-title">{{ gallery.name }}</h5>
+                        <h5 class="card-title text-center">{{ gallery.name }}</h5>
                     </div>
                     <div class="card-body d-flex flex-column">
                         <p class="card-text"><strong>Form:</strong> {{ gallery.form_name }}</p>
-                        <p class="card-text"><strong>Created On:</strong> {{ gallery.created_at }}</p>
+                        <!--<p class="card-text"><strong>Created On:</strong> {{ gallery.created_at }}</p> -->
                         <div class="gallery-image-container mb-3">
                             {% if gallery.image_url %}
                                 <img src="{{ gallery.image_url }}" class="gallery-image" alt="Gallery Image">

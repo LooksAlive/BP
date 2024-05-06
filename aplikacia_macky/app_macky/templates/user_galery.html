@@ -3,38 +3,94 @@
 {% block title %}Gallery - Clearblooded Animal Species Collection{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-4 text-center">Galleries</h1>
 
-    <!-- Display galleries in a well-structured table -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th>Name</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Loop through galleries and display them in rows -->
-                {% for gallery in galleries %}
-                <tr>
-                    <td>{{ gallery.gallery_name }}</td>
-                    <td>
-                        <!-- View button using a form with a hidden input -->
-                        <form method="get" action="{% url 'user_galery_view' gallery.id %}" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>    
+
+
+<!-- Recent Galleries Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Galleries</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            {% for gallery in gallery_page %}
+            <a href="{% url 'user_galery_view' gallery.id %}" class="col text-decoration-none">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-header bg-light border-0">
+                        <h5 class="card-title text-center">{{ gallery.name }}</h5>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <p class="card-text"><strong>Form:</strong> {{ gallery.form_name }}</p>
+                        <!--<p class="card-text"><strong>Created On:</strong> {{ gallery.created_at }}</p>-->
+                        <div class="gallery-image-container mb-3">
+                            {% if gallery.image_url %}
+                                <img src="{{ gallery.image_url }}" class="gallery-image" alt="Gallery Image">
+                            {% else %}
+                                <p class="card-text text-muted">No images available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
     </div>
+</section>
+
+<style>
+    .gallery-image-container {
+        height: 200px; /* Fixed height for images */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .gallery-image {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: cover; /* This will cover the area without stretching the image */
+    }
+    .card {
+        transition: transform 0.3s ease;
+        cursor: pointer; /* Changes the mouse cursor to indicate clickable */
+    }
+    .card:hover {
+        transform: translateY(-5px); /* Slight raise effect on hover */
+    }
+    /* Ensure text and other elements are not highlighted on click */
+    a.col {
+        color: inherit; /* Inherits text color from parent */
+    }
+    a.col:hover {
+        text-decoration: none; /* Removes underline on hover */
+    }
+</style>
+
+
+<!-- Pagination -->
+<div class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if gallery_page.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ gallery_page.previous_page_number }}">Previous</a>
+            </li>
+        {% endif %}
+        <li class="page-item disabled">
+            <span class="page-link">Page {{ gallery_page.number }} of {{ gallery_page.paginator.num_pages }}</span>
+        </li>
+        {% if gallery_page.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ gallery_page.next_page_number }}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ gallery_page.paginator.num_pages }}">Last</a>
+            </li>
+        {% endif %}
+    </ul>
 </div>
+
+
 
 <!-- Add Bootstrap JavaScript dependencies if needed -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
