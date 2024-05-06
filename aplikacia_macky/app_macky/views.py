@@ -164,8 +164,8 @@ def login_view(request):
 
             # Retrieve user's groups
             user_groups = user.groups.all()  # Retrieve all groups the user belongs to
-            for group in user_groups:
-                    print("group: ", group)
+            #for group in user_groups:
+                #print("group: ", group)
                     
             if any(group.name == "admin" for group in user_groups):
                 request.session['admin_view'] = True
@@ -337,7 +337,13 @@ def admin_create_form(request, form_id=None):
 def admin_delete_form(request, form_id):
     # Handle form deletion logic
     form = Form.objects.get(id=form_id)
+    records = Record.objects.filter(form=form)
+    # we need to remove image as well, database delete removes database data, images are stored statically in /media/.
+    # user_record_delete removes images as well
+    for record in records:
+        user_record_delete(request, record.id)
     form.delete()
+    messages.success(request, f'Form {form.form_name} was deleted successfully.')
     return redirect('admin_forms')  # Redirect to the form list page
 
 
@@ -428,7 +434,11 @@ def admin_delete_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
 
     if request.method == 'POST':
+        records = Record.objects.filter(user=user)
+        for record in records:
+            user_record_delete(request, record.id)
         user.delete()
+        messages.success(request, f'User {user.username} was deleted successfully.')
         return redirect('admin_users')  # Redirect to the user list page
 
     return render(request, 'admin_delete_user.html', {'user': user})

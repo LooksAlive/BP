@@ -69,7 +69,7 @@
                     <label class="attribute-label">Description
                         <span class="attribute-type">(text)</span>
                     </label>
-                    <textarea id="formName" name="record_description" class="form-control mb-3" rows="4" required>{{ record.description }}</textarea>
+                    <textarea id="formName" name="record_description" class="form-control mb-3" rows="4">{{ record.description }}</textarea> <!--required-->
                 </div>
 
                 {% for attribute in form_attributes %}
