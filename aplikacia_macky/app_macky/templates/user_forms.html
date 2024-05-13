@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}Forms - Clearblooded Animal Species Collection{% endblock %}
+{% block title %}Formuláre{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4 text-center">Forms</h1>
+    <h1 class="mb-4 text-center">Formuláre</h1>
 
     <!-- Display attributes in a well-structured table -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead class="thead-light">
                 <tr>
-                    <th>Name</th>
-                    <th>Action</th>
+                    <th>Názov</th>
+                    <th>Akcie</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Loop through attributes and display them in rows -->
                 {% for form in forms %}
                 <tr>
-                    <td>{{ form.form_name }}</td>
+                    <td>{{ form.formular_nazov }}</td>
                     <td>
                         <!-- Update button using a form with a hidden input -->
                         <form method="get" action="{% url 'user_forms_view' form.id %}" style="display: inline;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="fas fa-eye"></i> View
+                                <i class="fas fa-eye"></i> Zobraziť
                             </button>
                         </form>
                     </td>

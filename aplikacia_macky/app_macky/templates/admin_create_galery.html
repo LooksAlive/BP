@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block title %}
-  {% if gallery %}Edit Gallery{% else %}Create Gallery{% endif %} - Clearblooded Animal Species Collection
+  {% if gallery %}Úprava Galérie{% else %}Vytvor Galériu{% endif %}
 {% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-  <h1 class="text-center mb-4">{% if gallery %}Edit Gallery{% else %}New Gallery{% endif %}</h1>
+  <h1 class="text-center mb-4">{% if gallery %}Úprava Galérie{% else %}Galéria{% endif %}</h1>
   
   <div class="card">
     <div class="card-body">
@@ -16,35 +16,35 @@
         
         <!-- Form Selection Dropdown -->
         <div class="form-group">
-          <label for="formSelect">Select Form:</label>
+          <label for="formSelect">Vyberte Formulár:</label>
           <select id="formSelect" name="form" class="form-control" {% if gallery %}disabled{% endif %}>
             {% for form in forms %}
-              <option value="{{ form.id }}" {% if gallery and form.id == gallery.form.id %}selected{% endif %}>
-                {{ form.form_name }}
+              <option value="{{ form.id }}" {% if gallery and form.id == gallery.formular.id %}selected{% endif %}>
+                {{ form.formular_nazov }}
               </option>
             {% endfor %}
           </select>
           {% if gallery %}
-            <input type="hidden" name="form" value="{{ gallery.form.id }}">
+            <input type="hidden" name="form" value="{{ gallery.formular.id }}">
           {% endif %}
         </div>
-    <label for="formName">Gallery Name:</label>
-    <input type="text" id="GalleryName" name="gallery_name" class="form-control mb-3" value="{{ gallery_name }}" required>
+    <label for="formName">Názov Galérie:</label>
+    <input type="text" id="GalleryName" name="galeria_nazov" class="form-control mb-3" value="{{ galeria_nazov }}" required>
 
     <!-- Form Attributes Display On/Off -->
     <div class="form-attributes">
-      <h3>Form Attributes</h3>
+      <h3>Atribúty Formulára</h3>
       {% if form_attributes %}
         {% for attribute in form_attributes %}
-        <div class="form-check custom-checkbox">
-          <input class="form-check-input" type="checkbox" id="attribute{{ attribute.id }}"
-                  name="attribute_{{ attribute.id }}"
-                  value="{{ attribute.id }}"
-                  {% if attribute.display_in_gallery %}checked{% endif %}>
-          <label class="form-check-label" for="attribute{{ attribute.id }}">
-              {{ attribute.attribute.name }}
-          </label>
-      </div>
+          <div class="form-check custom-checkbox">
+            <input class="form-check-input" type="checkbox" id="attribute{{ attribute.id }}"
+                    name="attribute_{{ attribute.id }}"
+                    value="{{ attribute.id }}"
+                    {% if attribute.zobrazit_v_galerii %}checked{% endif %}>
+            <label class="form-check-label" for="attribute{{ attribute.id }}">
+                {{ attribute.atribut.nazov }}
+            </label>
+        </div>
       
         {% endfor %}
         {% endif %}
@@ -53,7 +53,7 @@
 
     <!-- Submit Button -->
     <button type="submit" class="btn btn-success mt-2">
-      {% if gallery %}Update Gallery{% else %}Create Gallery{% endif %}
+      {% if gallery %}Aktualizuj Galériu{% else %}Vytvor Galériu{% endif %}
     </button>
   </form>
 </div>
@@ -117,7 +117,7 @@
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="attribute${attr.id}" name="attribute_${attr.id}" value="${attr.id}" ${checked}>
                         <label class="form-check-label" for="attribute${attr.id}">
-                            ${attr.name}
+                            ${attr.nazov} <!-- name -->
                         </label>
                     </div>`;
                 attributesContainer.innerHTML += attributeRow;

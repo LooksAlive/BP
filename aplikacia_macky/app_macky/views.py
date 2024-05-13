@@ -31,9 +31,10 @@ from django.db.models.functions import TruncDate
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 
+
 def index(request):
     # Fetch recent records
-    recent_records = Record.objects.order_by('-created_at')[:6]
+    recent_records = Zaznam.objects.order_by('-vytvoreny')[:6]
     
     end_date = datetime.now()
     start_date = end_date - timedelta(days=30)  # Display data for the last 30 days
@@ -44,10 +45,10 @@ def index(request):
     
     current_date = start_date
     while current_date <= end_date:
-        num_records = Record.objects.filter(created_at__date=current_date).count()
+        num_records = Zaznam.objects.filter(vytvoreny__date=current_date).count()
         num_users = User.objects.filter(date_joined__date=current_date).count()
-        num_forms = Form.objects.filter(created_at__date=current_date).count()
-        num_galleries = Gallery.objects.filter(created_at__date=current_date).count()
+        num_forms = Formular.objects.filter(vytvoreny__date=current_date).count()
+        num_galleries = Galeria.objects.filter(vytvoreny__date=current_date).count()
 
         data.append([num_records, num_users, num_forms, num_galleries])
         dates.append(current_date.strftime('%Y-%m-%d'))
@@ -57,79 +58,80 @@ def index(request):
     # Aggregate records by date (count records created per day)
     records_per_day = (
         recent_records
-        .values('created_at')
+        .values('vytvoreny')
         .annotate(num_records=models.Count('id'))
     )
 
-    # For each recent record, fetch related FormAttributeData
+    # For each recent record, fetch related Formular_Atribut_Udaje
     recent_records_data = []
     for record in recent_records:
-        form_data = FormAttributeData.objects.filter(record=record)
-        # Collecting only necessary details for display, such as images and attribute values
-        image_attribute = form_data.filter(form_attribute__attribute__type='image_url').first()
+        form_data = Formular_Atribut_Udaje.objects.filter(zaznam=record)
+        # Collecting only necessary details for display, such as images and atribut values
+        image_attribute = form_data.filter(formular_atribut__atribut__typ='obrazok_url').first()
         # Determine if image is available for this record
         image_available = bool(image_attribute)
+        print("image_available: ", image_available)
         
         record_details = {
             'id': record.id,
-            'description': record.description,
-            'thumb_up': Vote.objects.filter(record=record, vote_type="up").count(),
-            'thumb_down': Vote.objects.filter(record=record, vote_type="down").count(),
-            'created_at': record.created_at,
-            'updated_at': record.updated_at,
-            'username': record.user.username if record.user else "Unknown",
+            'description': record.opis,
+            'thumb_up': Hlas.objects.filter(zaznam=record, typ_hlasu="up").count(),
+            'thumb_down': Hlas.objects.filter(zaznam=record, typ_hlasu="down").count(),
+            'vytvoreny': record.vytvoreny,
+            'aktualizovany': record.aktualizovany,
+            'username': record.user.username if record.user else "Neznámy",
             'attributes': [{
-                'name': data.form_attribute.attribute.name,
-                'value': data.value,
-                'type': data.form_attribute.attribute.type,
-                'display_in_gallery': data.form_attribute.display_in_gallery
+                'nazov': data.formular_atribut.atribut.nazov,
+                'hodnota': data.hodnota,
+                'typ': data.formular_atribut.atribut.typ,
+                'zobrazit_v_galerii': data.formular_atribut.zobrazit_v_galerii
             } for data in form_data],
-            'image': form_data.filter(form_attribute__attribute__type='image_url').first().value if form_data.filter(form_attribute__attribute__type='image_url').exists() else None,
+            'image': form_data.filter(formular_atribut__atribut__typ='obrazok_url').first().hodnota if form_data.filter(formular_atribut__atribut__typ='obrazok_url').exists() else None,
             'image_available': image_available  # Include image availability flag
         }
         recent_records_data.append(record_details)
 
     # Fetch galleries to be highlighted
-    featured_galleries = Gallery.objects.order_by('-created_at')[:4]
+    featured_galleries = Galeria.objects.order_by('-vytvoreny')[:4]
     
     gallery_data = []
     for gallery in featured_galleries:
-        # Get the associated form for the gallery
-        form = gallery.form
-        if form:
-            form_name = form.form_name
-            # Get all form attributes marked to be displayed in the gallery
-            attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True)
-            # Get all attribute data entries linked to the selected attributes and the gallery's form
-            attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
-            # Filter attribute data entries for the current gallery's form
+        # Get the associated formular for the gallery
+        formular = gallery.formular
+        if formular:
+            formular_nazov = formular.formular_nazov
+            # Get all formular attributes marked to be displayed in the gallery
+            attributes_to_display = Formular_Atribut.objects.filter(formular=formular, zobrazit_v_galerii=True)
+            # Get all atribut data entries linked to the selected attributes and the gallery's formular
+            attributes_data = Formular_Atribut_Udaje.objects.filter(formular_atribut__in=attributes_to_display)
+            # Filter atribut data entries for the current gallery's formular
             record_attributes = attributes_data
-            # Find the first image URL attribute data entry for the current gallery
-            image_url_attribute = record_attributes.filter(form_attribute__attribute__type='image_url').first()
-            # Get the image URL value if it exists
-            image_url = image_url_attribute.value if image_url_attribute else None
+            # Find the first image URL atribut data entry for the current gallery
+            image_url_attribute = record_attributes.filter(formular_atribut__atribut__typ='obrazok_url').first()
+            # Get the image URL hodnota if it exists
+            obrazok_url = image_url_attribute.hodnota if image_url_attribute else None
         else:
-            form_name = "Unknown Form"
-            image_url = None
+            formular_nazov = "Unknown Form"
+            obrazok_url = None
 
         gallery_info = {
             'id': gallery.id,
-            'name': gallery.gallery_name,
-            'form_name': form_name,
-            'created_at': gallery.created_at.strftime('%Y-%m-%d'),
-            'image_url': image_url
+            'nazov': gallery.galeria_nazov,
+            'formular_nazov': formular_nazov,
+            'vytvoreny': gallery.vytvoreny.strftime('%Y-%m-%d'),
+            'obrazok_url': obrazok_url
         }
         gallery_data.append(gallery_info)
 
 
     # Get counts for statistics
-    num_records = Record.objects.count()
+    num_records = Zaznam.objects.count()
     num_users = User.objects.count()
-    num_galleries = Gallery.objects.count()
-    num_forms = Form.objects.count()
+    num_galleries = Galeria.objects.count()
+    num_forms = Formular.objects.count()
 
     # Prepare chart data
-    chart_labels = [item['created_at'].strftime('%Y-%m-%d') for item in records_per_day]
+    chart_labels = [item['vytvoreny'].strftime('%Y-%m-%d') for item in records_per_day]
     chart_data = [item['num_records'] for item in records_per_day]
 
     # Pass the data to the template
@@ -144,7 +146,7 @@ def index(request):
         'labels': labels,
         'dates': dates,
         'data': json.dumps(data, cls=DjangoJSONEncoder),  # Convert data to JSON
-        'username': request.user.username if request.user.is_authenticated else 'Guest'
+        'username': request.user.username if request.user.is_authenticated else 'Hosť'
     }
 
     return render(request, 'index.html', context)
@@ -171,35 +173,33 @@ def login_view(request):
                 request.session['admin_view'] = True
                 request.session['posudzovateľ'] = False
                 user.is_superuser = True
-                messages.success(request, f"Welcome back, {username}!")
+                messages.success(request, f"Prihlásenie bolo úspešné")
                 return redirect('index')
             elif any(group.name == "posudzovateľ" for group in user_groups):
                     request.session['admin_view'] = False
                     request.session['posudzovateľ'] = True
                     user.is_superuser = False
-                    messages.success(request, f"Welcome back, {username}!")
+                    messages.success(request, f"Prihlásenie bolo úspešné")
                     return redirect('user_galeries')
             elif any(group.name == "prihlásený použivateľ" for group in user_groups):
                     request.session['admin_view'] = False
                     request.session['posudzovateľ'] = False
                     user.is_superuser = False
-                    messages.success(request, f"Welcome back, {username}!")
+                    messages.success(request, f"Prihlásenie bolo úspešné")
                     return redirect('user_forms')
         else:
-            messages.error(request, "Invalid username or password.")
+            messages.error(request, "Nesprávne užívateľské meno alebo heslo.")
 
     return render(request, 'login.html')
 
 def logout_user(request):
     logout(request)
-    messages.success(request, "You Have Been Logged Out...")
+    messages.success(request, "Boli ste odhlásený...")
     request.session["admin_view"] = False
     return redirect('index')
 
 def registration_view(request):
     if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
         email = request.POST.get('email')
@@ -208,22 +208,22 @@ def registration_view(request):
         group = Group.objects.get(name="prihlásený použivateľ")
 
         if password != confirm_password:
-            messages.error(request, "Passwords do not match.")
+            messages.error(request, "Heslá sa nezhodujú.")
             return render(request, 'registration.html')
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Username is already taken.")
+            messages.error(request, "Používateľské meno už je obsadené.")
             return render(request, 'registration.html')
 
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email is already registered.")
+            messages.error(request, "Email už je registrovaný.")
             clear_messages(request)  # Clear messages before redirecting
             return render(request, 'registration.html')
 
-        user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
+        user = User.objects.create_user(username=username, email=email, password=password)
         user.groups.add(group)
         user.save()
-        messages.success(request, "Registration successful. You can now log in.")
+        messages.success(request, "Registrácia úspešná. Teraz sa môžete prihlásiť.")
         return redirect('login')
 
     return render(request, 'registration.html')
@@ -231,124 +231,125 @@ def registration_view(request):
 
 
 
-attribute_types = ['int', 'float', 'str', 'bool', 'image_url', 'date']
-
+attribute_types = ['int', 'float', 'str', 'bool', 'obrazok_url', 'date']
 
 def admin_attributes(request):
-    attributes = Attribute.objects.all()
+    attributes = Atribut.objects.all()
     return render(request, 'admin_attributes.html', {'attributes': attributes, 'attribute_types': attribute_types})
 
 def admin_create_attribute(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        a_type = request.POST.get('type')
+        nazov = request.POST.get('nazov')
+        a_type = request.POST.get('typ')
         
         # Create a new Attribute record
-        attr = Attribute(name=name, type=a_type)
+        attr = Atribut(nazov=nazov, typ=a_type)
         attr.save()
         return redirect('admin_attributes')
     
     # Define attr as an empty instance (you can set default values if needed)
-    attr = Attribute()  # or attr = Attribute(name='', type='')
+    attr = Atribut()  # or attr = Attribute(nazov='', typ='')
 
-    return render(request, 'admin_attributes.html', {'attributes': Attribute.objects.all()})
+    return render(request, 'admin_attributes.html', {'attributes': Atribut.objects.all()})
 
 def admin_delete_attribute(request, attribute_id):
-    attribute = get_object_or_404(Attribute, pk=attribute_id)
+    atribut = get_object_or_404(Atribut, pk=attribute_id)
 
     if request.method == 'POST':
-        attribute.delete()
-        return redirect('admin_attributes')  # Redirect to the attribute list page
+        atribut.delete()
+        return redirect('admin_attributes')  # Redirect to the atribut list page
 
-    return render(request, 'admin_delete_attribute.html', {'attribute': attribute})
+    return render(request, 'admin_delete_attribute.html', {'atribut': atribut})
 
 def admin_edit_attribute(request, attribute_id):
-    attribute = get_object_or_404(Attribute, pk=attribute_id)
+    atribut = get_object_or_404(Atribut, pk=attribute_id)
 
     if request.method == 'GET':
-        # Here, you should render the form for editing the attribute
-        return render(request, 'admin_edit_attribute.html', {'attribute': attribute, 'attribute_types': attribute_types})
+        # Here, you should render the formular for editing the atribut
+        return render(request, 'admin_edit_attribute.html', {'atribut': atribut, 'attribute_types': attribute_types})
 
-    # Handle POST request for updating the attribute
+    # Handle POST request for updating the atribut
     if request.method == 'POST':
-        name = request.POST.get('name')
-        a_type = request.POST.get('type')
+        nazov = request.POST.get('nazov')
+        a_type = request.POST.get('typ')
 
-        attribute.name = name
-        attribute.type = a_type
-        attribute.save()
+        atribut.nazov = nazov
+        atribut.typ = a_type
+        atribut.save()
 
-        return redirect('admin_attributes')  # Redirect to the attribute list page
+        return redirect('admin_attributes')  # Redirect to the atribut list page
 
 
 
 
 def admin_forms(request):
-    forms = Form.objects.all()
+    forms = Formular.objects.all()
     return render(request, 'admin_forms.html', {'forms': forms})
 
 def admin_create_form(request, form_id=None):
     # Determine if this is a create or edit action
     if form_id:
-        # We are editing an existing form
-        form = get_object_or_404(Form, pk=form_id)
-        form_attributes = FormAttribute.objects.filter(form=form)
+        # We are editing an existing formular
+        formular = get_object_or_404(Formular, pk=form_id)
+        form_attributes = Formular_Atribut.objects.filter(formular=formular)
     else:
-        # We are creating a new form
-        form = Form()
+        # We are creating a new formular
+        formular = Formular()
         form_attributes = None
     
     if request.method == 'POST':
-        form_name = request.POST.get('form_name')
-        form.form_name = form_name
-        form.save()
+        formular_nazov = request.POST.get('formular_nazov')
+        formular.formular_nazov = formular_nazov
+        formular.save()
         
         # If editing, remove existing FormAttributes
         if form_id:
-            FormAttribute.objects.filter(form=form).delete()
+            Formular_Atribut.objects.filter(formular=formular).delete()
         
-        # Create FormAttributes for the new or updated form
-        for key, value in request.POST.items():
+        # Create FormAttributes for the new or updated formular
+        for key, hodnota in request.POST.items():
             if key.startswith('attribute_'):
-                attribute_id = value
+                attribute_id = hodnota
                 req = request.POST.get('attr_req_'+str(attribute_id))
+                print("req: ", req)
                 if not req:
                     req = False
                 else:
                     req = True
                 try:
-                    attribute = Attribute.objects.get(id=int(attribute_id))
-                    FormAttribute.objects.create(
-                        form=form,
-                        attribute=attribute,
-                        required=req
+                    atribut = Atribut.objects.get(id=int(attribute_id))
+                    Formular_Atribut.objects.create(
+                        formular=formular,
+                        atribut=atribut,
+                        povinny=req
                     )
-                except (Attribute.DoesNotExist, ValueError):
-                    print("ERROR ", attribute)
+                except (Atribut.DoesNotExist, ValueError):
+                    print("ERROR ", atribut)
                     pass
         # Redirect after POST
         return redirect('admin_forms')
     
     else:
-        attributes = Attribute.objects.all()
+        attributes = Atribut.objects.all()
         return render(request, 'admin_create_form.html', {
-            'form': form,
+            'formular': formular,
             'form_id': form_id,
             'attributes': attributes,
             'form_attributes': form_attributes,
         })
 
 def admin_delete_form(request, form_id):
-    # Handle form deletion logic
-    form = Form.objects.get(id=form_id)
-    records = Record.objects.filter(form=form)
+    # Handle formular deletion logic
+    f = get_object_or_404(Formular, id=form_id)
+    records = Zaznam.objects.filter(formular=f)
     # we need to remove image as well, database delete removes database data, images are stored statically in /media/.
     # user_record_delete removes images as well
     for record in records:
         user_record_delete(request, record.id)
-    form.delete()
-    messages.success(request, f'Form {form.form_name} was deleted successfully.')
-    return redirect('admin_forms')  # Redirect to the form list page
+    
+    f.delete()
+    messages.success(request, f'Formulár {f.formular_nazov} bol vymazaný úspešne.')
+    return redirect('admin_forms')  # Redirect to the formular list page
 
 
 def admin_users(request):
@@ -358,14 +359,12 @@ def admin_users(request):
 
 def admin_create_user(request):
     if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
         email = request.POST.get('email')
         username = request.POST.get('username')
         password = request.POST.get('password')
-        group_name = request.POST.get('group')  # Get selected group name from form
+        group_name = request.POST.get('group')  # Get selected group nazov from formular
 
-        # Validate group name and retrieve corresponding Group object
+        # Validate group nazov and retrieve corresponding Group object
         try:
             group = Group.objects.get(name=group_name)
         except Group.DoesNotExist:
@@ -386,7 +385,7 @@ def admin_create_user(request):
 
         # Create and save the new user
         try:
-            user2 = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password)
+            user2 = User.objects.create_user(username=username, email=email, password=password)
             user2.groups.add(group)  # Add user to the selected group
             messages.success(request, "User created successfully.")
             return redirect('admin_users')
@@ -404,8 +403,6 @@ def admin_edit_user(request, user_id):
 
     if request.method == 'POST':
         # user1 details update
-        user1.first_name = request.POST.get('first_name')
-        user1.last_name = request.POST.get('last_name')
         user1.email = request.POST.get('email')
         user1.username = request.POST.get('username')
         # FIXME: 
@@ -438,7 +435,7 @@ def admin_delete_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
 
     if request.method == 'POST':
-        records = Record.objects.filter(user=user)
+        records = Zaznam.objects.filter(user=user)
         for record in records:
             user_record_delete(request, record.id)
         user.delete()
@@ -451,47 +448,8 @@ def admin_delete_user(request, user_id):
 
 
 
-'''
-# for admin make a view for all records with pagination and other stuff like in other functions
-def admin_records(request):
-    records = Record.objects.all().order_by('-created_at')
-    paginator = Paginator(records, 20)  # Show 20 records per page
-
-    page = request.GET.get('page')
-    records = paginator.get_page(page)
-
-    records_with_details = []
-
-    for record in records:
-        # Fetch the first FormAttributeData instance related to the record to determine the form
-        first_attribute_data = FormAttributeData.objects.filter(record=record).first()
-        form = first_attribute_data.form_attribute.form if first_attribute_data else None
-        form_name = form.form_name if form else "Unknown Form"
-
-        # Check if there is a gallery associated with the form
-        gallery = Gallery.objects.filter(form=form).first() if form else None
-        gallery_name = gallery.gallery_name if gallery else None
-
-        attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True) # TODO: when in user records could be false
-        # Get all FormAttributeData entries linked to the selected attributes
-        attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
-        record_attributes = attributes_data.filter(record_id=record.id)
-        image_url = record_attributes.filter(form_attribute__attribute__type='image_url').first()
-        image_url = image_url.value if image_url else None
-
-        records_with_details.append({
-            'record': record,
-            'image' : image_url, 
-            'form_name': form_name,
-            'gallery_name': gallery_name, 
-            'description' : record.description
-        })
-
-    return render(request, 'admin_records.html', {'records_with_details': records_with_details})
-'''
-
 def admin_galeries(request):
-    galleries = Gallery.objects.all().order_by('-created_at')
+    galleries = Galeria.objects.all().order_by('-vytvoreny')
     return render(request, 'admin_galeries.html', {'galleries': galleries})
 
 
@@ -499,24 +457,24 @@ def admin_create_galery(request, gallery_id=None):
     # If editing an existing gallery, we need to fetch it and its attributes
     g_name = ""
     if gallery_id:
-        gallery = get_object_or_404(Gallery, pk=gallery_id)
-        selected_form = gallery.form
-        form_attributes = FormAttribute.objects.filter(form=selected_form).order_by('id')
-        g_name = gallery.gallery_name
+        gallery = get_object_or_404(Galeria, pk=gallery_id)
+        selected_form = gallery.formular
+        form_attributes = Formular_Atribut.objects.filter(formular=selected_form).order_by('id')
+        g_name = gallery.galeria_nazov
     else:
         gallery = None
         selected_form = None
         form_attributes = None
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'GET':
-        # AJAX request to get attributes for a specific form
+        # AJAX request to get attributes for a specific formular
         form_id = request.GET.get('form_id')
-        attributes = FormAttribute.objects.filter(form=form_id).order_by('id')
+        attributes = Formular_Atribut.objects.filter(formular=form_id).order_by('id')
         attributes_data = [
             {
                 'id': attr.id,
-                'name': attr.attribute.name,
-                'display_in_gallery': attr.display_in_gallery
+                'nazov': attr.atribut.nazov,
+                'zobrazit_v_galerii': attr.zobrazit_v_galerii
             }
             for attr in attributes
         ]
@@ -525,47 +483,47 @@ def admin_create_galery(request, gallery_id=None):
 
     if request.method == 'POST':
         form_id = request.POST.get('form')
-        g_name = request.POST.get('gallery_name')
+        g_name = request.POST.get('galeria_nazov')
         try:
-            form = Form.objects.get(id=form_id)
-        except Form.DoesNotExist:
-            # error, no form for gallery is set
-            messages.error(request, 'A form for the gallery was not found.')    
+            formular = Formular.objects.get(id=form_id)
+        except Formular.DoesNotExist:
+            # error, no formular for gallery is set
+            messages.error(request, 'A formular for the gallery was not found.')    
             return redirect('admin_galeries')
         
         # If we're creating a new gallery, instantiate it
         if not gallery_id:
-            gallery = Gallery(form=form)
+            gallery = Galeria(formular=formular)
         
-        form.included_in_gallery = True
-        form.save()
+        formular.zobrazit_v_galerii = True
+        formular.save()
         
-        gallery.gallery_name = g_name
+        gallery.galeria_nazov = g_name
 
         gallery.save()
 
-        # Update the display_in_gallery settings for each attribute
+        # Update the zobrazit_v_galerii settings for each atribut
         # We reset all to False first, then set the selected ones to True
-        FormAttribute.objects.filter(form=form).update(display_in_gallery=False)
+        Formular_Atribut.objects.filter(formular=formular).update(zobrazit_v_galerii=False)
         # TODO filter, fix
-        for key, value in request.POST.items():
+        for key, hodnota in request.POST.items():
             if key.startswith('attribute_'):
-                #print(key, value, "--------------------------------------------------------------")
-                attr_id = value
-                FormAttribute.objects.filter(id=attr_id, form=form).update(display_in_gallery=True)
+                #print(key, hodnota, "--------------------------------------------------------------")
+                attr_id = hodnota
+                Formular_Atribut.objects.filter(id=attr_id, formular=formular).update(zobrazit_v_galerii=True)
 
         if gallery_id:
-            messages.success(request, 'Gallery has been updated successfully.')
+            messages.success(request, 'Galeria has been updated successfully.')
         else:
-            messages.success(request, 'Gallery has been created successfully.')
+            messages.success(request, 'Galeria has been created successfully.')
             
         return redirect('admin_galeries')
 
-    # If it's a GET request, we render the page with the form selection
+    # If it's a GET request, we render the page with the formular selection
     if not g_name:
         if selected_form:
-            g_name = selected_form.form_name
-    forms = Form.objects.filter(included_in_gallery=False)
+            g_name = selected_form.formular_nazov
+    forms = Formular.objects.filter(zobrazit_v_galerii=False)
     #print("forms: ", forms, "\n")
     #print("selected_form: ", selected_form, "\n")
     #print("gallery_id: ", gallery_id, "\n")
@@ -577,61 +535,62 @@ def admin_create_galery(request, gallery_id=None):
         'selected_form': selected_form,
         'forms': forms,
         'form_attributes': form_attributes,
-        'gallery_name' : g_name
+        'galeria_nazov' : g_name
     })
     
     
 @require_POST  # Ensure this view can only be accessed via POST method for security
 def admin_delete_galery(request, gallery_id):
-    gallery = get_object_or_404(Gallery, pk=gallery_id)
+    gallery = get_object_or_404(Galeria, pk=gallery_id)
     
-    f = gallery.form
-    f.included_in_gallery = False
+    f = gallery.formular
+    f.zobrazit_v_galerii = False
     f.save()
     
-    attrs = FormAttribute.objects.filter(display_in_gallery=True, form=f)
+    attrs = Formular_Atribut.objects.filter(zobrazit_v_galerii=True, formular=f)
     for attr in attrs:
-        attr.display_in_gallery = False
+        attr.zobrazit_v_galerii = False
         attr.save()
     
     gallery.delete()
-    messages.success(request, 'Gallery deleted successfully!')
+    messages.success(request, 'Galeria deleted successfully!')
     return redirect('admin_galeries')
 
 @login_required
 def admin_all_records(request):
     records_with_details = []
 
-    records = Record.objects.all()
+    records = Zaznam.objects.all()
     for record in records:
         if record.user == None:
             print("ERROR, rec not exists")
             continue
-        # Fetch the first FormAttributeData instance related to the record to determine the form
-        first_attribute_data = FormAttributeData.objects.filter(record=record).first()
-        form = first_attribute_data.form_attribute.form if first_attribute_data else None
-        form_name = form.form_name if form else "Unknown Form"
+        # Fetch the first Formular_Atribut_Udaje instance related to the record to determine the formular
+        first_attribute_data = Formular_Atribut_Udaje.objects.filter(zaznam=record).first()
+        formular = first_attribute_data.formular_atribut.formular if first_attribute_data else None
+        formular_nazov = None
+        if formular: formular_nazov = formular.formular_nazov
 
-        # Check if there is a gallery associated with the form
-        gallery = Gallery.objects.filter(form=form).first() if form else None
-        gallery_name = gallery.gallery_name if gallery else None
+        # Check if there is a gallery associated with the formular
+        gallery = Galeria.objects.filter(formular=formular).first() if formular else None
+        galeria_nazov = gallery.galeria_nazov if gallery else None
         
-        attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True)
+        attributes_to_display = Formular_Atribut.objects.filter(formular=formular, zobrazit_v_galerii=True)
         if not attributes_to_display:
-            attributes_to_display = FormAttribute.objects.filter(form=form)
-        # Get all FormAttributeData entries linked to the selected attributes
-        attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
-        record_attributes = attributes_data.filter(record_id=record.id)
-        image_url = record_attributes.filter(form_attribute__attribute__type='image_url').first()
-        #print("image url: ", image_url, "\n")
-        image_url = image_url.value if image_url else None
+            attributes_to_display = Formular_Atribut.objects.filter(formular=formular)
+        # Get all Formular_Atribut_Udaje entries linked to the selected attributes
+        attributes_data = Formular_Atribut_Udaje.objects.filter(formular_atribut__in=attributes_to_display)
+        record_attributes = attributes_data.filter(zaznam_id=record.id)
+        obrazok_url = record_attributes.filter(formular_atribut__atribut__typ='obrazok_url').first()
+        #print("image url: ", obrazok_url, "\n")
+        obrazok_url = obrazok_url.hodnota if obrazok_url else None
         
         records_with_details.append({
             'record': record,
-            'image' : image_url, 
-            'form_name': form_name,
-            'gallery_name': gallery_name, 
-            'description' : record.description
+            'image' : obrazok_url, 
+            'formular_nazov': formular_nazov,
+            'galeria_nazov': galeria_nazov, 
+            'description' : record.opis
         })
         
     # Paginate the gallery data
@@ -647,27 +606,27 @@ def admin_all_records(request):
 
 
 def user_collection_formular(request):
-    attributes = Attribute.objects.all()
+    attributes = Atribut.objects.all()
     return render(request, 'user_collection_formular.html', {'attributes': attributes})
 
 
 def user_forms(request):
-    forms = Form.objects.all()
+    forms = Formular.objects.all()
     return render(request, 'user_forms.html', {'forms': forms})
 
 
 
 @login_required
 def user_forms_view(request, form_id):
-    form_data = FormAttribute.objects.filter(form=form_id)
-    form_name = get_object_or_404(Form, id=form_id).form_name
+    form_data = Formular_Atribut.objects.filter(formular=form_id)
+    formular_nazov = get_object_or_404(Formular, id=form_id).formular_nazov
     form_attrs = []
     for x in form_data:
-        form_attrs.append({'attr': x.attribute, 'req': x.required})
-    #form_attrs = [attr.attribute for attr, req in form_data]
+        form_attrs.append({'attr': x.atribut, 'req': x.povinny})
+    #form_attrs = [attr.atribut for attr, req in form_data]
     return render(request, 'user_forms_view.html', {
         'form_attrs': form_attrs,
-        'form_name': form_name,
+        'formular_nazov': formular_nazov,
         'form_id': form_id
     })
 
@@ -675,67 +634,70 @@ def user_forms_view(request, form_id):
 def user_forms_record_add(request, form_id):
     if request.method == 'POST':
         user = request.user
-        record = Record.objects.create(user=user)
-        record.form = Form.objects.get(id=form_id)
+        record = Zaznam.objects.create(user=user)
+        record.formular = Formular.objects.get(id=form_id)
         
         # description
         desc = request.POST.get('description', '')
         if desc:
-            record.description = desc
+            record.opis = desc
             record.save()
                 
         # Process text fields
-        for key, value in request.POST.items():
+        for key, hodnota in request.POST.items():
             if key.startswith("attr_"):
                 attr_id = key.split("_")[1]
-                attribute = get_object_or_404(Attribute, id=attr_id)
-                # here check for attribute.type and given string to test correct type e.g. int(...)
+                atribut = get_object_or_404(Atribut, id=attr_id)
+                # here check for atribut.typ and given string to test correct typ e.g. int(...)
                 
-                if attribute.type != "image_url":  # Only process non-image fields here
-                    
-                    if attribute.type == "date" and not re.match(r"^\d{4}-\d{2}-\d{2}$", value):
-                        messages.error(request, f"The value for '{attribute.name}' must be in YYYY-MM-DD format.")
-                        return redirect('user_forms_view', form_id=form_id)
-                    if attribute.type == "bool" and value.lower() not in ["yes", "no", "áno", "nie"]:
-                        messages.error(request, f"The value for '{attribute.name}' must be either 'yes', 'no', 'áno' or 'nie'.")
-                        return redirect('user_forms_view', form_id=form_id)
+                if atribut.typ != "obrazok_url":  # Only process non-image fields here
+            
+                    if atribut.typ == "date" and not re.match(r"^\d{4}-\d{2}-\d{2}$", hodnota):
+                        if Formular_Atribut.objects.get(atribut=atribut, formular_id=form_id).povinny:
+                            messages.error(request, f"Hodnota pre '{atribut.nazov}' musí mať formát: YYYY-MM-DD.")
+                            return redirect('user_forms_view', form_id=form_id)
+                    if atribut.typ == "bool" and hodnota.lower() not in ["áno", "nie"]:
+                        if Formular_Atribut.objects.get(atribut=atribut, formular_id=form_id).povinny:
+                            messages.error(request, f"Hodnota pre'{atribut.nazov}' musí byť: 'áno' or 'nie'.")
+                            return redirect('user_forms_view', form_id=form_id)
 
-                    if attribute.type == "int" and not value.isdigit():
-                        messages.error(request, f"The value for '{attribute.name}' must be an integer.")
-                        return redirect('user_forms_view', form_id=form_id)
+                    if atribut.typ == "int" and not hodnota.isdigit():
+                        if Formular_Atribut.objects.get(atribut=atribut, formular_id=form_id).povinny:
+                            messages.error(request, f"Hodnota pre '{atribut.nazov}' musí byť: integer.")
+                            return redirect('user_forms_view', form_id=form_id)
                         
-                    form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)
-                    FormAttributeData.objects.create(record=record, form_attribute=form_attr, value=value)
+                    form_attr = Formular_Atribut.objects.get(atribut=atribut, formular_id=form_id)
+                    Formular_Atribut_Udaje.objects.create(zaznam=record, formular_atribut=form_attr, hodnota=hodnota)
                 
         # Process file fields (images)
         added_image = False
         for key, image_file in request.FILES.items():
             if key.startswith("attr_"):
                 attr_id = key.split("_")[1]
-                attribute = get_object_or_404(Attribute, id=attr_id)
-                if attribute.type == "image_url":
-                    form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)                        
+                atribut = get_object_or_404(Atribut, id=attr_id)
+                if atribut.typ == "obrazok_url":
+                    form_attr = Formular_Atribut.objects.get(atribut=atribut, formular_id=form_id)                        
                     fs = FileSystemStorage(location=settings.MEDIA_ROOT) # pridane...
-                    filename = fs.save(image_file.name, image_file)
-                    image_url = fs.url(filename)
-                    FormAttributeData.objects.create(record=record, form_attribute=form_attr, value=image_url)
+                    filename = fs.save(image_file, image_file)
+                    obrazok_url = fs.url(filename)
+                    Formular_Atribut_Udaje.objects.create(zaznam=record, formular_atribut=form_attr, hodnota=obrazok_url)
                     added_image = True
-                    #logger.info(f"Uploaded file: {image_file.name}")
-                    #logger.info(f"File URL: {image_url}")
+                    #logger.info(f"Uploaded file: {image_file.nazov}")
+                    #logger.info(f"File URL: {obrazok_url}")
 
         if not added_image:
             try:
-                attribute = Attribute.objects.get(type="image_url")
-                form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)
-                #print("------------------no files, but image_url\n")
-                FormAttributeData.objects.create(record=record, form_attribute=form_attr, value="")
-            except FormAttribute.DoesNotExist:
+                atribut = Atribut.objects.get(typ="obrazok_url")
+                form_attr = Formular_Atribut.objects.get(atribut=atribut, formular_id=form_id)
+                #print("------------------no files, but obrazok_url\n")
+                Formular_Atribut_Udaje.objects.create(zaznam=record, formular_atribut=form_attr, hodnota="")
+            except Formular_Atribut.DoesNotExist:
                 pass    # this is OK
         # Process comment
         
         comment = request.POST.get('comment', '')
         if comment:
-            RecordComment.objects.create(user=user, record=record, comment=comment)
+            Zaznam_Komentar.objects.create(user=user, zaznam=record, komentar=comment)
     
     return redirect("user_forms")
 
@@ -746,33 +708,33 @@ def user_forms_record_add(request, form_id):
 def user_records(request):
     records_with_details = []
 
-    records = Record.objects.filter(user=request.user)
+    records = Zaznam.objects.filter(user=request.user)
     for record in records:
-        # Fetch the first FormAttributeData instance related to the record to determine the form
-        first_attribute_data = FormAttributeData.objects.filter(record=record).first()
-        form = first_attribute_data.form_attribute.form if first_attribute_data else None
-        form_name = form.form_name if form else "Unknown Form"
+        # Fetch the first Formular_Atribut_Udaje instance related to the record to determine the formular
+        first_attribute_data = Formular_Atribut_Udaje.objects.filter(zaznam=record).first()
+        formular = first_attribute_data.formular_atribut.formular if first_attribute_data else None
+        formular_nazov = formular.formular_nazov if formular else "Unknown Form"
 
-        # Check if there is a gallery associated with the form
-        gallery = Gallery.objects.filter(form=form).first() if form else None
-        gallery_name = gallery.gallery_name if gallery else None
+        # Check if there is a gallery associated with the formular
+        gallery = Galeria.objects.filter(formular=formular).first() if formular else None
+        galeria_nazov = gallery.galeria_nazov if gallery else None
         
-        attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True)
+        attributes_to_display = Formular_Atribut.objects.filter(formular=formular, zobrazit_v_galerii=True)
         if not attributes_to_display:
-            attributes_to_display = FormAttribute.objects.filter(form=form)
-        #attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True) # TODO: when in user records could be false
-        # Get all FormAttributeData entries linked to the selected attributes
-        attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
-        record_attributes = attributes_data.filter(record_id=record.id)
-        image_url = record_attributes.filter(form_attribute__attribute__type='image_url').first()
-        image_url = image_url.value if image_url else None
+            attributes_to_display = Formular_Atribut.objects.filter(formular=formular)
+        #attributes_to_display = FormAttribute.objects.filter(formular=formular, zobrazit_v_galerii=True) # TODO: when in user records could be false
+        # Get all Formular_Atribut_Udaje entries linked to the selected attributes
+        attributes_data = Formular_Atribut_Udaje.objects.filter(formular_atribut__in=attributes_to_display)
+        record_attributes = attributes_data.filter(zaznam_id=record.id)
+        obrazok_url = record_attributes.filter(formular_atribut__atribut__typ='obrazok_url').first()
+        obrazok_url = obrazok_url.hodnota if obrazok_url else None
         
         records_with_details.append({
             'record': record,
-            'image' : image_url, 
-            'form_name': form_name,
-            'gallery_name': gallery_name, 
-            'description' : record.description
+            'image' : obrazok_url, 
+            'formular_nazov': formular_nazov,
+            'galeria_nazov': galeria_nazov, 
+            'description' : record.opis
         })
         
     # Paginate the gallery data
@@ -785,12 +747,12 @@ def user_records(request):
 
 @login_required
 def user_record_delete(request, record_id):
-    record = get_object_or_404(Record, id=record_id) #, user=request.user
+    record = get_object_or_404(Zaznam, id=record_id) #, user=request.user
 
     # Find and delete the image file associated with the record
-    image_attribute_data = FormAttributeData.objects.filter(record=record, form_attribute__attribute__type='image_url')
+    image_attribute_data = Formular_Atribut_Udaje.objects.filter(zaznam=record, formular_atribut__atribut__typ='obrazok_url')
     for image_data in image_attribute_data:
-        image_path = image_data.value
+        image_path = image_data.hodnota
         if image_path:
             # Remove the leading '/media' from the image path
             if image_path.startswith('/media'):
@@ -800,7 +762,7 @@ def user_record_delete(request, record_id):
                 os.remove(full_image_path)
 
     record.delete()
-    messages.success(request, 'Record deleted successfully.')
+    messages.success(request, 'Zaznam deleted successfully.')
     if request.session['admin_view'] == True:
         return redirect('admin_all_records')
     return redirect('user_records')
@@ -809,28 +771,28 @@ def user_record_delete(request, record_id):
 
 def user_record_detail(request, record_id, for_user):
     if for_user == 1:
-        record = get_object_or_404(Record, pk=record_id, user=request.user)
+        record = get_object_or_404(Zaznam, pk=record_id, user=request.user)
     else:
-        record = get_object_or_404(Record, pk=record_id)
+        record = get_object_or_404(Zaznam, pk=record_id)
         
     if record.user == request.user: # request.user.is_authenticated or 
         for_user = 1
     
-    fa = FormAttributeData.objects.filter(record=record)
-    # filter which are display_in_gallery
+    fa = Formular_Atribut_Udaje.objects.filter(zaznam=record)
+    # filter which are zobrazit_v_galerii
     form_attributes = []
     # helper to get all attributes
-    attributes_to_display = FormAttribute.objects.filter(form=record.form, display_in_gallery=True)
+    attributes_to_display = Formular_Atribut.objects.filter(formular=record.formular, zobrazit_v_galerii=True)
 
     for f in fa:
         if not attributes_to_display:
             form_attributes.append(f)
-        elif f.form_attribute.display_in_gallery == True:
+        elif f.formular_atribut.zobrazit_v_galerii == True:
                 form_attributes.append(f)
         else:
             pass
             #print("NO\n")
-    record_comments = RecordComment.objects.filter(record=record).order_by('updated_at')
+    record_comments = Zaznam_Komentar.objects.filter(zaznam=record).order_by('vytvoreny')
 
     return render(request, 'user_record_detail.html', {
         'record': record,
@@ -844,49 +806,53 @@ import re
 
 def user_record_update(request, record_id, for_user):
     #clear_messages(request)
-    record = get_object_or_404(Record, pk=record_id)
+    record = get_object_or_404(Zaznam, pk=record_id)
 
     
     if request.method == 'POST':
-        for key, value in request.POST.items():
+        for key, hodnota in request.POST.items():
             if key.startswith('attribute_'):
                 attr_id = key.split('_')[1]
-                attribute_data = FormAttributeData.objects.get(id=attr_id)
-                # get actual attribute and its type:
-                attribute = attribute_data.form_attribute.attribute
-                # check the type correctness:
-                if attribute.type == "date" and not re.match(r"^\d{4}-\d{2}-\d{2}$", value):
-                    messages.error(request, f"The value for '{attribute.name}' must be in YYYY-MM-DD format.")
-                    return redirect('user_record_detail', record_id=record_id, for_user=for_user)
-                if attribute.type == "bool" and value.lower() not in ["yes", "no", "áno", "nie"]:
-                    messages.error(request, f"The value for '{attribute.name}' must be either 'yes', 'no', 'áno' or 'nie'.")
-                    return redirect('user_record_detail', record_id=record_id, for_user=for_user)
+                attribute_data = Formular_Atribut_Udaje.objects.get(id=attr_id)
+                # get actual atribut and its typ:
+                atribut = attribute_data.formular_atribut.atribut
+                # check the typ correctness:
+                if atribut.typ == "date" and not re.match(r"^\d{4}-\d{2}-\d{2}$", hodnota):
+                    # povinny
+                    if attribute_data.formular_atribut.povinny == True:
+                        messages.error(request, f"Hodnota pre '{atribut.nazov}' musí mať formát:  YYYY-MM-DD.")
+                        return redirect('user_record_detail', record_id=record_id, for_user=for_user)
+                if atribut.typ == "bool" and hodnota.lower() not in ["áno", "nie"]:
+                    if attribute_data.formular_atribut.povinny == True:
+                        messages.error(request, f"odnota pre '{atribut.nazov}' musí byť: 'áno' alebo 'nie'.")
+                        return redirect('user_record_detail', record_id=record_id, for_user=for_user)
 
-                if attribute.type == "int" and not value.isdigit():
-                    messages.error(request, f"The value for '{attribute.name}' must be an integer.")
-                    return redirect('user_record_detail', record_id=record_id, for_user=for_user)
+                if atribut.typ == "int" and not hodnota.isdigit():
+                    if attribute_data.formular_atribut.povinny == True:
+                        messages.error(request, f"odnota pre '{atribut.nazov}' musí byt: integer.")
+                        return redirect('user_record_detail', record_id=record_id, for_user=for_user)
                 
-                attribute_data.value = value
+                attribute_data.hodnota = hodnota
                 attribute_data.save()
                 
-        for key, value in request.POST.items():
+        for key, hodnota in request.POST.items():
             if key.startswith('comment_'):
                 comment_id = key.split('_')[1]
-                comment_data = RecordComment.objects.get(id=comment_id)
-                comment_data.comment = value
+                comment_data = Zaznam_Komentar.objects.get(id=comment_id)
+                comment_data.komentar = hodnota
                 comment_data.save()
         
         for key, image_file in request.FILES.items():
             if key.startswith("attrnew_"):
                 attr_id = key.split("_")[1]
-                attribute = get_object_or_404(Attribute, id=attr_id)
+                atribut = get_object_or_404(Atribut, id=attr_id)
                 
-                if attribute.type == "image_url":
-                    print("record.form: ", record.form)
-                    form_attr = FormAttribute.objects.get(attribute=attribute, form=record.form)
-                    attr_data, _ = FormAttributeData.objects.get_or_create(record=record, form_attribute=form_attr)
+                if atribut.typ == "obrazok_url":
+                    print("record.formular: ", record.formular)
+                    form_attr = Formular_Atribut.objects.get(atribut=atribut, formular=record.formular)
+                    attr_data, _ = Formular_Atribut_Udaje.objects.get_or_create(zaznam=record, formular_atribut=form_attr)
                     
-                    # Get file name from the uploaded file
+                    # Get file nazov from the uploaded file
                     file_name = Path(image_file.name).name
                     
                     # Save the new image file to the file system within MEDIA_ROOT
@@ -894,9 +860,9 @@ def user_record_update(request, record_id, for_user):
                     new_image_path = fs.save(file_name, image_file)
                     new_image_url = fs.url(new_image_path)
 
-                    # Update the FormAttributeData with the new image URL
-                    if attr_data.value:
-                        image_path = attr_data.value
+                    # Update the Formular_Atribut_Udaje with the new image URL
+                    if attr_data.hodnota:
+                        image_path = attr_data.hodnota
                         if image_path:
                             # Remove the leading '/media' from the image path
                             if image_path.startswith('/media'):
@@ -905,27 +871,28 @@ def user_record_update(request, record_id, for_user):
                             if os.path.exists(full_image_path):
                                 os.remove(full_image_path)
 
-                    attr_data.value = new_image_url
+                    attr_data.hodnota = new_image_url
                     attr_data.save()
                 
                 
-        messages.success(request, "Record updated successfully.")
+        messages.success(request, "Zaznam bol aktualizovaný.")
         
         descr = request.POST.get('record_description')
         if descr:
-            record.description = descr
+            record.opis = descr
             record.save()
     
         comment = request.POST.get('comment')
         if comment:
-            RecordComment.objects.create(record=record, user=request.user, comment=comment)
-            messages.success(request, 'Your comment has been added.')
+            Zaznam_Komentar.objects.create(zaznam=record, user=request.user, komentar=comment)
+            messages.success(request, 'Váš komentár bol pridaný.')
         
     
         commentU = request.POST.get('commentU')
         if commentU:
-            RecordComment.objects.create(record=record, user=None, comment=commentU, aproved_by_admin=False)
-            messages.success(request, 'Your comment has been added.')
+            """  user = None"""
+            Zaznam_Komentar.objects.create(zaznam=record, user=None, komentar=commentU, povoleny_adminom=False)
+            messages.success(request, 'Váš komentár bol pridaný.')
 
         return redirect('user_record_detail', record_id=record_id, for_user=for_user)
 
@@ -935,51 +902,51 @@ def user_record_update(request, record_id, for_user):
 
 
 def remove_comment(request, comment_id, for_user):
-    comment = get_object_or_404(RecordComment, pk=comment_id)
+    comment = get_object_or_404(Zaznam_Komentar, pk=comment_id)
     #print("------------------------")
     if request.session.get('admin_view', False) or for_user or (request.user.is_authenticated and comment.user == request.user):
         comment.delete()
-        messages.success(request, 'Comment removed successfully.')
-    return redirect('user_record_detail', record_id=comment.record.id, for_user=for_user)
+        messages.success(request, 'Komentár bol úspešne odstránený.')
+    return redirect('user_record_detail', record_id=comment.zaznam.id, for_user=for_user)
 
 def aprove_comment(request, comment_id, for_user):
-    comment = get_object_or_404(RecordComment, pk=comment_id)
-    comment.aproved_by_admin = True
+    comment = get_object_or_404(Zaznam_Komentar, pk=comment_id)
+    comment.povoleny_adminom = True
     comment.save()
-    messages.success(request, 'Comment Approved.')
-    return redirect('user_record_detail', record_id=comment.record.id, for_user=for_user)
+    messages.success(request, 'Komentár schválený.')
+    return redirect('user_record_detail', record_id=comment.zaznam.id, for_user=for_user)
 
 
 
 def user_galeries(request):
     
-    featured_galleries = Gallery.objects.order_by('-created_at')#[:4]
+    featured_galleries = Galeria.objects.order_by('-vytvoreny')#[:4]
     gallery_data = []
     for gallery in featured_galleries:
-        # Get the associated form for the gallery
-        form = gallery.form
-        if form:
-            form_name = form.form_name
-            # Get all form attributes marked to be displayed in the gallery
-            attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True)
-            # Get all attribute data entries linked to the selected attributes and the gallery's form
-            attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
-            # Filter attribute data entries for the current gallery's form
+        # Get the associated formular for the gallery
+        formular = gallery.formular
+        if formular:
+            formular_nazov = formular.formular_nazov
+            # Get all formular attributes marked to be displayed in the gallery
+            attributes_to_display = Formular_Atribut.objects.filter(formular=formular, zobrazit_v_galerii=True)
+            # Get all atribut data entries linked to the selected attributes and the gallery's formular
+            attributes_data = Formular_Atribut_Udaje.objects.filter(formular_atribut__in=attributes_to_display)
+            # Filter atribut data entries for the current gallery's formular
             record_attributes = attributes_data
-            # Find the first image URL attribute data entry for the current gallery
-            image_url_attribute = record_attributes.filter(form_attribute__attribute__type='image_url').first()
-            # Get the image URL value if it exists
-            image_url = image_url_attribute.value if image_url_attribute else None
+            # Find the first image URL atribut data entry for the current gallery
+            image_url_attribute = record_attributes.filter(formular_atribut__atribut__typ='obrazok_url').first()
+            # Get the image URL hodnota if it exists
+            obrazok_url = image_url_attribute.hodnota if image_url_attribute else None
         else:
-            form_name = "Unknown Form"
-            image_url = None
+            formular_nazov = "Unknown Form"
+            obrazok_url = None
 
         gallery_info = {
             'id': gallery.id,
-            'name': gallery.gallery_name,
-            'form_name': form_name,
-            'created_at': gallery.created_at.strftime('%Y-%m-%d'),
-            'image_url': image_url
+            'nazov': gallery.galeria_nazov,
+            'formular_nazov': formular_nazov,
+            'vytvoreny': gallery.vytvoreny.strftime('%Y-%m-%d'),
+            'obrazok_url': obrazok_url
         }
         gallery_data.append(gallery_info)
         
@@ -989,49 +956,49 @@ def user_galeries(request):
     gallery_page = paginator.get_page(page)
     
     
-    #galleries = Gallery.objects.all()
+    #galleries = Galeria.objects.all()
     return render(request, 'user_galery.html', {'gallery_data': gallery_data, 'gallery_page': gallery_page})
 
 
 def user_galery_view(request, gallery_id):
-    gallery = get_object_or_404(Gallery, id=gallery_id)
-    form = gallery.form
+    gallery = get_object_or_404(Galeria, id=gallery_id)
+    formular = gallery.formular
 
     # Get attributes that are marked to display in gallery
-    attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True)
+    attributes_to_display = Formular_Atribut.objects.filter(formular=formular, zobrazit_v_galerii=True)
 
-    # Get all FormAttributeData entries linked to the selected attributes
-    attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
+    # Get all Formular_Atribut_Udaje entries linked to the selected attributes
+    attributes_data = Formular_Atribut_Udaje.objects.filter(formular_atribut__in=attributes_to_display)
 
     # Extracting unique record IDs from attributes_data
-    unique_record_ids = set(attributes_data.values_list('record_id', flat=True))
+    unique_record_ids = set(attributes_data.values_list('zaznam_id', flat=True))
 
     # Preparing data for each unique record
     gallery_data = []
     for record_id in unique_record_ids:
-        record = Record.objects.get(id=record_id)
-        record_attributes = attributes_data.filter(record_id=record_id)
+        record = Zaznam.objects.get(id=record_id)
+        record_attributes = attributes_data.filter(zaznam_id=record_id)
 
         # Extract image URL if available
-        image_url = record_attributes.filter(form_attribute__attribute__type='image_url').first()
-        image_url = image_url.value if image_url else None
+        obrazok_url = record_attributes.filter(formular_atribut__atribut__typ='obrazok_url').first()
+        obrazok_url = obrazok_url.hodnota if obrazok_url else None
 
         # Check the user's existing vote for the record
         user_vote = None
         if request.user.is_authenticated:
-            user_vote_obj = Vote.objects.filter(user=request.user, record=record).first()
+            user_vote_obj = Hlas.objects.filter(user=request.user, zaznam=record).first()
             if user_vote_obj:
-                user_vote = user_vote_obj.vote_type
+                user_vote = user_vote_obj.typ_hlasu
                 
         record_details = {
             'record': record,
-            'thumb_up': Vote.objects.filter(record = record_id, vote_type="up").count(),
-            'thumb_down': Vote.objects.filter(record = record_id, vote_type="down").count(),
-            'created_at': record.created_at,
-            'updated_at': record.updated_at,
+            'thumb_up': Hlas.objects.filter(zaznam = record_id, typ_hlasu="up").count(),
+            'thumb_down': Hlas.objects.filter(zaznam = record_id, typ_hlasu="down").count(),
+            'vytvoreny': record.vytvoreny,
+            'aktualizovany': record.aktualizovany,
             'username': record.user.username if record.user else "Unknown",
-            'attributes': [{'name': attr.form_attribute.attribute.name, 'value': attr.value, 'type' : attr.form_attribute.attribute.type} for attr in record_attributes if attr.form_attribute.attribute.type != 'image_url'],
-            'image': image_url,
+            'attributes': [{'nazov': attr.formular_atribut.atribut.nazov, 'hodnota': attr.hodnota, 'typ' : attr.formular_atribut.atribut.typ} for attr in record_attributes if attr.formular_atribut.atribut.typ != 'obrazok_url'],
+            'image': obrazok_url,
             'user_vote': user_vote
         }
         gallery_data.append(record_details)
@@ -1053,20 +1020,23 @@ def user_galery_view(request, gallery_id):
 
 
 @require_POST
-def vote(request, record_id, vote_type):
-    record = get_object_or_404(Record, pk=record_id)
+def vote(request, record_id, typ_hlasu):
+    #print("------------------------Voting on record", record_id, "with", typ_hlasu)
+    record = get_object_or_404(Zaznam, pk=record_id)
     user = request.user
+    
+    #print("------------------------Voting on record", record_id, "with", typ_hlasu, "for user", user)
 
     # Check if the user has already voted on this record
-    existing_vote = Vote.objects.filter(user=user, record=record).first()
+    existing_vote = Hlas.objects.filter(user=user, zaznam=record).first()
 
     # Update or create the vote
     if existing_vote:
-        if existing_vote.vote_type != vote_type:
-            existing_vote.vote_type = vote_type
+        if existing_vote.typ_hlasu != typ_hlasu:
+            existing_vote.typ_hlasu = typ_hlasu
             existing_vote.save()
     else:
-        Vote.objects.create(user=user, record=record, vote_type=vote_type)
+        Hlas.objects.create(user=user, zaznam=record, typ_hlasu=typ_hlasu)
 
     # Return the updated vote counts
-    return JsonResponse({'thumb_up': Vote.objects.filter(record = record_id, vote_type="up").count(), 'thumb_down': Vote.objects.filter(record = record_id, vote_type="down").count()})
+    return JsonResponse({'thumb_up': Hlas.objects.filter(zaznam = record_id, typ_hlasu="up").count(), 'thumb_down': Hlas.objects.filter(zaznam = record_id, typ_hlasu="down").count()})

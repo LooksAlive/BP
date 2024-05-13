@@ -3,33 +3,32 @@
 {% load static %}
 
 {% block title %}
-{% if form_id %}Edit Form - {{ form.form_name }}{% else %}Create New Form{% endif %}
+{% if form_id %}Úprava Formulára - {{ form.formular_nazov }}{% else %}Create New Form{% endif %}
 {% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-  <h1 class="text-center mb-4">Form Builder</h1>
 
   <div class="row">
     <!-- Left side: Table of attributes -->
     <div class="col-md-6 mb-3">
-      <h2>Attributes</h2>
+      <h2>Atribúty</h2>
       <div class="table-responsive">
         <table class="table table-striped">
           <thead class="thead-dark">
             <tr>
-              <th>Attribute Name</th>
-              <th>Attribute Type</th>
-              <th>Add</th>
+              <th>Názov</th>
+              <th>Typ</th>
+              <th>Pridaj</th>
             </tr>
           </thead>
           <tbody>
             {% for attribute in attributes %}
-            <tr class="attribute-row" data-attribute-id="{{ attribute.id }}" data-attribute-name="{{ attribute.name }}" data-attribute-type="{{ attribute.type }}">
-              <td>{{ attribute.name }}</td>
-              <td>{{ attribute.type }}</td>
+            <tr class="attribute-row" data-attribute-id="{{ attribute.id }}" data-attribute-name="{{ attribute.nazov }}" data-attribute-type="{{ attribute.typ }}">
+              <td>{{ attribute.nazov }}</td>
+              <td>{{ attribute.typ }}</td>
               <td>
-                <button type="button" class="btn btn-primary add-attribute-btn">Add</button>
+                <button type="button" class="btn btn-primary add-attribute-btn">Pridaj</button>
               </td>
             </tr>
             {% endfor %}
@@ -40,41 +39,41 @@
 
     <!-- Right side: Table for the form preview -->
     <div class="col-md-6 mb-3">
-      <h2>Form Preview</h2>
+      <h2>Výsledný formulár</h2>
       <form id="form-builder" method="post" action="{% if form_id %}{% url 'admin_create_form' form_id %}{% else %}{% url 'admin_create_form' %}{% endif %}">
         {% csrf_token %}
         <div class="form-group">
-          <label for="formName">Form Name:</label>
-          <input type="text" id="formName" name="form_name" class="form-control mb-3" value="{{ form.form_name }}" required>
+          <label for="formName">Názov Formulára:</label>
+          <input type="text" id="formName" name="formular_nazov" class="form-control mb-3" value="{{ formular.formular_nazov }}" required>
           <div id="form-preview" class="table-responsive">
             <table class="table table-striped mb-3">
               <thead class="thead-dark">
                 <tr>
-                  <th>Field Name</th>
-                  <th>Field Type</th>
-                  <th>Required</th>
-                  <th>Actions</th>
+                  <th>Názov</th>
+                  <th>Typ</th>
+                  <th>Povinný</th>
+                  <th>Akcie</th>
                 </tr>
               </thead>
               <tbody id="form-fields">
                 {% if form_id %}
                   {% for form_attribute in form_attributes %}
-                    <tr data-attribute-id="{{ form_attribute.attribute.id }}">
-                      <td>{{ form_attribute.attribute.name }}</td>
-                      <td>{{ form_attribute.attribute.type }}</td>
+                    <tr data-attribute-id="{{ form_attribute.atribut.id }}">
+                      <td>{{ form_attribute.atribut.nazov }}</td>
+                      <td>{{ form_attribute.atribut.typ }}</td>
                       <td>
                         <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="attribute{{ form_attribute.attribute.id }}"
-                          name="attr_req_{{ form_attribute.attribute.id }}"
-                          value="{% if form_attribute.required %}checked{% endif %}"
-                          {% if form_attribute.required %}checked="checked"{% endif %}>
+                          <input class="form-check-input" type="checkbox" id="attribute{{ form_attribute.atribut.id }}"
+                          name="attr_req_{{ form_attribute.atribut.id }}"
+                          value="{% if form_attribute.povinny %}checked {% else %} {% endif %}"
+                          {% if form_attribute.povinny %}checked="checked"{% endif %}>
                         </div>
                       </td>
                       <td>
                         <button type="button" class="btn btn-secondary move-up-btn">↑</button>
                         <button type="button" class="btn btn-secondary move-down-btn">↓</button>
-                        <button type="button" class="btn btn-danger remove-attribute-btn" onclick="removeAttribute(this);">Remove</button>
-                        <input type="hidden" name="attribute_{{ form_attribute.attribute.id }}" value="{{ form_attribute.attribute.id }}">
+                        <button type="button" class="btn btn-danger remove-attribute-btn" onclick="removeAttribute(this);">Vymaž</button>
+                        <input type="hidden" name="attribute_{{ form_attribute.atribut.id }}" value="{{ form_attribute.atribut.id }}">
                       </td>
                     </tr>
                   {% endfor %}
@@ -82,7 +81,7 @@
               </tbody>
             </table>
           <input type="hidden" name="form_id" value="{{ form_id }}">
-          <button type="submit" class="btn btn-success mt-2">{% if form_id %}Update Form{% else %}Create Form{% endif %}</button>
+          <button type="submit" class="btn btn-success mt-2">{% if form_id %}Aktualizuj Formulár{% else %}Vytvor Formulár{% endif %}</button>
       </form>
     </div>
   </div>

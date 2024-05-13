@@ -60,7 +60,7 @@ urlpatterns = [
     path('user_galery_view/<int:gallery_id>/', views.user_galery_view, name='user_galery_view'),
     
     
-    path('vote/<int:record_id>/<str:vote_type>/', views.vote, name='vote'),
+    path('vote/<int:record_id>/<str:typ_hlasu>/', views.vote, name='vote'), # typ_hlasu je nejaka premenná, musi byt rovnaka ako atribút ale aj v JS.
 
 ]
 

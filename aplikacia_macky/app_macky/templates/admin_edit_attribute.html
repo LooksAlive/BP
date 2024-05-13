@@ -3,22 +3,22 @@
 {% block title %}Admin Attributes - Clearblooded Animal Species Collection{% endblock %}
 
 {% block content %}
-    <h1 class="mb-4">Update Attribute</h1>
+    <h1 class="mb-4">Úprava Atribútu</h1>
 
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            <label for="name">Attribute Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ attribute.name }}">
+            <label for="name">Názov</label>
+            <input type="text" class="form-control" id="nazov" name="nazov" value="{{ atribut.nazov }}">
         </div>
         <div class="form-group">
-            <select class="form-control" id="type" name="type">
-                {% for type in attribute_types %}
-                <option value="{{ type }}" {% if type == attribute.type %}selected{% endif %}>{{ type }}</option>
+            <select class="form-control" id="typ" name="typ">
+                {% for typ in attribute_types %}
+                <option value="{{ typ }}" {% if typ == atribut.typ %}selected{% endif %}>{{ typ }}</option>
                 {% endfor %}
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Update Attribute</button>
+        <button type="submit" class="btn btn-primary">Aktualizovať Atribút</button>
     </form>
     
 

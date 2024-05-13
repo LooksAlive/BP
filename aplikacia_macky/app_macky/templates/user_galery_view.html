@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Gallery - {{ gallery.form.form_name }}{% endblock %}
+{% block title %}Galéria: {{ gallery.galeria_nazov }}{% endblock %}
 
 {% block content %}
 <style>
@@ -17,24 +17,6 @@
     .modal-img {
         max-width: 100%;
         height: auto;
-    }
-    .card-img-top-show {
-        cursor: pointer;
-        object-fit: contain; /* Preserve aspect ratio and cover the container */
-        height: 200px; /* Maximum height for the image */
-        width: 100%; /* Full width of the card */
-        display: block; /* Ensure the image takes the full card width */
-        margin: 0 auto; /* Center the image horizontally */
-    }
-    .card-body {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 200px; /* Optional: Minimum height for uniformity */
-    }
-    .card {
-        min-height: 400px; /* Minimum height for uniformity */
-        max-height: 900;
     }
     .close {
         position: absolute;
@@ -65,12 +47,6 @@
         display: block;
         margin: 0 auto;
     }
-
-    .card-img-top-show {
-        /* ... existing styles ... */
-        height: 200px; /* Fixed height for image container */
-    }
-
     .card-img-placeholder {
         height: 200px; /* Same height as the image container */
         width: 100%; /* Full width */
@@ -122,49 +98,48 @@
 
 </style>
 
-    <h1 class="mb-5 text-center">{{ gallery.gallery_name }}</h1>
+    <h1 class="mb-5 text-center">{{ gallery.galeria_nazov }}</h1>
 
     <div class="row">
         {% for record in gallery_page %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
                     <div class="card-header">
                         <!--<h5 class="card-title">Record #{{ record.record.id }}</h5> -->
                         {% if record.image %}
-                            <img src="{{ record.image }}" alt="Record Image" class="img-fluid m-2 clickable-image card-img-top-show">
-
+                            <img src="{{ record.image }}" alt="Record Image" class="card-img-placeholder card-img-top">
                         {% else %}
-                            <div class="card-img-placeholder">No Image Available</div>
+                            <div class="card-img-placeholder card-img-top">Žiadny obrázok</div>
                         {% endif %}
+                    </div>
                         <div class="card-body">
-                            <p class="truncate-cell" data-content="{{ record.record.description }}">{{ record.record.description }}</p>
+                            <p class="card-text">{{ record.record.opis }}</p>
                         </div>
-                        <div class="card-footer m-2">
-                            <small>Added by: {{ record.username }}</small><br>
-                            <small>Added on: {{ record.created_at|date:"Y-m-d H:i" }}</small><br>
-                            <small>Last updated: {{ record.updated_at|date:"Y-m-d H:i" }}</small>
+                        <div class="card-footer">
+                            <small>Pridal: {{ record.username }}</small><br>
+                            <small>pridaný: {{ record.vytvoreny|date:"Y-m-d H:i" }}</small><br>
+                            <small>Aktualizovaný: {{ record.aktualizovany|date:"Y-m-d H:i" }}</small>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="card-footer d-flex justify-content-between">
                              <!-- Voting buttons, admin can vote even his record ... -->
                              {% if request.session.admin_view or record.record.user != request.user and user.is_authenticated %}
-                             <div>
-                                 <button type="button" class="btn btn-outline-success btn-sm vote-btn {% if record.user_vote == 'up' %}voted{% endif %}" data-record="{{ record.record.id }}" data-vote="up">👍 ({{ record.thumb_up }})</button>
-                                 <button type="button" class="btn btn-outline-danger btn-sm vote-btn {% if record.user_vote == 'down' %}voted{% endif %}" data-record="{{ record.record.id }}" data-vote="down">👎 ({{ record.thumb_down }})</button>
-                             </div>
-                         {% else %}
-                             <div>
-                                 <!-- Disabled voting buttons for guests or non-logged-in users -->
-                                 <button type="button" class="btn btn-outline-success btn-sm vote-btn" disabled>👍 ({{ record.thumb_up }})</button>
-                                 <button type="button" class="btn btn-outline-danger btn-sm vote-btn" disabled>👎 ({{ record.thumb_down }})</button>
-                             </div>
-                         {% endif %}
-                         <a href="{% url 'user_record_detail' record.record.id 0 %}" class="btn btn-sm btn-outline-secondary">View Details</a>
-                     </div>
+                                <div>
+                                    <button type="button" class="btn btn-outline-success btn-sm vote-btn {% if record.user_vote == 'up' %}voted{% endif %}" data-record="{{ record.record.id }}" data-vote="up">👍 ({{ record.thumb_up }})</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm vote-btn {% if record.user_vote == 'down' %}voted{% endif %}" data-record="{{ record.record.id }}" data-vote="down">👎 ({{ record.thumb_down }})</button>
+                                </div>
+                            {% else %}
+                                <div>
+                                    <!-- Disabled voting buttons for guests or non-logged-in users -->
+                                    <button type="button" class="btn btn-outline-success btn-sm vote-btn" disabled>👍 ({{ record.thumb_up }})</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm vote-btn" disabled>👎 ({{ record.thumb_down }})</button>
+                                </div>
+                            {% endif %}
+                            <a href="{% url 'user_record_detail' record.record.id 0 %}" class="btn btn-sm btn-outline-secondary">Zobraziť Detaily</a>
+                        </div>
                  </div>
              </div>
-         </div>
      {% empty %}
-         <p>No records available in this gallery.</p>
+         <p>Žiadne záznamy v galérií.</p>
      {% endfor %}
     </div>
 
@@ -176,21 +151,21 @@
         <ul class="pagination justify-content-center">
             {% if gallery_page.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page=1">First</a>
+                    <a class="page-link" href="?page=1">Prvý</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ gallery_page.previous_page_number }}">Previous</a>
+                    <a class="page-link" href="?page={{ gallery_page.previous_page_number }}">Predchadzajúci</a>
                 </li>
             {% endif %}
             <li class="page-item disabled">
-                <span class="page-link">Page {{ gallery_page.number }} of {{ gallery_page.paginator.num_pages }}</span>
+                <span class="page-link">Strana {{ gallery_page.number }} z {{ gallery_page.paginator.num_pages }}</span>
             </li>
             {% if gallery_page.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ gallery_page.next_page_number }}">Next</a>
+                    <a class="page-link" href="?page={{ gallery_page.next_page_number }}">Ďalší</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ gallery_page.paginator.num_pages }}">Last</a>
+                    <a class="page-link" href="?page={{ gallery_page.paginator.num_pages }}">Posledný</a>
                 </li>
             {% endif %}
         </ul>
@@ -201,7 +176,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="imageModalLabel">Record Image</h5>
+                    <h5 class="modal-title" id="imageModalLabel">Obrázok</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -238,8 +213,14 @@
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.vote-btn').forEach(button => {
             button.addEventListener('click', function() {
-                const recordId = this.dataset.record;
-                const voteType = this.dataset.vote;
+                const recordId = this.getAttribute('data-record'); // Get recordId from the dataset attribute
+                const voteType = this.getAttribute('data-vote'); // Get voteType from the dataset attribute
+                
+                if (!recordId || !voteType) {
+                    console.error('Invalid recordId or voteType.');
+                    return;
+                }
+
                 fetch(`/vote/${recordId}/${voteType}/`, {
                     method: 'POST',
                     headers: {
@@ -247,7 +228,7 @@
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ vote_type: voteType })
+                    body: JSON.stringify({ typ_hlasu: voteType })
                 })
                 .then(response => {
                     if(response.ok) {

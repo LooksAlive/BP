@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Forms - Clearblooded Animal Species Collection{% endblock %}
+{% block title %}Admin Formuláre{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Admin Forms</h1>
+<h1 class="mb-4">Admin Formuláre</h1>
 
 <!-- Display forms in a well-structured table -->
 <table class="table table-striped">
     <thead class="thead-light">
         <tr>
             <th>ID</th>
-            <th>Name</th>
-            <th>Created At</th>
-            <th>Updated At</th>
-            <th>Actions</th>
+            <th>Názov</th>
+            <th>Vytvoreny</th>
+            <th>Aktualizovany</th>
+            <th>Akcie</th>
         </tr>
     </thead>
     <tbody>
@@ -21,28 +21,28 @@
         {% for form in forms %}
         <tr>
             <td>{{ form.id }}</td>
-            <td>{{ form.form_name }}</td>
-            <td>{{ form.created_at }}</td>
-            <td>{{ form.updated_at }}</td>
+            <td>{{ form.formular_nazov }}</td>
+            <td>{{ form.vytvoreny}}</td>
+            <td>{{ form.aktualizovany }}</td>
             <td>
                 <!-- Update button using a form with a hidden input -->
                 <form method="get" action="{% url 'admin_create_form' form.id %}" style="display: inline;">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-primary btn-sm" value="Edit">
+                    <input type="submit" class="btn btn-primary btn-sm" value="Upraviť">
                 </form>
 
                 <!-- Delete button using a form with a hidden input -->
                 <form method="post" action="{% url 'admin_delete_form' form.id %}" style="display: inline;">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure?');">
-                </form>
+                    <input type="submit" class="btn btn-danger btn-sm" value="Vymazať" onclick="return confirm('Potvrďte akciu:');">
+                </form> 
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<a href="{% url 'admin_create_form' %}" class="btn btn-success">Add Form</a>
+<a href="{% url 'admin_create_form' %}" class="btn btn-success">Pridaj fomrmulár</a>
 
 
 

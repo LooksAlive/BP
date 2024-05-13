@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Your Records{% endblock %}
+{% block title %}Všetky Záznamy{% endblock %}
 
 {% block content %}
 
@@ -19,14 +19,14 @@
 
 <div class="row justify-content-center">
     <div class="text-center">
-        <h2 class="mb-4 text-center">All Records</h2>
+        <h2 class="mb-4 text-center">Všetky záznamy</h2>
     </div>
 </div>
 
 <div class="row justify-content-end">
     <form method="post" action="{% url 'user_forms' %}">
         {% csrf_token %}
-        <button id="addRecordButton" class="btn btn-success mb-4">Add Record</button>
+        <button id="addRecordButton" class="btn btn-success mb-4">Pridať záznam</button>
     </form>
 </div>
 
@@ -37,31 +37,33 @@
         <div class="card h-100 border-primary shadow-sm">
             <div class="card-header bg-primary text-white">
                 <!--<h5 class="mb-0">Record #{{ item.record.id }}</h5>-->
-                <small class="d-block">Form: {{ item.form_name }}</small>
-                {% if item.gallery_name %}
-                <small class="d-block">Gallery: {{ item.gallery_name }}</small>
+                {% if item.formular_nazov %}
+                <small class="d-block">Formulár: {{ item.formular_nazov }}</small>
                 {% else %}
-                <small class="d-block">Gallery: None</small>
+                <small class="d-block">Formulár: </small>
+                {% endif %}
+                {% if item.galeria_nazov %}
+                <small class="d-block">galéria: {{ item.galeria_nazov }}</small>
+                {% else %}
+                <small class="d-block">galéria: </small>
                 {% endif %}
             </div>
-            <div class="card-header">
                 {% if item.image %}
                 <img src="{{ item.image }}" alt="Record Image" class="card-img-top">
                 {% else %}
-                    <div class="card-img-placeholder card-img-top">No Image Available</div>     
+                    <div class="card-img-placeholder card-img-top">Žiadny obrázok</div>     
                 {% endif %}
-            </div>
             <div class="card-body">
                 <p class="card-text">{{ item.description }}</p>
             </div>
             <div class="card-footer bg-white d-flex justify-content-between">
                 <div>
-                    <small class="text-muted">Submitted on: {{ item.record.created_at|date:"M d, Y" }}</small> <br>
-                    <small class="text-muted">Updated at: {{ item.record.updated_at|date:"M d, Y" }}</small>
+                    <small class="text-muted">Pridaný: {{ item.record.vytvoreny|date:"M d, Y" }}</small> <br>
+                    <small class="text-muted">Aktualizovaný: {{ item.record.aktualizovany|date:"M d, Y" }}</small>
                 </div>
                 <div class="btn-group flex-column align-self-start">
-                    <a href="{% url 'user_record_detail' item.record.id 0 %}" class="btn btn-sm btn-outline-secondary mb-2">View Details</a>
-                    <a href="{% url 'user_record_delete' item.record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Delete</a>
+                    <a href="{% url 'user_record_detail' item.record.id 0 %}" class="btn btn-sm btn-outline-secondary mb-2">Zobraziť Detaily</a>
+                    <a href="{% url 'user_record_delete' item.record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Vymaž</a>
                 </div>
             </div>
         </div>
@@ -69,7 +71,7 @@
     {% empty %}
     <div class="col">
         <div class="alert alert-info" role="alert">
-            You have not submitted any records yet.
+            Nemaš pridaný žiadny záznam.
         </div>
     </div>
     {% endfor %}
@@ -80,21 +82,21 @@
     <ul class="pagination justify-content-center">
         {% if records_with_details.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page=1">First</a>
+            <a class="page-link" href="?page=1">Prvý</a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="?page={{ records_with_details.previous_page_number }}">Previous</a>
+            <a class="page-link" href="?page={{ records_with_details.previous_page_number }}">Predchadzajúci</a>
         </li>
         {% endif %}
         <li class="page-item disabled">
-            <span class="page-link">Page {{ records_with_details.number }} of {{ records_with_details.paginator.num_pages }}</span>
+            <span class="page-link">Strana {{ records_with_details.number }} z {{ records_with_details.paginator.num_pages }}</span>
         </li>
         {% if records_with_details.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ records_with_details.next_page_number }}">Next</a>
+            <a class="page-link" href="?page={{ records_with_details.next_page_number }}">Ďalší</a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="?page={{ records_with_details.paginator.num_pages }}">Last</a>
+            <a class="page-link" href="?page={{ records_with_details.paginator.num_pages }}">Posledný</a>
         </li>
         {% endif %}
     </ul>
@@ -105,7 +107,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="imageModalLabel">Record Image</h5>
+                <h5 class="modal-title" id="imageModalLabel">Obrázok</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

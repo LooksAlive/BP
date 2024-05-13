@@ -5,110 +5,110 @@ from django.utils import timezone
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-class TimeStampedModel(models.Model):
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
-    updated_at = models.DateTimeField(default=timezone.now)
+class CasovyModel(models.Model):
+    vytvoreny = models.DateTimeField(default=timezone.now, editable=False)
+    aktualizovany = models.DateTimeField(default=timezone.now)
 
     class Meta:
         abstract = True
 
-class Attribute(TimeStampedModel):
-    name = models.CharField(max_length=255)
-    type = models.CharField(max_length=100)
+class Atribut(CasovyModel):
+    nazov = models.CharField(max_length=255)
+    typ = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.name
+        return self.nazov
 
-class Form(TimeStampedModel):
-    form_name = models.CharField(max_length=255)
+class Formular(CasovyModel):
+    formular_nazov = models.CharField(max_length=255)
     # A new field to indicate if the form should be included in a gallery
-    included_in_gallery = models.BooleanField(default=False)
+    zobrazit_v_galerii = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.form_name
+        return self.formular_nazov
 
-class Record(TimeStampedModel):
+class Zaznam(CasovyModel):
     # Linking each record to a User
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    description = models.TextField(default="")
-    form = models.ForeignKey(Form, on_delete=models.CASCADE, null=True)  # Link Record to Form
+    opis = models.TextField(default="")
+    formular = models.ForeignKey(Formular, on_delete=models.CASCADE, null=True)  # Link Record to Form
     
     def upvote(self, user):
-        Vote.objects.create(record=self, user=user, vote_type='up')
+        Zaznam.objects.create(record=self, user=user, vote_type='up')
 
     def downvote(self, user):
-        Vote.objects.create(record=self, user=user, vote_type='down')
+        Zaznam.objects.create(record=self, user=user, vote_type='down')
     
     def net_votes(self):
         return self.thumb_up - self.thumb_down
         
     def get_comments(self):
-        return RecordComment.objects.filter(record=self).order_by('-created_at')
+        return Zaznam_Komentar.objects.filter(record=self).order_by('-created_at')
 
     def __str__(self):
         return f'Record {self.id}'
     
     # Define a signal handler for pre-delete of Form
-@receiver(pre_delete, sender=Form)
+@receiver(pre_delete, sender=Formular)
 def delete_records_with_form(sender, instance, **kwargs):
-    records_to_delete = Record.objects.filter(form=instance)
+    records_to_delete = Zaznam.objects.filter(formular=instance)
     records_to_delete.delete()
     
-class Vote(TimeStampedModel):
+class Hlas(CasovyModel):
     VOTE_TYPE_CHOICES = (
         ('up', 'Upvote'),
         ('down', 'Downvote'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    record = models.ForeignKey(Record, on_delete=models.CASCADE)
-    vote_type = models.CharField(max_length=10, choices=VOTE_TYPE_CHOICES)
+    zaznam = models.ForeignKey(Zaznam, on_delete=models.CASCADE)
+    typ_hlasu = models.CharField(max_length=10, choices=VOTE_TYPE_CHOICES)
 
     class Meta:
-        unique_together = ('user', 'record')  # Prevents multiple votes on the same record by the same user
+        unique_together = ('user', 'zaznam')  # Prevents multiple votes on the same record by the same user
 
 
-class RecordComment(TimeStampedModel):
-    record = models.ForeignKey(Record, on_delete=models.CASCADE, null=True)
-    comment = models.TextField(default="")
+class Zaznam_Komentar(CasovyModel):
+    zaznam = models.ForeignKey(Zaznam, on_delete=models.CASCADE, null=True)
+    komentar = models.TextField(default="")
     # Linking each comment to a User
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    aproved_by_admin = models.BooleanField(default=True)
+    povoleny_adminom = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'Comment by {self.user.username} on Record {self.record.id}'
+        return f'Comment by {self.user.username} on Record {self.zaznam.id}'
 
 
 
-class FormAttribute(TimeStampedModel):
-    form = models.ForeignKey(Form, on_delete=models.CASCADE)
-    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
-    required = models.BooleanField(default=True)
+class Formular_Atribut(CasovyModel):
+    formular = models.ForeignKey(Formular, on_delete=models.CASCADE)
+    atribut = models.ForeignKey(Atribut, on_delete=models.CASCADE)
+    povinny = models.BooleanField(default=True)
     # A new field to indicate if the attribute should be displayed in the gallery
-    display_in_gallery = models.BooleanField(default=True)
+    zobrazit_v_galerii = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.attribute.name} in {self.form.form_name}'
+        return f'{self.atribut.name} in {self.formular.formular_nazov}'
 
-class FormAttributeData(TimeStampedModel):
-    record = models.ForeignKey(Record, on_delete=models.CASCADE, null=True)
-    form_attribute = models.ForeignKey(FormAttribute, on_delete=models.CASCADE)
-    value = models.CharField(max_length=255, blank=True, null=True)
+class Formular_Atribut_Udaje(CasovyModel):
+    zaznam = models.ForeignKey(Zaznam, on_delete=models.CASCADE, null=True)
+    formular_atribut = models.ForeignKey(Formular_Atribut, on_delete=models.CASCADE)
+    hodnota = models.CharField(max_length=512, blank=True, null=True)
     
     def __str__(self):
-        return self.value
+        return self.hodnota
 
 
 # Gallery table is replaced by a flag in FormAttribute to indicate if an attribute should be shown in the gallery
 
 # A model to manage gallery settings for a form without creating additional tables
-class Gallery(TimeStampedModel):
-    gallery_name = models.CharField(max_length=255, default="")
-    form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="galleries")
+class Galeria(CasovyModel):
+    galeria_nazov = models.CharField(max_length=255, default="")
+    formular = models.ForeignKey(Formular, on_delete=models.CASCADE, related_name="galleries")
 
     def __str__(self):
-        return f'Gallery for {self.form.form_name}'
+        return f'Gallery for {self.formular.formular_nazov}'
 
     class Meta:
-        unique_together = ('form', 'created_at')  # Ensures each gallery is unique for a form at a given creation time
+        unique_together = ('formular', 'vytvoreny')  # Ensures each gallery is unique for a form at a given creation time
 
 

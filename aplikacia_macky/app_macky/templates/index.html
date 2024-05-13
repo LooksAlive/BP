@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Clearblooded Animal Species Collection{% endblock %}
+{% block title %}Čistokrvné plemená mačiek{% endblock %}
 
 {% block content %}
 <section class="py-5">
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <h2 class="display-6 font-weight-bold text-primary">Welcome, <span id="username">{{ username }}</span>!</h2>
-                <p>Discover a world of fascinating cat species.</p>
-                <p class="lead text-muted mb-4">Embark on a journey to discover the fascinating world of cat species.</p>
+                <h2 class="display-6 font-weight-bold text-primary">Vitaj, <span id="username">{{ username }}</span>!</h2>
+                <p>Objavte svet fascinujúcich druhov mačiek.</p>
+                <p class="lead text-muted mb-4">Vydajte sa na cestu objavovať fascinujúci svet mačacích druhov.</p>
 
             </div>
         </div>
@@ -85,7 +85,7 @@
 <!-- Recent Records Carousel -->
 <section class="py-5 bg-light">
     <div class="container">
-        <h2 class="text-center">Recent Records</h2>
+        <h2 class="text-center">Nedávne záznamy</h2>
         <div id="recentRecordsCarousel" class="carousel slide" data-ride="carousel">
             <!-- Indicators -->
             <ol class="carousel-indicators">
@@ -105,20 +105,20 @@
                                     {% if record.image_available %}
                                         <!--<h5 class="card-title">Record #{{ record.id }}</h5>-->
                                         {% for attribute in record.attributes %}
-                                            {% if attribute.type == 'image_url' %}
-                                                <img src="{{ attribute.value }}" alt="Record Image" class="img-fluid m-2 mx-auto d-block"> <!-- card-img-top -->
+                                            {% if attribute.typ == 'obrazok_url' %}
+                                                <img src="{{ attribute.hodnota }}" alt="Record Image" class="img-fluid m-2 mx-auto d-block"> <!-- card-img-top -->
                                             {% endif %}
                                         {% endfor %}
                                     {% else %}
-                                        <div class="card-img-placeholder">No Image Available</div>
+                                        <div class="card-img-placeholder">Žiadny obrázok</div>
                                     {% endif %}
                                     
                                     <div class="card-body">
                                         <textarea id="formName" name="record_description" class="form-control mb-3" rows="4" required readonly>{{ record.description }}</textarea>
                                     </div>
                                     <div class="card-footer">
-                                        <small>Added by: {{ record.username }}</small><br>
-                                        <small>Added on: {{ record.created_at|date:"Y-m-d H:i" }}</small><br>
+                                        <small>Pridal: {{ record.username }}</small><br>
+                                        <small>Vytvorený: {{ record.vytvoreny|date:"Y-m-d H:i" }}</small><br>
                                         <!--<small>Last updated: {{ record.updated_at|date:"Y-m-d H:i" }}</small>-->
                                         <div class="d-flex justify-content-between align-items-center">
                                             <!-- Voting buttons -->
@@ -134,7 +134,7 @@
                                                 <button type="button" class="btn btn-outline-danger btn-sm vote-btn" disabled>👎 ({{ record.thumb_down }})</button>
                                             </div>
                                         {% endif %}
-                                        <a href="{% url 'user_record_detail' record.id 0 %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                                        <a href="{% url 'user_record_detail' record.id 0 %}" class="btn btn-sm btn-outline-secondary">Zobraziť Detaily</a>
                                         </div>
                                     </div>
                                 </div>
@@ -161,22 +161,22 @@
 <!-- Recent Galleries Section -->
 <section class="py-5">
     <div class="container">
-        <h2 class="text-center mb-5">Galleries</h2>
+        <h2 class="text-center mb-5">Galérie</h2>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 justify-content-center">
             {% for gallery in gallery_data %}
             <a href="{% url 'user_galery_view' gallery.id %}" class="col text-decoration-none">
                 <div class="card h-100 border-0 shadow">
                     <div class="card-header bg-light border-0">
-                        <h5 class="card-title text-center">{{ gallery.name }}</h5>
+                        <h5 class="card-title text-center">{{ gallery.nazov }}</h5>
                     </div>
                     <div class="card-body d-flex flex-column">
-                        <p class="card-text"><strong>Form:</strong> {{ gallery.form_name }}</p>
+                        <p class="card-text"><strong>Formulár:</strong> {{ gallery.formular_nazov }}</p>
                         <!--<p class="card-text"><strong>Created On:</strong> {{ gallery.created_at }}</p> -->
                         <div class="gallery-image-container mb-3">
-                            {% if gallery.image_url %}
-                                <img src="{{ gallery.image_url }}" class="gallery-image" alt="Gallery Image">
+                            {% if gallery.obrazok_url %}
+                                <img src="{{ gallery.obrazok_url }}" class="gallery-image" alt="Gallery Image">
                             {% else %}
-                                <p class="card-text text-muted">No images available</p>
+                                <p class="card-text text-muted">Žiadny obrázok</p>
                             {% endif %}
                         </div>
                     </div>
@@ -228,24 +228,24 @@
 <!-- Project Statistics Section -->
 <section class="py-5 bg-light">
     <div class="container">
-        <h2 class="text-center mb-5">Project Statistics</h2>
+        <h2 class="text-center mb-5">Štatistiky</h2>
         <div class="row">
             <div class="col-md-6">
                 <ul class="list-group">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Number of Records
+                        Počet záznamov
                         <span class="badge badge-primary badge-pill">{{ num_records }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Number of Registered Users
+                        Počet registrovaných užívateľov
                         <span class="badge badge-primary badge-pill">{{ num_users }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Number of Forms
+                        Počet formulárov
                         <span class="badge badge-primary badge-pill">{{ num_forms }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Number of Galleries
+                        Počet galérií
                         <span class="badge badge-primary badge-pill">{{ num_galleries }}</span>
                     </li>
                 </ul>
@@ -267,7 +267,7 @@
 
         var data = JSON.parse('{{ data|safe }}');
         var dates = {{ dates|safe }};
-        var labels = ['Records', 'Users', 'Forms', 'Galleries'];
+        var labels = ['Záznamy', 'Užívatelia', 'Formuláre', 'Galérie'];
 
         // Define custom colors for each dataset
         var colors = [
@@ -314,7 +314,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Date',
+                            text: 'Dátum',
                             font: {
                                 size: 14
                             }
@@ -331,7 +331,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Count',
+                            text: 'Počet',
                             font: {
                                 size: 14
                             }
@@ -361,9 +361,9 @@
 {% if not user.is_authenticated %}
 <section class="py-5">
     <div class="container text-center">
-        <h2>Join Our Community</h2>
-        <p>Be a part of our growing community of cat lovers and researchers.</p>
-        <a href="{% url 'registration' %}" class="btn btn-lg btn-success">Sign Up Now</a>
+        <h2>Pridaj sa do našej komunity</h2>
+        <p>Staň sa plnohodnotným členom našej komunity milovníkov mačiek. </p>
+        <a href="{% url 'registration' %}" class="btn btn-lg btn-success">Registruj sa teraz</a>
     </div>
 </section>
 {% endif %}

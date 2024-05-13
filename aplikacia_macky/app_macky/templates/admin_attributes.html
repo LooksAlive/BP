@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Attributes - Clearblooded Animal Species Collection{% endblock %}
+{% block title %}Admin Atribúty{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4">Admin Attributes</h1>
+    <h1 class="mb-4">Admin Atribúty</h1>
 
     <!-- Display attributes in a well-structured table -->
     <table class="table table-striped">
         <thead class="thead-light">
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>created at</th>
-                <th>Actions</th>
+                <th>Názov</th>
+                <th>Typ</th>
+                <th>Vytvorený</th>
+                <th>Akcie</th>
             </tr>
         </thead>
         <tbody>
@@ -22,9 +22,9 @@
             {% for attribute in attributes %}
             <tr>
                 <td>{{ attribute.id }}</td>
-                <td>{{ attribute.name }}</td>
-                <td>{{ attribute.type }}</td>
-                <td>{{ attribute.created_at }}</td>
+                <td>{{ attribute.nazov }}</td>
+                <td>{{ attribute.typ }}</td>
+                <td>{{ attribute.vytvoreny }}</td>
                 <td>
                     <!-- Update button using a form with a hidden input -->
                     <form method="get" action="{% url 'admin_edit_attribute' attribute.id %}" style="display: inline;">
@@ -44,21 +44,21 @@
     </table>
 
     <!-- Button to toggle the input fields for adding a new attribute -->
-    <button id="addAttributeButton" class="btn btn-success mb-4">Add Attribute</button>
+    <button id="addAttributeButton" class="btn btn-success mb-4">Pridať Atribút</button>
 
     <!-- Input fields for adding a new attribute (initially hidden) -->
     <div id="addAttributeFields" style="display: none">
         <form method="post" action="{% url 'admin_create_attribute' %}">
             {% csrf_token %}
             <div class="form-group">
-                <label for="name">Attribute Name</label>
-                <input type="text" class="form-control" id="name" name="name">
+                <label for="nazov">Názov</label>
+                <input type="text" class="form-control" id="nazov" name="nazov">
             </div>
             <div class="form-group">
-                <label for="type">Attribute Type</label>
-                <select class="form-control" id="type" name="type">
-                    {% for type in attribute_types %}
-                    <option value="{{ type }}">{{ type }}</option>
+                <label for="typ">Typ</label>
+                <select class="form-control" id="typ" name="typ">
+                    {% for typ in attribute_types %}
+                    <option value="{{ typ }}">{{ typ }}</option>
                     {% endfor %}
                 </select>
             </div>

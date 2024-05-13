@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Registration{% endblock %}
+{% block title %}Registrácia{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -8,7 +8,7 @@
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h4>Registration</h4>
+                    <h4>Registrácia</h4>
                 </div>
                 <div class="card-body">
                     <form method="post">
@@ -19,22 +19,9 @@
                                 <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                             {% endfor %}
                         {% endif %}
-                        
-                        <!-- First Name -->
-                        <div class="form-group">
-                            <label for="first_name">First Name</label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name" required>
-                        </div>
-
-                        <!-- Last Name -->
-                        <div class="form-group">
-                            <label for="last_name">Last Name</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name" required>
-                        </div>
-
                         <!-- Username -->
                         <div class="form-group">
-                            <label for="username">Username</label>
+                            <label for="username">Meno</label>
                             <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
                         </div>
 
@@ -46,18 +33,18 @@
 
                         <!-- Password -->
                         <div class="form-group">
-                            <label for="password">Password</label>
+                            <label for="password">Heslo</label>
                             <input type="password" class="form-control" id="password" name="password" placeholder="Choose a password" required>
                         </div>
 
                         <!-- Confirm Password -->
                         <div class="form-group">
-                            <label for="confirm_password">Confirm Password</label>
+                            <label for="confirm_password">Potvrďte heslo</label>
                             <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                        <button type="submit" class="btn btn-primary btn-block">Registruj sa</button>
                     </form>
                 </div>
             </div>

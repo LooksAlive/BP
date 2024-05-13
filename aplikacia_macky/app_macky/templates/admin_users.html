@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Users - Clearblooded Animal Species Collection{% endblock %}
+{% block title %}Admin Užívatelia{% endblock %}
 
 {% block content %}
 <style>
@@ -27,20 +27,18 @@
         box-sizing: border-box; /* Include padding and border in width */
     }
 </style>
-<h1 class="mb-4">Admin Users</h1>
+<h1 class="mb-4">Admin Užívatelia</h1>
 
 <!-- Add Table for displaying users -->
 <table class="table table-striped">
     <thead class="thead-light">
         <tr>
             <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
             <th>Email</th>
-            <th>Username</th>
-            <th>Password</th>
-            <th>Role</th>
-            <th>Actions</th>
+            <th>Meno</th>
+            <th>Heslo</th>
+            <th>Rola</th>
+            <th>Akcie</th>
         </tr>
     </thead>
     <tbody>
@@ -48,8 +46,6 @@
         {% for user in users %}
             <tr>
                 <td>{{ user.id }}</td>
-                <td>{{ user.first_name }}</td>
-                <td>{{ user.last_name }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.username }}</td>
                 <td class="truncate-cell" data-content="{{ user.password }}">{{ user.password }}</td>
@@ -64,13 +60,13 @@
                     <!-- Update button using a form with a hidden input -->
                     <form method="get" action="{% url 'admin_edit_user' user.id %}" style="display: inline;">
                         {% csrf_token %}
-                        <input type="submit" class="btn btn-primary btn-update" value="Edit">
+                        <input type="submit" class="btn btn-primary btn-update" value="Upraviť">
                     </form>
 
                     <!-- Delete button using a form with a hidden input -->
                     <form method="post" action="{% url 'admin_delete_user' user.id %}" style="display: inline;">
                         {% csrf_token %}
-                        <input type="submit" class="btn btn-danger btn-delete" value="Delete" onclick="return confirm('Are you sure?');">
+                        <input type="submit" class="btn btn-danger btn-delete" value="Vymazať" onclick="return confirm('Potvrdďte akciu?');">
                     </form>
                 </td>
             </tr>
@@ -79,34 +75,27 @@
 </table>
 
 <!-- Button to toggle the input fields for adding a new user -->
-<button id="addUserButton" class="btn btn-success mb-4">Add User</button>
+<button id="addUserButton" class="btn btn-success mb-4">Pridaj Užívateľa</button>
 
 <!-- Input fields for adding a new user (initially hidden) -->
 <div id="addUserFields" style="display: none">
     <form method="post" action="{% url 'admin_create_user' %}">
         {% csrf_token %}
+        
         <div class="form-group">
-            <label for="first_name">First Name</label>
-            <input type="text" class="form-control" id="first_name" name="first_name" value="" placeholder="Enter first name" required>
-        </div>
-        <div class="form-group">
-            <label for="last_name">Last Name</label>
-            <input type="text" class="form-control" id="last_name" name="last_name" value="" placeholder="Enter last name" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" value="" placeholder="Enter email" required>
-        </div>
-        <div class="form-group">
-            <label for="username">Username</label>
+            <label for="username">Meno</label>
             <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" value="" required>
         </div>
         <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password">Heslo</label>
             <input type="password" class="form-control" id="password" name="password" placeholder="Enter a new password">
-        </div>        
+        </div>     
         <div class="form-group">
-            <label for="group">Role</label>
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="" placeholder="Enter email" required>
+        </div>   
+        <div class="form-group">
+            <label for="group">Rola</label>
             <select class="form-control" id="group" name="group">
                 <!-- <option value="">Select a Role</option> -->
                 {% for group in groups %}
@@ -114,7 +103,7 @@
                 {% endfor %}
             </select>
         </div>
-        <button type="submit" class="btn btn-success">Submit</button>
+        <button type="submit" class="btn btn-success">Potvrdiť</button>
     </form>
 </div>
 

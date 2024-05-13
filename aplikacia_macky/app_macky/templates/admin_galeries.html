@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Galleries - Clearblooded Animal Species Collection{% endblock %}
+{% block title %}Admin Galérie{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Admin Galleries</h1>
+<h1 class="mb-4">Admin Galérie</h1>
 
 <!-- Display galleries in a well-structured table -->
 <table class="table table-striped">
     <thead class="thead-light">
         <tr>
             <th>ID</th>
-            <th>Gallery name</th>
-            <th>Form Name</th>
-            <th>Created At</th>
-            <th>Updated At</th>
-            <th>Actions</th>
+            <th>Názov galérie</th>
+            <th>Názov fomrulára</th>
+            <th>Vytvorený</th>
+            <th>Aktualizovaný</th>
+            <th>Akcie</th>
         </tr>
     </thead>
     <tbody>
@@ -22,17 +22,17 @@
         {% for gallery in galleries %}
         <tr>
             <td>{{ gallery.id }}</td>
-            <td>{{ gallery.gallery_name }}</td>
-            <td>{{ gallery.form.form_name }}</td>
-            <td>{{ gallery.created_at }}</td>
-            <td>{{ gallery.updated_at }}</td>
+            <td>{{ gallery.galeria_nazov }}</td>
+            <td>{{ gallery.formular.formular_nazov }}</td>
+            <td>{{ gallery.vytvoreny }}</td>
+            <td>{{ gallery.aktualizovany }}</td>
             <td>
                 <a href="{% url 'admin_create_galery' gallery.id %}" class="btn btn-primary btn-sm">Edit</a>
 
                 <!-- Delete button using a form with a hidden input -->
                 <form method="post" action="{% url 'admin_delete_galery' gallery.id %}" style="display: inline;">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure?');">
+                    <input type="submit" class="btn btn-danger btn-sm" value="Vymaž" onclick="return confirm('Potvrďte akciu:');">
                 </form>
             </td>
         </tr>
@@ -41,7 +41,7 @@
 </table>
 
 <!-- The link to create a new gallery would typically require selecting a form, so you might need a separate page for that -->
-<a href="{% url 'admin_create_galery' %}" class="btn btn-success">Add Gallery</a>
+<a href="{% url 'admin_create_galery' %}" class="btn btn-success">Pridaj Galériu</a>
 
 <!-- Add at the bottom of your admin_create_gallery.html -->
 

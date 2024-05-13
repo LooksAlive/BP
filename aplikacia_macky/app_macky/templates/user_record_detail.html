@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Record Details{% endblock %}
+{% block title %}Detail Záznamu{% endblock %}
 
 {% block content %}
 
@@ -54,9 +54,9 @@
 
 
     <div class="d-flex justify-content-between align-items-center">
-        <h2 class="mb-4">Record Details</h2>
+        <h2 class="mb-4">Detail Záznamu</h2>
         {% if request.session.admin_view or for_user %}
-            <a href="{% url 'user_record_delete' record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Delete Record</a>
+            <a href="{% url 'user_record_delete' record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Vymaž Záznam</a>
         {% endif %}
     </div>
 <div class="card mb-4">
@@ -66,73 +66,73 @@
             {% csrf_token %}
             {% if request.session.admin_view or for_user %}
                 <div class="form-group attribute-input">
-                    <label class="attribute-label">Description
+                    <label class="attribute-label">Opis
                         <span class="attribute-type">(text)</span>
                     </label>
-                    <textarea id="formName" name="record_description" class="form-control mb-3" rows="4">{{ record.description }}</textarea> <!--required-->
+                    <textarea id="formName" name="record_description" class="form-control mb-3" rows="4">{{ record.opis }}</textarea> <!--required-->
                 </div>
 
                 {% for attribute in form_attributes %}
-                {% if attribute.form_attribute.attribute.type == "image_url" %}
+                {% if attribute.formular_atribut.atribut.typ == "obrazok_url" %}
                     <div class="form-group attribute-input">
-                        <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
-                            <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                        <label class="attribute-label">{{ attribute.formular_atribut.atribut.nazov }}
+                            <span class="attribute-type">({{ attribute.formular_atribut.atribut.typ }})</span>
                         </label>
-                        {% if attribute.value %}
-                        <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive clickable-image">
+                        {% if attribute.hodnota %}
+                        <img src="{{ attribute.hodnota }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive clickable-image">
                         {% else %}
                         <div class="card-header">
-                            <div class="card-img-placeholder">No Image Available</div>
+                            <div class="card-img-placeholder">Žiadny obrázok</div>
                         </div>
                         {% endif %}
 
-                        <input type="file" class="form-control-file" id="attrnew_{{ attribute.form_attribute.attribute.id }}" name="attrnew_{{ attribute.form_attribute.attribute.id }}" accept="image/*">
+                        <input type="file" class="form-control-file" id="attrnew_{{ attribute.formular_atribut.atribut.id }}" name="attrnew_{{ attribute.formular_atribut.atribut.id }}" accept="image/*">
                     
-                        <!--<input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">-->
+                        <!--<input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.hodnota }}">-->
                     </div>
                 {% else %}
                     <div class="form-group attribute-input">
-                        <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
-                            <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                        <label class="attribute-label">{{ attribute.formular_atribut.atribut.nazov }}
+                            <span class="attribute-type">({{ attribute.formular_atribut.atribut.typ }})</span>
                         </label>
-                        <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">
+                        <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.hodnota }}">
                     </div>
                     <!-- Input field for other attribute types -->
                 {% endif %}
                     
                 {% endfor %}
-                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="submit" class="btn btn-primary">Ulož zmeny</button>
                 {% else %}
                 <!-- Display form attributes -->
 
                 <div class="form-group attribute-input">
-                    <label class="attribute-label">Description
+                    <label class="attribute-label">Opis
                         <span class="attribute-type">(text)</span>
                     </label>
-                    <textarea id="formName" name="record_description" class="form-control mb-3" rows="4" required readonly>{{ record.description }}</textarea>
+                    <textarea id="formName" name="record_description" class="form-control mb-3" rows="4" required readonly>{{ record.opis }}</textarea>
                 </div>
 
                 {% for attribute in form_attributes %}
-                    {% if attribute.form_attribute.attribute.type == "image_url" %}
+                    {% if attribute.formular_atribut.atribut.typ == "obrazok_url" %}
                         <div class="form-group attribute-input">
-                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
-                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                            <label class="attribute-label">{{ attribute.formular_atribut.atribut.nazov }}
+                                <span class="attribute-type">({{ attribute.formular_atribut.atribut.typ }})</span>
                             </label>
-                            {% if attribute.value %}
-                            <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive clickable-image">
+                            {% if attribute.hodnota %}
+                            <img src="{{ attribute.hodnota }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive clickable-image">
                             {% else %}
                             <div class="card-header">
-                                <div class="card-img-placeholder">No Image Available</div>
+                                <div class="card-img-placeholder">Žiadny obrázok</div>
                             </div>
                             {% endif %}
-                            <!--<input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">-->
+                            <!--<input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.hodnota }}">-->
                         </div>
                     {% else %}
                         <div class="form-group attribute-input">
-                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
-                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                            <label class="attribute-label">{{ attribute.formular_atribut.atribut.nazov }}
+                                <span class="attribute-type">({{ attribute.formular_atribut.atribut.typ }})</span>
                             </label>
-                            <p class="card-text">{{ attribute.value }}</p>
+                            <p class="card-text">{{ attribute.hodnota }}</p>
                         </div>
                         <!-- Input field for other attribute types -->
                     {% endif %}
@@ -140,10 +140,10 @@
             {% endif %}
 
             <br><br>
-            <small>Form: {{ record.form.form_name }}</small><br>
-            <small>Added by: {{ record.user.username }}</small><br>
-            <small>Added on: {{ record.created_at|date:"Y-m-d H:i" }}</small><br>
-            <small>Last updated: {{ record.updated_at|date:"Y-m-d H:i" }}</small>
+            <small>Formulár: {{ record.formular.formular_nazov }}</small><br>
+            <small>Pridal: {{ record.user.username }}</small><br>
+            <small>Vytvorený: {{ record.vytvoreny|date:"Y-m-d H:i" }}</small><br>
+            <small>Aktualizovaný: {{ record.aktualizovany|date:"Y-m-d H:i" }}</small>
         </form>
     </div>
 </div>
@@ -155,54 +155,54 @@
                 <form method="post" action="{% url 'user_record_update' record.id for_user %}">
                 {% csrf_token %}
                 {% if request.session.admin_view %}
-                    <input type="hidden" name="comment_{{ comment.id }}" value="{{ comment.comment }}">
-                    <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required>{{ comment.comment }}</textarea>
+                    <input type="hidden" name="comment_{{ comment.id }}" value="{{ comment.komentar }}">
+                    <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required>{{ comment.komentar }}</textarea>
                     <div class="comment-meta" style="font-size: 0.8em; color: #666;">
-                        Commented by {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.created_at|date:"Y-m-d H:i" }}
+                        Komentoval {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.vytvoreny|date:"Y-m-d H:i" }}
                     </div>
-                    <button type="submit" class="btn btn-primary btn-sm mt-2">Update Comment</button>
-                {% elif user.is_authenticated and comment.user == request.user and comment.aproved_by_admin %}
-                    <input type="hidden" name="comment_{{ comment.id }}" value="{{ comment.comment }}">
-                    <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required>{{ comment.comment }}</textarea>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">Aktualizuj komentár</button>
+                {% elif user.is_authenticated and comment.user == request.user and comment.povoleny_adminom %}
+                    <input type="hidden" name="comment_{{ comment.id }}" value="{{ comment.komentar }}">
+                    <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required>{{ comment.komentar }}</textarea>
                     <div class="comment-meta" style="font-size: 0.8em; color: #666;">
-                        Commented by {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.created_at|date:"Y-m-d H:i" }}
+                        Komentoval {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.vytvoreny|date:"Y-m-d H:i" }}
                     </div>
-                    <button type="submit" class="btn btn-primary btn-sm mt-2">Update Comment</button>
-                {% elif comment.aproved_by_admin %}
-                    <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required readonly>{{ comment.comment }}</textarea>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">Aktualizuj komentár</button>
+                {% elif comment.povoleny_adminom %}
+                    <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required readonly>{{ comment.komentar }}</textarea>
                     <div class="comment-meta" style="font-size: 0.8em; color: #666;">
-                        Commented by {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.created_at|date:"Y-m-d H:i" }}
+                        Komentoval {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.vytvoreny|date:"Y-m-d H:i" }}
                     </div>
                 {% else %}
                     <!-- not approved by admin -> not showing -->
                 {% endif %}
                 </form>
                 <div class="btn-group mt-2 mb-5">
-                    {% if user.is_authenticated and comment.user == request.user and comment.aproved_by_admin %}
+                    {% if user.is_authenticated and comment.user == request.user and comment.povoleny_adminom %}
                     <form method="post" action="{% url 'remove_comment' comment.id for_user %}" class="d-inline">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Remove Comment</button>
+                        <button type="submit" class="btn btn-danger btn-sm">Vymaž komentár</button>
                     </form>
                     {% elif request.session.admin_view %}
                         <form method="post" action="{% url 'remove_comment' comment.id for_user %}" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm">Remove Comment</button>
+                            <button type="submit" class="btn btn-danger btn-sm">Vymaž komentár</button>
                         </form>
                     {% endif %}
                     {% if request.session.admin_view %}
                         <form method="post" action="{% url 'aprove_comment' comment.id for_user %}" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-success btn-sm ml-2" style="display: {% if request.session.admin_view and not comment.aproved_by_admin %}inline-block{% else %}none{% endif %};">Approve Comment</button>
+                            <button type="submit" class="btn btn-success btn-sm ml-2" style="display: {% if request.session.admin_view and not comment.povoleny_adminom %}inline-block{% else %}none{% endif %};">Approve Comment</button>
                         </form>
                     {% endif %}
                 </div>
             {% empty %}
-                <p>No comments yet.</p>
+                <p>žiadne komentáre.</p>
             {% endfor %}
         </div>
     </div>
     {% if record.user != request.user or request.session.admin_view %} <!--  or for_user -->
-        <button id="addCommentBtn" class="btn btn-secondary mb-3 add-comment-btn">Add Comment</button>
+        <button id="addCommentBtn" class="btn btn-secondary mb-3 add-comment-btn">Pridaj komentár</button>
         <div id="commentForm" style="display:none;">
             <form method="post" action="{% url 'user_record_update' record.id for_user %}">
                 {% csrf_token %}
@@ -213,7 +213,7 @@
                     <textarea name="commentU" class="form-control" placeholder="Enter your comment here..."></textarea>
                     {% endif %}
                 </div>
-                <button type="submit" class="btn btn-primary">Submit Comment</button>
+                <button type="submit" class="btn btn-primary">Potvrď Komentár</button>
             </form>
         </div>
         {% endif %}
@@ -224,7 +224,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="imageModalLabel">Record Image</h5>
+                <h5 class="modal-title" id="imageModalLabel">Obrázok</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
