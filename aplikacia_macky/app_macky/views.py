@@ -169,16 +169,19 @@ def login_view(request):
                     
             if any(group.name == "admin" for group in user_groups):
                 request.session['admin_view'] = True
+                request.session['posudzovateľ'] = False
                 user.is_superuser = True
                 messages.success(request, f"Welcome back, {username}!")
                 return redirect('index')
             elif any(group.name == "posudzovateľ" for group in user_groups):
                     request.session['admin_view'] = False
+                    request.session['posudzovateľ'] = True
                     user.is_superuser = False
                     messages.success(request, f"Welcome back, {username}!")
                     return redirect('user_galeries')
             elif any(group.name == "prihlásený použivateľ" for group in user_groups):
                     request.session['admin_view'] = False
+                    request.session['posudzovateľ'] = False
                     user.is_superuser = False
                     messages.success(request, f"Welcome back, {username}!")
                     return redirect('user_forms')
@@ -228,7 +231,8 @@ def registration_view(request):
 
 
 
-attribute_types = ['int', 'float', 'str', 'bool', 'image_url', 'date', 'datetime', 'time']
+attribute_types = ['int', 'float', 'str', 'bool', 'image_url', 'date']
+
 
 def admin_attributes(request):
     attributes = Attribute.objects.all()
@@ -612,7 +616,9 @@ def admin_all_records(request):
         gallery = Gallery.objects.filter(form=form).first() if form else None
         gallery_name = gallery.gallery_name if gallery else None
         
-        attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True) # TODO: when in user records could be false
+        attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True)
+        if not attributes_to_display:
+            attributes_to_display = FormAttribute.objects.filter(form=form)
         # Get all FormAttributeData entries linked to the selected attributes
         attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
         record_attributes = attributes_data.filter(record_id=record.id)
@@ -683,7 +689,21 @@ def user_forms_record_add(request, form_id):
             if key.startswith("attr_"):
                 attr_id = key.split("_")[1]
                 attribute = get_object_or_404(Attribute, id=attr_id)
+                # here check for attribute.type and given string to test correct type e.g. int(...)
+                
                 if attribute.type != "image_url":  # Only process non-image fields here
+                    
+                    if attribute.type == "date" and not re.match(r"^\d{4}-\d{2}-\d{2}$", value):
+                        messages.error(request, f"The value for '{attribute.name}' must be in YYYY-MM-DD format.")
+                        return redirect('user_forms_view', form_id=form_id)
+                    if attribute.type == "bool" and value.lower() not in ["yes", "no", "áno", "nie"]:
+                        messages.error(request, f"The value for '{attribute.name}' must be either 'yes', 'no', 'áno' or 'nie'.")
+                        return redirect('user_forms_view', form_id=form_id)
+
+                    if attribute.type == "int" and not value.isdigit():
+                        messages.error(request, f"The value for '{attribute.name}' must be an integer.")
+                        return redirect('user_forms_view', form_id=form_id)
+                        
                     form_attr = FormAttribute.objects.get(attribute=attribute, form_id=form_id)
                     FormAttributeData.objects.create(record=record, form_attribute=form_attr, value=value)
                 
@@ -737,7 +757,10 @@ def user_records(request):
         gallery = Gallery.objects.filter(form=form).first() if form else None
         gallery_name = gallery.gallery_name if gallery else None
         
-        attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True) # TODO: when in user records could be false
+        attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True)
+        if not attributes_to_display:
+            attributes_to_display = FormAttribute.objects.filter(form=form)
+        #attributes_to_display = FormAttribute.objects.filter(form=form, display_in_gallery=True) # TODO: when in user records could be false
         # Get all FormAttributeData entries linked to the selected attributes
         attributes_data = FormAttributeData.objects.filter(form_attribute__in=attributes_to_display)
         record_attributes = attributes_data.filter(record_id=record.id)
@@ -796,9 +819,17 @@ def user_record_detail(request, record_id, for_user):
     fa = FormAttributeData.objects.filter(record=record)
     # filter which are display_in_gallery
     form_attributes = []
+    # helper to get all attributes
+    attributes_to_display = FormAttribute.objects.filter(form=record.form, display_in_gallery=True)
+
     for f in fa:
-        if f.form_attribute.display_in_gallery == True:
+        if not attributes_to_display:
             form_attributes.append(f)
+        elif f.form_attribute.display_in_gallery == True:
+                form_attributes.append(f)
+        else:
+            pass
+            #print("NO\n")
     record_comments = RecordComment.objects.filter(record=record).order_by('updated_at')
 
     return render(request, 'user_record_detail.html', {
@@ -808,6 +839,8 @@ def user_record_detail(request, record_id, for_user):
         'for_user' : for_user
     })
 
+from pathlib import Path
+import re
 
 def user_record_update(request, record_id, for_user):
     #clear_messages(request)
@@ -819,6 +852,20 @@ def user_record_update(request, record_id, for_user):
             if key.startswith('attribute_'):
                 attr_id = key.split('_')[1]
                 attribute_data = FormAttributeData.objects.get(id=attr_id)
+                # get actual attribute and its type:
+                attribute = attribute_data.form_attribute.attribute
+                # check the type correctness:
+                if attribute.type == "date" and not re.match(r"^\d{4}-\d{2}-\d{2}$", value):
+                    messages.error(request, f"The value for '{attribute.name}' must be in YYYY-MM-DD format.")
+                    return redirect('user_record_detail', record_id=record_id, for_user=for_user)
+                if attribute.type == "bool" and value.lower() not in ["yes", "no", "áno", "nie"]:
+                    messages.error(request, f"The value for '{attribute.name}' must be either 'yes', 'no', 'áno' or 'nie'.")
+                    return redirect('user_record_detail', record_id=record_id, for_user=for_user)
+
+                if attribute.type == "int" and not value.isdigit():
+                    messages.error(request, f"The value for '{attribute.name}' must be an integer.")
+                    return redirect('user_record_detail', record_id=record_id, for_user=for_user)
+                
                 attribute_data.value = value
                 attribute_data.save()
                 
@@ -828,6 +875,39 @@ def user_record_update(request, record_id, for_user):
                 comment_data = RecordComment.objects.get(id=comment_id)
                 comment_data.comment = value
                 comment_data.save()
+        
+        for key, image_file in request.FILES.items():
+            if key.startswith("attrnew_"):
+                attr_id = key.split("_")[1]
+                attribute = get_object_or_404(Attribute, id=attr_id)
+                
+                if attribute.type == "image_url":
+                    print("record.form: ", record.form)
+                    form_attr = FormAttribute.objects.get(attribute=attribute, form=record.form)
+                    attr_data, _ = FormAttributeData.objects.get_or_create(record=record, form_attribute=form_attr)
+                    
+                    # Get file name from the uploaded file
+                    file_name = Path(image_file.name).name
+                    
+                    # Save the new image file to the file system within MEDIA_ROOT
+                    fs = FileSystemStorage(location=settings.MEDIA_ROOT)
+                    new_image_path = fs.save(file_name, image_file)
+                    new_image_url = fs.url(new_image_path)
+
+                    # Update the FormAttributeData with the new image URL
+                    if attr_data.value:
+                        image_path = attr_data.value
+                        if image_path:
+                            # Remove the leading '/media' from the image path
+                            if image_path.startswith('/media'):
+                                image_path = image_path[6:]  # Adjust this based on the exact structure of your paths
+                            full_image_path = settings.MEDIA_ROOT +  image_path
+                            if os.path.exists(full_image_path):
+                                os.remove(full_image_path)
+
+                    attr_data.value = new_image_url
+                    attr_data.save()
+                
                 
         messages.success(request, "Record updated successfully.")
         

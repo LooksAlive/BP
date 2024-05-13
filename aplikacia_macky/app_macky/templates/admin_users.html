@@ -70,7 +70,7 @@
                     <!-- Delete button using a form with a hidden input -->
                     <form method="post" action="{% url 'admin_delete_user' user.id %}" style="display: inline;">
                         {% csrf_token %}
-                        <input type="submit" class="btn btn-danger btn-delete" value="Delete">
+                        <input type="submit" class="btn btn-danger btn-delete" value="Delete" onclick="return confirm('Are you sure?');">
                     </form>
                 </td>
             </tr>

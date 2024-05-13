@@ -48,7 +48,7 @@
     <header class="bg-primary text-white py-4 mb-4" style="position: relative;">
         <div class="header-container">
             <div class="col-md-12 text-center">
-                <h1 style="margin-bottom: 0;">Clearblooded Animal Species Collection</h1>
+                <h1 style="margin-bottom: 0;">Purebred breeds Collection</h1>
             </div>
             <div style="position: absolute; top: 10px; right: 20px;">
                 {% if user.is_authenticated %}
@@ -71,9 +71,12 @@
                                 <li class="nav-item"><a class="nav-link" href="{% url 'admin_galeries' %}">Admin Galery</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{% url 'admin_all_records' %}">All Records</a></li>
                             {% endif %}
+
                             <li class="nav-item"><a class="nav-link" href="{% url 'user_galeries' %}">Galeries</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'user_forms' %}">Forms</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'user_records' %}">My Records</a></li>
+                            {% if not request.session.posudzovateľ %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'user_forms' %}">Forms</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'user_records' %}">My Records</a></li>
+                            {% endif %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'user_galeries' %}">Galeries</a></li>

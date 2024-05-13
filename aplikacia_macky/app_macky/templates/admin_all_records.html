@@ -40,6 +40,8 @@
                 <small class="d-block">Form: {{ item.form_name }}</small>
                 {% if item.gallery_name %}
                 <small class="d-block">Gallery: {{ item.gallery_name }}</small>
+                {% else %}
+                <small class="d-block">Gallery: None</small>
                 {% endif %}
             </div>
             <div class="card-header">

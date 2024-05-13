@@ -62,7 +62,7 @@
 <div class="card mb-4">
     <div class="card-body">
         <!--<h5 class="card-title">Record #{{ record.id }}</h5>-->
-        <form method="post" action="{% url 'user_record_update' record.id for_user %}">
+        <form method="post" action="{% url 'user_record_update' record.id for_user %}"  enctype="multipart/form-data">
             {% csrf_token %}
             {% if request.session.admin_view or for_user %}
                 <div class="form-group attribute-input">
@@ -85,7 +85,10 @@
                             <div class="card-img-placeholder">No Image Available</div>
                         </div>
                         {% endif %}
-                        <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">
+
+                        <input type="file" class="form-control-file" id="attrnew_{{ attribute.form_attribute.attribute.id }}" name="attrnew_{{ attribute.form_attribute.attribute.id }}" accept="image/*">
+                    
+                        <!--<input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">-->
                     </div>
                 {% else %}
                     <div class="form-group attribute-input">
@@ -110,25 +113,37 @@
                 </div>
 
                 {% for attribute in form_attributes %}
-                {% if attribute.form_attribute.attribute.type == "image_url" %}
-                    <div class="form-group attribute-input">
-                        <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
-                            <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
-                        </label>
-                        <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive"/>
-                        <p class="card-text">{{ attribute.value }}</p>
-                    </div>
-                {% else %}
-                    <div class="form-group attribute-input">
-                        <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
-                            <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
-                        </label>
-                        <p class="card-text">{{ attribute.value }}</p>
-                    </div>
-                    <!-- Input field for other attribute types -->
-                {% endif %}
+                    {% if attribute.form_attribute.attribute.type == "image_url" %}
+                        <div class="form-group attribute-input">
+                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
+                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                            </label>
+                            {% if attribute.value %}
+                            <img src="{{ attribute.value }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive clickable-image">
+                            {% else %}
+                            <div class="card-header">
+                                <div class="card-img-placeholder">No Image Available</div>
+                            </div>
+                            {% endif %}
+                            <!--<input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.value }}">-->
+                        </div>
+                    {% else %}
+                        <div class="form-group attribute-input">
+                            <label class="attribute-label">{{ attribute.form_attribute.attribute.name }}
+                                <span class="attribute-type">({{ attribute.form_attribute.attribute.type }})</span>
+                            </label>
+                            <p class="card-text">{{ attribute.value }}</p>
+                        </div>
+                        <!-- Input field for other attribute types -->
+                    {% endif %}
                 {% endfor %}
             {% endif %}
+
+            <br><br>
+            <small>Form: {{ record.form.form_name }}</small><br>
+            <small>Added by: {{ record.user.username }}</small><br>
+            <small>Added on: {{ record.created_at|date:"Y-m-d H:i" }}</small><br>
+            <small>Last updated: {{ record.updated_at|date:"Y-m-d H:i" }}</small>
         </form>
     </div>
 </div>

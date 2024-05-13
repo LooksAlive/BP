@@ -33,7 +33,7 @@
                     </form>
 
                     <!-- Delete button using a form with a hidden input -->
-                    <form method="post" action="{% url 'admin_delete_attribute' attribute.id %}" style="display: inline;">
+                    <form method="post" action="{% url 'admin_delete_attribute' attribute.id %}" style="display: inline;"  onclick="return confirm('Are you sure?');">
                         {% csrf_token %}
                         <input type="submit" class="btn btn-danger btn-sm" value="Delete">
                     </form>
