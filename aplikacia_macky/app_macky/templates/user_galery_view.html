@@ -76,6 +76,12 @@
         position: static;
     }
     
+    .limited-text {
+        max-height: calc(1.5em * 4); /* Adjust the number of rows (4 rows in this example) */
+        overflow: hidden;
+        line-height: 1.5em;
+        margin-bottom: 0; /* Optional: Remove bottom margin to make it more compact */
+    }
 
     /*
     .truncate-cell {
@@ -107,13 +113,13 @@
                     <div class="card-header">
                         <!--<h5 class="card-title">Record #{{ record.record.id }}</h5> -->
                         {% if record.image %}
-                            <img src="{{ record.image }}" alt="Record Image" class="card-img-placeholder card-img-top">
+                            <img src="{{ record.image }}" alt="Record Image" class="card-img-placeholder card-img-top modal-img clickable-image">
                         {% else %}
                             <div class="card-img-placeholder card-img-top">Žiadny obrázok</div>
                         {% endif %}
                     </div>
                         <div class="card-body">
-                            <p class="card-text">{{ record.record.opis }}</p>
+                            <p class="card-text limited-text">{{ record.record.opis }}</p>
                         </div>
                         <div class="card-footer">
                             <small>Pridal: {{ record.username }}</small><br>

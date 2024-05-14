@@ -50,6 +50,34 @@
         font-size: 16px;
     }
 
+    .modal-img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .modal-content {
+        position: relative;
+        margin: auto;
+        width: 80%;
+        max-width: 800px;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    .modal-img.img-center {
+        display: block;
+        margin: 0 auto;
+    }
+
 </style>
 
 
@@ -79,7 +107,7 @@
                             <span class="attribute-type">({{ attribute.formular_atribut.atribut.typ }})</span>
                         </label>
                         {% if attribute.hodnota %}
-                        <img src="{{ attribute.hodnota }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive clickable-image">
+                        <img src="{{ attribute.hodnota }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive modal-img clickable-image">
                         {% else %}
                         <div class="card-header">
                             <div class="card-img-placeholder">Žiadny obrázok</div>
@@ -119,7 +147,7 @@
                                 <span class="attribute-type">({{ attribute.formular_atribut.atribut.typ }})</span>
                             </label>
                             {% if attribute.hodnota %}
-                            <img src="{{ attribute.hodnota }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive clickable-image">
+                            <img src="{{ attribute.hodnota }}" alt="Uploaded Image" class="img-fluid img-rounded mb-3 mt-3 img-responsive modal-img clickable-image">
                             {% else %}
                             <div class="card-header">
                                 <div class="card-img-placeholder">Žiadny obrázok</div>
@@ -192,7 +220,7 @@
                     {% if request.session.admin_view %}
                         <form method="post" action="{% url 'aprove_comment' comment.id for_user %}" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-success btn-sm ml-2" style="display: {% if request.session.admin_view and not comment.povoleny_adminom %}inline-block{% else %}none{% endif %};">Approve Comment</button>
+                            <button type="submit" class="btn btn-success btn-sm ml-2" style="display: {% if request.session.admin_view and not comment.povoleny_adminom %}inline-block{% else %}none{% endif %};">Schváliť komentár</button>
                         </form>
                     {% endif %}
                 </div>

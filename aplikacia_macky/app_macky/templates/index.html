@@ -7,14 +7,14 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <h2 class="display-6 font-weight-bold text-primary">Vitaj, <span id="username">{{ username }}</span>!</h2>
-                <p>Objavte svet fascinujúcich druhov mačiek.</p>
-                <p class="lead text-muted mb-4">Vydajte sa na cestu objavovať fascinujúci svet mačacích druhov.</p>
-
+                <h2 class="display-6 font-weight-bold text-primary">Vitajte, <span id="username">{{ username }}</span></h2>
+                <p>Skúste pridať svoje vlastné mačky rôznych plemien a ich charakteristík.</p>
+                <p class="lead text-muted mb-4">Pozrite si aktuálne galérie mačiek a vyjadrite svoj názor ohodnotením alebo komentárom k príspevkom iných užívateľov.</p>
             </div>
         </div>
     </div>
 </section>
+
 
 
 <style>
@@ -80,6 +80,12 @@
         color: #666; /* Placeholder text color */
         font-size: 16px;
     }
+    .limited-text {
+        max-height: calc(1.5em * 4); /* Adjust the number of rows (4 rows in this example) */
+        overflow: hidden;
+        line-height: 1.5em;
+        margin-bottom: 0; /* Optional: Remove bottom margin to make it more compact */
+    }
 </style>
 
 <!-- Recent Records Carousel -->
@@ -114,7 +120,7 @@
                                     {% endif %}
                                     
                                     <div class="card-body">
-                                        <textarea id="formName" name="record_description" class="form-control mb-3" rows="4" required readonly>{{ record.description }}</textarea>
+                                        <p class="limited-text">{{ record.description }}</p>
                                     </div>
                                     <div class="card-footer">
                                         <small>Pridal: {{ record.username }}</small><br>

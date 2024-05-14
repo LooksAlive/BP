@@ -19,7 +19,7 @@
           <label for="formSelect">Vyberte Formulár:</label>
           <select id="formSelect" name="form" class="form-control" {% if gallery %}disabled{% endif %}>
             {% for form in forms %}
-              <option value="{{ form.id }}" {% if gallery and form.id == gallery.formular.id %}selected{% endif %}>
+              <option value="{{ form.id }}" {% if gallery and form == gallery.formular %}selected{% endif %}>
                 {{ form.formular_nazov }}
               </option>
             {% endfor %}

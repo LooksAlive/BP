@@ -70,7 +70,7 @@ def index(request):
         image_attribute = form_data.filter(formular_atribut__atribut__typ='obrazok_url').first()
         # Determine if image is available for this record
         image_available = bool(image_attribute)
-        print("image_available: ", image_available)
+        #print("image_available: ", image_available)
         
         record_details = {
             'id': record.id,
@@ -146,7 +146,7 @@ def index(request):
         'labels': labels,
         'dates': dates,
         'data': json.dumps(data, cls=DjangoJSONEncoder),  # Convert data to JSON
-        'username': request.user.username if request.user.is_authenticated else 'Hosť'
+        'username': request.user.username if request.user.is_authenticated else ''
     }
 
     return render(request, 'index.html', context)
@@ -302,30 +302,48 @@ def admin_create_form(request, form_id=None):
         formular.formular_nazov = formular_nazov
         formular.save()
         
-        # If editing, remove existing FormAttributes
-        if form_id:
-            Formular_Atribut.objects.filter(formular=formular).delete()
-        
         # Create FormAttributes for the new or updated formular
+        processed_attribute_ids = set()
+        # Process attributes
         for key, hodnota in request.POST.items():
             if key.startswith('attribute_'):
                 attribute_id = hodnota
                 req = request.POST.get('attr_req_'+str(attribute_id))
-                print("req: ", req)
-                if not req:
-                    req = False
-                else:
-                    req = True
+                povinny = bool(req)  # Convert to boolean
+
+                processed_attribute_ids.add(int(attribute_id))
+
+                # Check if the Formular_Atribut already exists for this formular and attribute
                 try:
-                    atribut = Atribut.objects.get(id=int(attribute_id))
-                    Formular_Atribut.objects.create(
-                        formular=formular,
-                        atribut=atribut,
-                        povinny=req
-                    )
-                except (Atribut.DoesNotExist, ValueError):
-                    print("ERROR ", atribut)
-                    pass
+                    formular_attribute = Formular_Atribut.objects.get(formular=formular, atribut_id=int(attribute_id))
+                    print(f"Found existing Formular_Atribut for formular {formular.id} and attribute {attribute_id}: {formular_attribute}")
+                    formular_attribute.povinny = povinny
+                    formular_attribute.save()
+                except Formular_Atribut.DoesNotExist:
+                    print(f"Creating new Formular_Atribut for formular {formular.id} and attribute {attribute_id} with povinny={povinny}")
+                    try:
+                        atribut = Atribut.objects.get(id=int(attribute_id))
+                        new_formular_attribute = Formular_Atribut.objects.create(
+                            formular=formular,
+                            atribut=atribut,
+                            povinny=povinny
+                        )
+                        
+                        # Create Formular_Atribut_Udaje linked to a Zaznam (record)
+                        existing_zaznams = Zaznam.objects.filter(formular=formular)
+                        for record in existing_zaznams:
+                            Formular_Atribut_Udaje.objects.create(
+                                zaznam=record,
+                                formular_atribut=new_formular_attribute,
+                                hodnota=''  # You may initialize the value as needed
+                            )
+                    except Atribut.DoesNotExist:
+                        print(f"Atribut with ID {attribute_id} does not exist.")
+
+        # Remove any Formular_Atribut instances not in the processed set
+        formular_attributes_to_delete = Formular_Atribut.objects.filter(formular=formular)
+        formular_attributes_to_delete.exclude(atribut_id__in=processed_attribute_ids).delete()
+                    
         # Redirect after POST
         return redirect('admin_forms')
     
@@ -371,27 +389,27 @@ def admin_create_user(request):
             group = None
         
         if not group:
-            messages.error(request, "Invalid group selection.")
+            messages.error(request, "Neplatný výber skupiny.")
             return redirect('admin_users')
 
         # Check if username or email already exist
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Username is already taken.")
+            messages.error(request, "Používateľské meno už je obsadené.")
             return redirect('admin_users')
         
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email is already registered.")
+            messages.error(request, "E-mail je už zaregistrovaný.")
             return redirect('admin_users')
 
         # Create and save the new user
         try:
             user2 = User.objects.create_user(username=username, email=email, password=password)
             user2.groups.add(group)  # Add user to the selected group
-            messages.success(request, "User created successfully.")
+            messages.success(request, "Používateľ bol úspešne vytvorený.")
             return redirect('admin_users')
         except Exception as e:
             error_message = str(e)
-            messages.error(request, f'Error creating user: {error_message}')
+            messages.error(request, f'Chyba pri vytváraní používateľa: {error_message}')
 
     return redirect('admin_users')
 
@@ -420,9 +438,9 @@ def admin_edit_user(request, user_id):
         
         try:
             user1.save()
-            messages.success(request, 'User updated successfully.')
+            messages.success(request, 'Používateľ bol úspešne aktualizovaný.')
         except Exception as e:
-            messages.error(request, f'Error updating user: {str(e)}')
+            messages.error(request, f'Chyba pri aktualizácii používateľa: {str(e)}')
 
         return redirect('admin_users')
     else:
@@ -459,6 +477,7 @@ def admin_create_galery(request, gallery_id=None):
     if gallery_id:
         gallery = get_object_or_404(Galeria, pk=gallery_id)
         selected_form = gallery.formular
+        #print("selected_form: ", selected_form)
         form_attributes = Formular_Atribut.objects.filter(formular=selected_form).order_by('id')
         g_name = gallery.galeria_nazov
     else:
@@ -488,7 +507,7 @@ def admin_create_galery(request, gallery_id=None):
             formular = Formular.objects.get(id=form_id)
         except Formular.DoesNotExist:
             # error, no formular for gallery is set
-            messages.error(request, 'A formular for the gallery was not found.')    
+            messages.error(request, 'Formulár pre galériu sa nenašiel.')    
             return redirect('admin_galeries')
         
         # If we're creating a new gallery, instantiate it
@@ -513,23 +532,35 @@ def admin_create_galery(request, gallery_id=None):
                 Formular_Atribut.objects.filter(id=attr_id, formular=formular).update(zobrazit_v_galerii=True)
 
         if gallery_id:
-            messages.success(request, 'Galeria has been updated successfully.')
+            messages.success(request, 'Galéria bola úspešne aktualizovaná.')
         else:
-            messages.success(request, 'Galeria has been created successfully.')
+            messages.success(request, 'Galéria bola úspešne vytvorená.')
             
         return redirect('admin_galeries')
 
     # If it's a GET request, we render the page with the formular selection
     if not g_name:
         if selected_form:
+            #print("HRERE-------")
             g_name = selected_form.formular_nazov
+    
     forms = Formular.objects.filter(zobrazit_v_galerii=False)
     #print("forms: ", forms, "\n")
-    #print("selected_form: ", selected_form, "\n")
-    #print("gallery_id: ", gallery_id, "\n")
-    if not forms.exists() and gallery_id != None and selected_form != None:
+    if forms.exists():
+        if selected_form != None:
+            forms = []
+            forms.append(selected_form)
+    else:
+        if gallery_id != None and selected_form != None:
+            forms = []
+            forms.append(selected_form)
+    print("forms: ", forms, "\n")
+    print("selected_form: ", selected_form, "\n")
+    print("gallery_id: ", gallery_id, "\n")
+    """if not forms.exists() and gallery_id != None and selected_form != None:
+        print("------HRERE-------")
         forms = []
-        forms.append(selected_form)
+        forms.append(selected_form)"""
     return render(request, 'admin_create_galery.html', {
         'gallery': gallery,
         'selected_form': selected_form,
@@ -553,7 +584,7 @@ def admin_delete_galery(request, gallery_id):
         attr.save()
     
     gallery.delete()
-    messages.success(request, 'Galeria deleted successfully!')
+    messages.success(request, 'Galéria bola úspešne odstránená.')
     return redirect('admin_galeries')
 
 @login_required
@@ -655,15 +686,18 @@ def user_forms_record_add(request, form_id):
                     if atribut.typ == "date" and not re.match(r"^\d{4}-\d{2}-\d{2}$", hodnota):
                         if Formular_Atribut.objects.get(atribut=atribut, formular_id=form_id).povinny:
                             messages.error(request, f"Hodnota pre '{atribut.nazov}' musí mať formát: YYYY-MM-DD.")
+                            record.delete()
                             return redirect('user_forms_view', form_id=form_id)
                     if atribut.typ == "bool" and hodnota.lower() not in ["áno", "nie"]:
                         if Formular_Atribut.objects.get(atribut=atribut, formular_id=form_id).povinny:
                             messages.error(request, f"Hodnota pre'{atribut.nazov}' musí byť: 'áno' or 'nie'.")
+                            record.delete()
                             return redirect('user_forms_view', form_id=form_id)
 
                     if atribut.typ == "int" and not hodnota.isdigit():
                         if Formular_Atribut.objects.get(atribut=atribut, formular_id=form_id).povinny:
                             messages.error(request, f"Hodnota pre '{atribut.nazov}' musí byť: integer.")
+                            record.delete()
                             return redirect('user_forms_view', form_id=form_id)
                         
                     form_attr = Formular_Atribut.objects.get(atribut=atribut, formular_id=form_id)
@@ -762,7 +796,7 @@ def user_record_delete(request, record_id):
                 os.remove(full_image_path)
 
     record.delete()
-    messages.success(request, 'Zaznam deleted successfully.')
+    messages.success(request, 'Zoznam bol úspešne odstránený.')
     if request.session['admin_view'] == True:
         return redirect('admin_all_records')
     return redirect('user_records')
@@ -808,7 +842,6 @@ def user_record_update(request, record_id, for_user):
     #clear_messages(request)
     record = get_object_or_404(Zaznam, pk=record_id)
 
-    
     if request.method == 'POST':
         for key, hodnota in request.POST.items():
             if key.startswith('attribute_'):
@@ -848,7 +881,7 @@ def user_record_update(request, record_id, for_user):
                 atribut = get_object_or_404(Atribut, id=attr_id)
                 
                 if atribut.typ == "obrazok_url":
-                    print("record.formular: ", record.formular)
+                    #print("record.formular: ", record.formular)
                     form_attr = Formular_Atribut.objects.get(atribut=atribut, formular=record.formular)
                     attr_data, _ = Formular_Atribut_Udaje.objects.get_or_create(zaznam=record, formular_atribut=form_attr)
                     
@@ -862,14 +895,17 @@ def user_record_update(request, record_id, for_user):
 
                     # Update the Formular_Atribut_Udaje with the new image URL
                     if attr_data.hodnota:
+                        #print("HERE: ", attr_data.hodnota)
                         image_path = attr_data.hodnota
                         if image_path:
                             # Remove the leading '/media' from the image path
                             if image_path.startswith('/media'):
                                 image_path = image_path[6:]  # Adjust this based on the exact structure of your paths
                             full_image_path = settings.MEDIA_ROOT +  image_path
+                            #print("FULL: ", full_image_path)
                             if os.path.exists(full_image_path):
                                 os.remove(full_image_path)
+                                #print("REMOVED: ", full_image_path)
 
                     attr_data.hodnota = new_image_url
                     attr_data.save()

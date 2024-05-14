@@ -87,7 +87,7 @@ class Formular_Atribut(CasovyModel):
     zobrazit_v_galerii = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.atribut.name} in {self.formular.formular_nazov}'
+        return f'{self.atribut.nazov} in {self.formular.formular_nazov}'
 
 class Formular_Atribut_Udaje(CasovyModel):
     zaznam = models.ForeignKey(Zaznam, on_delete=models.CASCADE, null=True)
