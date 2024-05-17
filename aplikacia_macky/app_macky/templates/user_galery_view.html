@@ -48,13 +48,13 @@
         margin: 0 auto;
     }
     .card-img-placeholder {
-        height: 200px; /* Same height as the image container */
-        width: 100%; /* Full width */
+        height: 200px; 
+        width: 100%; 
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #f0f0f0; /* Placeholder background */
-        color: #666; /* Placeholder text color */
+        background-color: #f0f0f0; 
+        color: #666; 
         font-size: 16px;
     }
 
@@ -77,10 +77,10 @@
     }
     
     .limited-text {
-        max-height: calc(1.5em * 4); /* Adjust the number of rows (4 rows in this example) */
+        max-height: calc(1.5em * 4); 
         overflow: hidden;
         line-height: 1.5em;
-        margin-bottom: 0; /* Optional: Remove bottom margin to make it more compact */
+        margin-bottom: 0; 
     }
 
     /*
@@ -127,7 +127,7 @@
                             <small>Aktualizovaný: {{ record.aktualizovany|date:"Y-m-d H:i" }}</small>
                         </div>
                         <div class="card-footer d-flex justify-content-between">
-                             <!-- Voting buttons, admin can vote even his record ... -->
+                             <!-- Hlasovacie tlačidlá, admin môže hlasovať aj za svoj rekord ... -->
                              {% if request.session.admin_view or record.record.user != request.user and user.is_authenticated %}
                                 <div>
                                     <button type="button" class="btn btn-outline-success btn-sm vote-btn {% if record.user_vote == 'up' %}voted{% endif %}" data-record="{{ record.record.id }}" data-vote="up">👍 ({{ record.thumb_up }})</button>
@@ -135,7 +135,7 @@
                                 </div>
                             {% else %}
                                 <div>
-                                    <!-- Disabled voting buttons for guests or non-logged-in users -->
+                                    <!-- Zakázané tlačidlá na hlasovanie pre hostí alebo neprihlásených používateľov -->
                                     <button type="button" class="btn btn-outline-success btn-sm vote-btn" disabled>👍 ({{ record.thumb_up }})</button>
                                     <button type="button" class="btn btn-outline-danger btn-sm vote-btn" disabled>👎 ({{ record.thumb_down }})</button>
                                 </div>
@@ -152,7 +152,7 @@
 
 
 
-    <!-- Pagination -->
+    <!-- Stránkovanie -->
     <div class="mt-4">
         <ul class="pagination justify-content-center">
             {% if gallery_page.has_previous %}
@@ -177,7 +177,7 @@
         </ul>
     </div>
 
-    <!-- Add this modal for displaying larger images -->
+    <!-- Pridajte tento modal na zobrazovanie väčších obrázkov -->
     <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
@@ -197,7 +197,7 @@
 
 
 <script>
-    // JavaScript for the image modal and other event listeners
+    // JavaScript pre obrazový modálny a iné poslucháča udalostí
     document.addEventListener('DOMContentLoaded', function() {
         const clickableImages = document.querySelectorAll('.clickable-image');
 
@@ -206,12 +206,11 @@
                 const imageUrl = this.src;
                 const modalImage = document.getElementById('modalImage');
                 modalImage.src = imageUrl;
-                $('#imageModal').modal('show'); // Open the modal
+                $('#imageModal').modal('show');
             });
         });
 
         $('#imageModal').on('hidden.bs.modal', function() {
-            // Close the modal when clicking outside of it
             $('#imageModal').modal('hide');
         });
     });
@@ -219,8 +218,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.vote-btn').forEach(button => {
             button.addEventListener('click', function() {
-                const recordId = this.getAttribute('data-record'); // Get recordId from the dataset attribute
-                const voteType = this.getAttribute('data-vote'); // Get voteType from the dataset attribute
+                const recordId = this.getAttribute('data-record'); // Získajte recordId z atribútu množiny údajov
+                const voteType = this.getAttribute('data-vote'); // Získajte voteType z atribútu množiny údajov
                 
                 if (!recordId || !voteType) {
                     console.error('Invalid recordId or voteType.');
@@ -245,7 +244,7 @@
                     }
                 })
                 .then(data => {
-                    // Use arrow emojis instead of text
+                    // Namiesto textu použite emotikony so šípkami
                     this.innerHTML = voteType === 'up' ? '👍' : '👎';
                     updateVoteButtons(recordId, voteType, data.thumb_up, data.thumb_down);
                 })
@@ -258,7 +257,7 @@
     });
 
     function updateVoteButtons(recordId, voteType, thumbUpCount, thumbDownCount) {
-        // Update the button classes
+        // Aktualizujte triedy tlačidiel
         document.querySelectorAll(`[data-record='${recordId}']`).forEach(button => {
             if(button.dataset.vote == voteType) {
                 button.classList.add('voted');
@@ -267,12 +266,12 @@
             }
         });
 
-        // Update vote counts
+        // Aktualizujte počty hlasov
         document.querySelector(`[data-record='${recordId}'][data-vote='up']`).textContent = `👍 (${thumbUpCount})`;
         document.querySelector(`[data-record='${recordId}'][data-vote='down']`).textContent = `👎 (${thumbDownCount})`;
     }
     
-    // Get the CSRF token from the cookie
+    // Získajte token CSRF zo súboru cookie, pomocná funkcia
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -291,7 +290,7 @@
     const csrftoken = getCookie('csrftoken');
 
     $(document).ready(function() {
-        // Call the showBackButton function from the parent template if needed
+
     });
 
 </script>

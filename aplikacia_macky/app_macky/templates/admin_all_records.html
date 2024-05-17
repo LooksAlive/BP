@@ -6,13 +6,13 @@
 
 <style>
     .card-img-placeholder {
-        height: 200px; /* Same height as the image container */
-        width: 100%; /* Full width */
+        height: 200px; 
+        width: 100%; 
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #f0f0f0; /* Placeholder background */
-        color: #666; /* Placeholder text color */
+        background-color: #f0f0f0; 
+        color: #666; 
         font-size: 16px;
     }
 
@@ -44,10 +44,10 @@
         margin: 0 auto;
     }
     .limited-text {
-        max-height: calc(1.5em * 4); /* Adjust the number of rows (4 rows in this example) */
+        max-height: calc(1.5em * 4); 
         overflow: hidden;
         line-height: 1.5em;
-        margin-bottom: 0; /* Optional: Remove bottom margin to make it more compact */
+        margin-bottom: 0; 
     }
     
     
@@ -139,7 +139,7 @@
     </ul>
 </div>
 
-<!-- Add this modal for displaying larger images -->
+<!-- Pridajte tento modal na zobrazovanie väčších obrázkov -->
 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -157,7 +157,7 @@
 </div>
 
 <script>
-    // JavaScript for the image modal and other event listeners
+    // JavaScript pre obrazový modálny a iné poslucháča udalostí
     document.addEventListener('DOMContentLoaded', function() {
         const clickableImages = document.querySelectorAll('.clickable-image');
 
@@ -166,12 +166,12 @@
                 const imageUrl = this.src;
                 const modalImage = document.getElementById('modalImage');
                 modalImage.src = imageUrl;
-                $('#imageModal').modal('show'); // Open the modal
+                $('#imageModal').modal('show'); // otvorí sa modal zobrazenie
             });
         });
 
         $('#imageModal').on('hidden.bs.modal', function() {
-            // Close the modal when clicking outside of it
+            // Zatvorte modál, keď kliknete mimo neho
             $('#imageModal').modal('hide');
         });
     });

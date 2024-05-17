@@ -18,7 +18,6 @@
 
 
 <style>
-    /* Carousel arrows */
     .carousel-control-prev-icon,
     .carousel-control-next-icon {
         background-size: 100%, 100%;
@@ -27,21 +26,20 @@
 
     .carousel-control-prev-icon:after,
     .carousel-control-next-icon:after {
-        content: '❮'; /* Left arrow character */
-        font-size: 40px; /* Arrow size */
-        color: #333; /* Arrow color */
+        content: '❮';
+        font-size: 40px;
+        color: #333; 
     }
 
     .carousel-control-next-icon:after {
-        content: '❯'; /* Right arrow character */
+        content: '❯';
     }
 
-    /* Card styling */
     .carousel .card {
         box-shadow: 0 4px 8px rgba(0,0,0,.15);
         transition: box-shadow .3s ease;
         border: none;
-        min-height: 300px; /* Consistent minimum height for cards */
+        min-height: 300px;
     }
 
     .carousel .card:hover {
@@ -50,41 +48,41 @@
 
     .carousel .card-img-top,
     .card-img-top {
-        width: 100%; /* Full width of the card */
+        width: 100%;
         height: 300px;
-        object-fit: contain; /* Entire image visible without cropping */
-        background: #f8f9fa; /* Background color for empty space around the image */
-        display: block; /* Ensure the image takes the full card width */
-        margin: 0 auto; /* Center the image horizontally */
+        object-fit: contain; /* Celý obrázok je viditeľný bez orezania */
+        background: #f8f9fa;
+        display: block; /* Uistime sa, že obrázok zaberá celú šírku karty */
+        margin: 0 auto; /* Vycentrujte obrázok vodorovne */
     }
 
     .carousel-item {
-        height: auto; /* Adaptive height for each carousel item */
+        height: auto; /* Prispôsobivá výška pre každú položku karuselu */
     }
 
     .carousel-indicators li {
-        background-color: #333; /* Match indicator color with arrow color */
+        background-color: #333;
     }
 
     .carousel-indicators .active {
-        background-color: #555; /* Active indicator color */
+        background-color: #555;
     }
 
     .card-img-placeholder {
-        height: 200px; /* Same height as the image container */
-        width: 100%; /* Full width */
+        height: 200px;
+        width: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #f0f0f0; /* Placeholder background */
-        color: #666; /* Placeholder text color */
+        background-color: #f0f0f0; /* pozadie */
+        color: #666; /* Farba zástupného textu */
         font-size: 16px;
     }
     .limited-text {
-        max-height: calc(1.5em * 4); /* Adjust the number of rows (4 rows in this example) */
+        max-height: calc(1.5em * 4); /* Upravte počet riadkov (v tomto príklade 4 riadky) */
         overflow: hidden;
         line-height: 1.5em;
-        margin-bottom: 0; /* Optional: Remove bottom margin to make it more compact */
+        margin-bottom: 0; /* Voliteľné: Odstráňte spodný okraj, aby bol kompaktnejší */
     }
 </style>
 
@@ -195,7 +193,7 @@
 
 <style>
     .gallery-image-container {
-        height: 200px; /* Fixed height for images */
+        height: 200px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -204,21 +202,21 @@
     .gallery-image {
         max-height: 100%;
         max-width: 100%;
-        object-fit: cover; /* This will cover the area without stretching the image */
+        object-fit: cover;
     }
     .card {
         transition: transform 0.3s ease;
-        cursor: pointer; /* Changes the mouse cursor to indicate clickable */
+        cursor: pointer;
     }
     .card:hover {
-        transform: translateY(-5px); /* Slight raise effect on hover */
+        transform: translateY(-5px);
     }
-    /* Ensure text and other elements are not highlighted on click */
+    
     a.col {
-        color: inherit; /* Inherits text color from parent */
+        color: inherit;
     }
     a.col:hover {
-        text-decoration: none; /* Removes underline on hover */
+        text-decoration: none;
     }
 </style>
 
@@ -277,18 +275,18 @@
 
         // Define custom colors for each dataset
         var colors = [
-            'rgba(255, 99, 132, 1)',   // Red
-            'rgba(54, 162, 235, 1)',   // Blue
-            'rgba(255, 206, 86, 1)',   // Yellow
-            'rgba(75, 192, 192, 1)'    // Teal
+            'rgba(255, 99, 132, 1)',   // cervena
+            'rgba(54, 162, 235, 1)',   // modra
+            'rgba(255, 206, 86, 1)',   // zlta
+            'rgba(75, 192, 192, 1)'    // hneda
         ];
 
         var datasets = labels.map(function(label, idx) {
             return {
                 label: label,
                 data: data.map(function(item) { return item[idx]; }),
-                borderColor: colors[idx],           // Assign color based on index
-                backgroundColor: colors[idx],       // Use the same color for background
+                borderColor: colors[idx],           // pre index
+                backgroundColor: colors[idx],       // pozadie
                 borderWidth: 1
             };
         });

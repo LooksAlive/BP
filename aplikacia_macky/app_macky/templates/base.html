@@ -10,21 +10,16 @@
     <link rel="icon" type="image/png" href="https://icons8.com/icons/set/cat-favicon">
 
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Add Bootstrap JavaScript dependencies if needed -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
-    <!-- ... other head elements ... -->
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -40,8 +35,8 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            z-index: 1000; /* Ensure it's above other content */
-            display: none; /* Initially hide the button */
+            z-index: 1000;
+            display: none;
         }
     </style>
 
@@ -92,18 +87,18 @@
 
     <style>
         .user-info-box {
-            display: inline-block; /* Make the username box inline */
-            margin: 0; /* Remove any default margin */
+            display: inline-block;
+            margin: 0; /* Odstráňte všetky predvolené okraje */
         }
-        @media (min-width: 768px) { /* Adjustments for larger screens */
+        @media (min-width: 768px) {
             .user-info-box {
-                margin-right: -15px; /* Align with the container's padding */
+                margin-right: -15px;
             }
         }
     </style>
 
 
-    <!-- Main content block -->
+    <!-- Hlavný blok -->
     <div class="container mt-4">
         {% if messages %}
             {% for message in messages %}
@@ -152,7 +147,7 @@
         const backButton = document.getElementById('back-button');
         if (backButton) {
             backButton.addEventListener('click', function() {
-                window.history.back(); // Go back to the previous page
+                window.history.back(); // na predchadzajúcu stránku
             });
         }
 

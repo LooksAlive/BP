@@ -6,7 +6,7 @@
 
 
 
-<!-- Recent Galleries Section -->
+<!-- Sekcia galérií -->
 <section class="py-5">
     <div class="container">
         <h2 class="text-center mb-5">Galérie</h2>
@@ -37,7 +37,7 @@
 
 <style>
     .gallery-image-container {
-        height: 200px; /* Fixed height for images */
+        height: 200px; 
         display: flex;
         align-items: center;
         justify-content: center;
@@ -46,26 +46,26 @@
     .gallery-image {
         max-height: 100%;
         max-width: 100%;
-        object-fit: cover; /* This will cover the area without stretching the image */
+        object-fit: cover; /* Tým sa pokryje oblasť bez roztiahnutia obrazu */
     }
     .card {
         transition: transform 0.3s ease;
-        cursor: pointer; /* Changes the mouse cursor to indicate clickable */
+        cursor: pointer; /* Zmení kurzor myši na označenie, na ktoré sa dá kliknúť */
     }
     .card:hover {
-        transform: translateY(-5px); /* Slight raise effect on hover */
+        transform: translateY(-5px); 
     }
-    /* Ensure text and other elements are not highlighted on click */
+    
     a.col {
-        color: inherit; /* Inherits text color from parent */
+        color: inherit; 
     }
     a.col:hover {
-        text-decoration: none; /* Removes underline on hover */
+        text-decoration: none;
     }
 </style>
 
 
-<!-- Pagination -->
+<!-- Stránkovanie -->
 <div class="mt-4">
     <ul class="pagination justify-content-center">
         {% if gallery_page.has_previous %}
@@ -92,10 +92,8 @@
 
 
 
-<!-- Add Bootstrap JavaScript dependencies if needed -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- Optional: Include Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
 {% endblock %}

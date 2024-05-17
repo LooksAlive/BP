@@ -6,7 +6,7 @@
 
 <style>
     .attribute-input {
-        max-width: 400px; /* Shorten input fields */
+        max-width: 400px; 
     }
     .comments-section {
         margin-top: 20px;
@@ -22,7 +22,7 @@
         color: #6c757d;
     }
     .add-comment-btn {
-        float: right; /* Position the Add Comment button to the right */
+        float: right; 
     }
     .attribute-label {
         font-weight: bold;
@@ -35,18 +35,18 @@
     }
 
     textarea:readonly {
-        border: 1px solid #ccc; /* Add a small border for disabled textareas */
-        background-color: transparent; /* Keep the background transparent */
+        border: 1px solid #ccc; 
+        background-color: transparent;
     }
 
     .card-img-placeholder {
-        height: 200px; /* Same height as the image container */
-        width: 100%; /* Full width */
+        height: 200px; 
+        width: 100%; 
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #f0f0f0; /* Placeholder background */
-        color: #666; /* Placeholder text color */
+        background-color: #f0f0f0; 
+        color: #666; 
         font-size: 16px;
     }
 
@@ -99,6 +99,8 @@
                     </label>
                     <textarea id="formName" name="record_description" class="form-control mb-3" rows="4">{{ record.opis }}</textarea> <!--required-->
                 </div>
+                
+                <!-- zobrazenie atribútov a ich hodnôt pre záznam v rôznych prípadoch používateľov a ich skupín -->
 
                 {% for attribute in form_attributes %}
                 {% if attribute.formular_atribut.atribut.typ == "obrazok_url" %}
@@ -125,13 +127,11 @@
                         </label>
                         <input type="text" name="attribute_{{ attribute.id }}" class="form-control" value="{{ attribute.hodnota }}">
                     </div>
-                    <!-- Input field for other attribute types -->
                 {% endif %}
                     
                 {% endfor %}
                 <button type="submit" class="btn btn-primary">Ulož zmeny</button>
                 {% else %}
-                <!-- Display form attributes -->
 
                 <div class="form-group attribute-input">
                     <label class="attribute-label">Opis
@@ -162,7 +162,6 @@
                             </label>
                             <p class="card-text">{{ attribute.hodnota }}</p>
                         </div>
-                        <!-- Input field for other attribute types -->
                     {% endif %}
                 {% endfor %}
             {% endif %}
@@ -175,6 +174,8 @@
         </form>
     </div>
 </div>
+
+    <!-- komentáre, znova rôzne správanie pre rôzne skupiny, povolenia a podobne. -->
     
     <div class="comments-section">
         <h5>Comments</h5>
@@ -202,7 +203,7 @@
                         Komentoval {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.vytvoreny|date:"Y-m-d H:i" }}
                     </div>
                 {% else %}
-                    <!-- not approved by admin -> not showing -->
+                    <!-- neschválené správcom/adminom -> nezobrazuje sa -->
                 {% endif %}
                 </form>
                 <div class="btn-group mt-2 mb-5">
@@ -247,7 +248,6 @@
         {% endif %}
 
 
-<!-- Add this modal for displaying larger images -->
 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -270,7 +270,6 @@
 
 
 <script>
-    // JavaScript for the image modal and other event listeners
     document.addEventListener('DOMContentLoaded', function() {
         const clickableImages = document.querySelectorAll('.clickable-image');
 
@@ -279,12 +278,11 @@
                 const imageUrl = this.src;
                 const modalImage = document.getElementById('modalImage');
                 modalImage.src = imageUrl;
-                $('#imageModal').modal('show'); // Open the modal
+                $('#imageModal').modal('show');
             });
         });
 
         $('#imageModal').on('hidden.bs.modal', function() {
-            // Close the modal when clicking outside of it
             $('#imageModal').modal('hide');
         });
     });
@@ -297,7 +295,6 @@
 
 
     $(document).ready(function() {
-        // Call the showBackButton function from the parent template
         showBackButton();
     });
  

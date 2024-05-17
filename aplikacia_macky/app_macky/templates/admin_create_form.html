@@ -3,14 +3,14 @@
 {% load static %}
 
 {% block title %}
-{% if form_id %}Úprava Formulára - {{ form.formular_nazov }}{% else %}Create New Form{% endif %}
+{% if form_id %}Úprava Formulára - {{ form.formular_nazov }}{% else %}Nový formulár{% endif %}
 {% endblock %}
 
 {% block content %}
 <div class="container mt-4">
 
   <div class="row">
-    <!-- Left side: Table of attributes -->
+    <!-- Ľavá strana: Tabuľka atribútov -->
     <div class="col-md-6 mb-3">
       <h2>Atribúty</h2>
       <div class="table-responsive">
@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <!-- Right side: Table for the form preview -->
+    <!-- Pravá strana: Tabuľka pre náhľad formulára -->
     <div class="col-md-6 mb-3">
       <h2>Výsledný formulár</h2>
       <form id="form-builder" method="post" action="{% if form_id %}{% url 'admin_create_form' form_id %}{% else %}{% url 'admin_create_form' %}{% endif %}">
@@ -89,12 +89,11 @@
 
 <script>
   $(document).ready(function() {
-      // Call the showBackButton function from the parent template
       showBackButton();
   });
 </script>
-  
-<!-- Include JavaScript file -->
+
+<!-- súbor JavaScript - obsahuje funkcie -->
 <script src="{% static 'js/form-builder.js' %}"></script>
 {% endblock %}
 

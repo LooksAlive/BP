@@ -5,7 +5,7 @@
 {% block content %}
 <style>
     .truncate-cell {
-        max-width: 200px; /* Adjust as needed */
+        max-width: 200px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -14,17 +14,17 @@
     }
     
     .truncate-cell:hover {
-        white-space: normal; /* Allow text to wrap */
-        overflow: visible; /* Show overflowed text */
-        max-height: none; /* Remove max height restriction */
-        z-index: 1; /* Ensure it's above other content */
-        position: absolute; /* Take out of normal flow */
-        background-color: #fff; /* Optional: for better visibility */
-        padding: 5px; /* Optional: for spacing */
-        border: 1px solid #ccc; /* Optional: for border */
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Optional: for shadow */
-        max-width: 100%; /* Ensure it doesn't exceed the parent width */
-        box-sizing: border-box; /* Include padding and border in width */
+        white-space: normal;
+        overflow: visible;
+        max-height: none;
+        z-index: 1;
+        position: absolute;
+        background-color: #fff; 
+        padding: 5px; 
+        border: 1px solid #ccc; 
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); 
+        max-width: 100%; 
+        box-sizing: border-box; 
     }
 </style>
 <h1 class="mb-4">Admin Užívatelia</h1>
@@ -42,7 +42,7 @@
         </tr>
     </thead>
     <tbody>
-        <!-- Loop through users and display them in rows -->
+        <!-- Prechádzajte používateľmi a zobrazujte ich v riadkoch -->
         {% for user in users %}
             <tr>
                 <td>{{ user.id }}</td>
@@ -57,13 +57,13 @@
                     {% endfor %}
                 </td>
                 <td>
-                    <!-- Update button using a form with a hidden input -->
+                    <!-- Tlačidlo Aktualizovať pomocou formulára so skrytým vstupom -->
                     <form method="get" action="{% url 'admin_edit_user' user.id %}" style="display: inline;">
                         {% csrf_token %}
                         <input type="submit" class="btn btn-primary btn-update" value="Upraviť">
                     </form>
 
-                    <!-- Delete button using a form with a hidden input -->
+                    <!-- Tlačidlo Odstrániť pomocou formulára so skrytým vstupom -->
                     <form method="post" action="{% url 'admin_delete_user' user.id %}" style="display: inline;">
                         {% csrf_token %}
                         <input type="submit" class="btn btn-danger btn-delete" value="Vymazať" onclick="return confirm('Potvrdďte akciu?');">
@@ -74,10 +74,10 @@
     </tbody>
 </table>
 
-<!-- Button to toggle the input fields for adding a new user -->
+<!-- Tlačidlo na prepínanie vstupných polí na pridanie nového používateľa -->
 <button id="addUserButton" class="btn btn-success mb-4">Pridaj Užívateľa</button>
 
-<!-- Input fields for adding a new user (initially hidden) -->
+<!-- Vstupné polia na pridanie nového používateľa (na začiatku skryté) -->
 <div id="addUserFields" style="display: none">
     <form method="post" action="{% url 'admin_create_user' %}">
         {% csrf_token %}
@@ -107,10 +107,8 @@
     </form>
 </div>
 
-<!-- Add Bootstrap JavaScript dependencies if needed -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- JavaScript to toggle the visibility of input fields -->
 <script>
     document.getElementById('addUserButton').addEventListener('click', function () {
         const addUserFields = document.getElementById('addUserFields');

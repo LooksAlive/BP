@@ -13,13 +13,13 @@
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
-                        <!-- Displaying messages -->
+                        <!-- Správy -->
                         {% if messages %}
                             {% for message in messages %}
                                 <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                             {% endfor %}
                         {% endif %}
-                        <!-- Username -->
+                        <!-- Meno -->
                         <div class="form-group">
                             <label for="username">Meno</label>
                             <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
@@ -31,19 +31,18 @@
                             <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required>
                         </div>
 
-                        <!-- Password -->
+                        <!-- Heslo -->
                         <div class="form-group">
                             <label for="password">Heslo</label>
                             <input type="password" class="form-control" id="password" name="password" placeholder="Choose a password" required>
                         </div>
 
-                        <!-- Confirm Password -->
+                        <!-- Potvrdenie hesla -->
                         <div class="form-group">
                             <label for="confirm_password">Potvrďte heslo</label>
                             <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
                         </div>
 
-                        <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary btn-block">Registruj sa</button>
                     </form>
                 </div>

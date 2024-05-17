@@ -6,7 +6,7 @@
 <div class="container mt-5">
     <h1 class="mb-4">Admin Atribúty</h1>
 
-    <!-- Display attributes in a well-structured table -->
+    <!-- Zobrazte atribúty v dobre štruktúrovanej tabuľke -->
     <table class="table table-striped">
         <thead class="thead-light">
             <tr>
@@ -18,7 +18,7 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Loop through attributes and display them in rows -->
+            <!-- Prechádzajte atribútmi a zobrazujte ich v riadkoch -->
             {% for attribute in attributes %}
             <tr>
                 <td>{{ attribute.id }}</td>
@@ -26,13 +26,13 @@
                 <td>{{ attribute.typ }}</td>
                 <td>{{ attribute.vytvoreny }}</td>
                 <td>
-                    <!-- Update button using a form with a hidden input -->
+                    <!-- Tlačidlo Aktualizovať pomocou formulára so skrytým vstupom -->
                     <form method="get" action="{% url 'admin_edit_attribute' attribute.id %}" style="display: inline;">
                         {% csrf_token %}
                         <input type="submit" class="btn btn-primary btn-sm" value="Edit">
                     </form>
 
-                    <!-- Delete button using a form with a hidden input -->
+                    <!-- Tlačidlo vymazať pomocou formulára so skrytým vstupom -->
                     <form method="post" action="{% url 'admin_delete_attribute' attribute.id %}" style="display: inline;"  onclick="return confirm('Are you sure?');">
                         {% csrf_token %}
                         <input type="submit" class="btn btn-danger btn-sm" value="Delete">
@@ -43,10 +43,10 @@
         </tbody>
     </table>
 
-    <!-- Button to toggle the input fields for adding a new attribute -->
+    <!-- Tlačidlo na prepínanie vstupných polí na pridanie nového atribútu -->
     <button id="addAttributeButton" class="btn btn-success mb-4">Pridať Atribút</button>
 
-    <!-- Input fields for adding a new attribute (initially hidden) -->
+    <!-- Vstupné polia na pridanie nového atribútu (na začiatku skryté) -->
     <div id="addAttributeFields" style="display: none">
         <form method="post" action="{% url 'admin_create_attribute' %}">
             {% csrf_token %}
@@ -68,10 +68,8 @@
     </div>    
 </div>
 
-<!-- Add Bootstrap JavaScript dependencies if needed -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- JavaScript to toggle the visibility of input fields -->
 <script>
     document.getElementById('addAttributeButton').addEventListener('click', function () {
         const addAttributeFields = document.getElementById('addAttributeFields');

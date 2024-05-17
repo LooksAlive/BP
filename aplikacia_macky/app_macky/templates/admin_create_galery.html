@@ -2,19 +2,19 @@
 {% load static %}
 
 {% block title %}
-  {% if gallery %}Úprava Galérie{% else %}Vytvor Galériu{% endif %}
+  {% if gallery %}Úprava Galérie{% else %}Nová Galéria{% endif %}
 {% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-  <h1 class="text-center mb-4">{% if gallery %}Úprava Galérie{% else %}Galéria{% endif %}</h1>
+  <h1 class="text-center mb-4">{% if gallery %}Úprava Galérie{% else %}Nová Galéria{% endif %}</h1>
   
   <div class="card">
     <div class="card-body">
       <form method="post" action="{% if gallery.id %}{% url 'admin_create_galery' gallery.id %}{% else %}{% url 'admin_create_galery' %}{% endif %}">
         {% csrf_token %}
         
-        <!-- Form Selection Dropdown -->
+        <!-- Rozbaľovacia ponuka Výber formulára -->
         <div class="form-group">
           <label for="formSelect">Vyberte Formulár:</label>
           <select id="formSelect" name="form" class="form-control" {% if gallery %}disabled{% endif %}>
@@ -31,7 +31,7 @@
     <label for="formName">Názov Galérie:</label>
     <input type="text" id="GalleryName" name="galeria_nazov" class="form-control mb-3" value="{{ galeria_nazov }}" required>
 
-    <!-- Form Attributes Display On/Off -->
+    <!-- Zapnutie/vypnutie zobrazenia atribútov formulára-->
     <div class="form-attributes">
       <h3>Atribúty Formulára</h3>
       {% if form_attributes %}
@@ -51,7 +51,6 @@
 
     </div>
 
-    <!-- Submit Button -->
     <button type="submit" class="btn btn-success mt-2">
       {% if gallery %}Aktualizuj Galériu{% else %}Vytvor Galériu{% endif %}
     </button>
@@ -64,21 +63,21 @@
  }
  
   .custom-checkbox .form-check-input {
-    cursor: pointer; /* Makes the cursor a pointer when hovering over the checkbox */
+    cursor: pointer; 
 }
 
 .custom-checkbox .form-check-label {
-    cursor: pointer; /* Makes the cursor a pointer when hovering over the label */
-    padding: 0.5rem 1rem; /* Adds padding to the label */
-    border: 1px solid #ddd; /* Adds a border to the label */
-    border-radius: 5px; /* Rounds the corners of the border */
-    margin-bottom: 0; /* Removes the default bottom margin */
-    transition: background-color 0.2s, color 0.2s; /* Smooth transition for background and text color */
+    cursor: pointer; 
+    padding: 0.5rem 1rem; 
+    border: 1px solid #ddd; 
+    border-radius: 5px; 
+    margin-bottom: 0; 
+    transition: background-color 0.2s, color 0.2s; 
 }
 
 .custom-checkbox .form-check-input:checked + .form-check-label {
-    background-color: #007bff; /* Changes the background color when checked */
-    color: white; /* Changes the text color when checked */
+    background-color: #007bff; 
+    color: white; 
 }
 
 </style>
@@ -92,12 +91,12 @@
         });
     
         function fetchAttributes(formId) {
-            // Use AJAX to fetch attributes for the selected form
+            // Použijeme AJAX na načítanie atribútov pre vybratý formulár
             const url = `{% url 'admin_create_galery' %}?form_id=${formId}`;
             fetch(url, {
                 method: 'GET',
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest',  // Important for Django to recognize the AJAX request
+                    'X-Requested-With': 'XMLHttpRequest',
                 },
             })
             .then(response => response.json())
@@ -110,7 +109,7 @@
     
         function updateAttributesList(attributes) {
             const attributesContainer = document.querySelector('.form-attributes');
-            attributesContainer.innerHTML = ''; // Clear current attributes
+            attributesContainer.innerHTML = ''; // vymažeme atribúty
             attributes.forEach(attr => {
                 const checked = attr.display_in_gallery ? 'checked' : '';
                 const attributeRow = `
@@ -128,7 +127,6 @@
 
 
   $(document).ready(function() {
-        // Call the showBackButton function from the parent template
         showBackButton();
     });
 

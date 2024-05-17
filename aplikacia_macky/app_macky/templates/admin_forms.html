@@ -5,7 +5,7 @@
 {% block content %}
 <h1 class="mb-4">Admin Formuláre</h1>
 
-<!-- Display forms in a well-structured table -->
+<!-- Zobrazte formuláre v dobre štruktúrovanej tabuľke-->
 <table class="table table-striped">
     <thead class="thead-light">
         <tr>
@@ -17,7 +17,7 @@
         </tr>
     </thead>
     <tbody>
-        <!-- Loop through forms and display them in rows -->
+        <!-- Prechádzajte formulármi a zobrazujte ich v riadkoch -->
         {% for form in forms %}
         <tr>
             <td>{{ form.id }}</td>
@@ -25,13 +25,13 @@
             <td>{{ form.vytvoreny}}</td>
             <td>{{ form.aktualizovany }}</td>
             <td>
-                <!-- Update button using a form with a hidden input -->
+                <!-- Tlačidlo Aktualizovať pomocou formulára so skrytým vstupom -->
                 <form method="get" action="{% url 'admin_create_form' form.id %}" style="display: inline;">
                     {% csrf_token %}
                     <input type="submit" class="btn btn-primary btn-sm" value="Upraviť">
                 </form>
 
-                <!-- Delete button using a form with a hidden input -->
+                <!-- Tlačidlo Odstrániť pomocou formulára so skrytým vstupom-->
                 <form method="post" action="{% url 'admin_delete_form' form.id %}" style="display: inline;">
                     {% csrf_token %}
                     <input type="submit" class="btn btn-danger btn-sm" value="Vymazať" onclick="return confirm('Potvrďte akciu:');">

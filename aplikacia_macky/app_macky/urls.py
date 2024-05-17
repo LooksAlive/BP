@@ -4,6 +4,23 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+
+"""
+
+Súbor urls.py je kľúčovou súčasťou Django aplikácie. Slúži na definovanie mapovania medzi URL adresami a zobrazovacími funkciami (views).
+To znamená, že určuje, aká funkcia Django spustí, keď používateľ navštívi konkrétnu URL adresu.
+Čo obsahuje urls.py?
+
+Súbor urls.py obsahuje zoznam URL vzorov (URL patterns). Každý URL vzor pozostáva z dvoch hlavných častí:
+
+    URL adresa: Textový reťazec, ktorý definuje cestu URL, napríklad /, /login/ alebo /registration/.
+    Zobrazovacia funkcia (View): Python funkcia, ktorá sa spustí, keď sa URL adresa zhoduje s URL vzorom. 
+    Táto funkcia generuje HTML odpoveď, ktorú Django odošle prehliadaču používateľa.    
+    
+"""
+
+
+
 urlpatterns = [
     path('', views.index, name='index'),
     path('login/', views.login_view, name='login'),

@@ -6,7 +6,7 @@
 <div class="container mt-5">
     <h1 class="mb-4 text-center">Formuláre</h1>
 
-    <!-- Display attributes in a well-structured table -->
+    <!-- Zobrazte atribúty v dobre štruktúrovanej tabuľke -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead class="thead-light">
@@ -16,12 +16,12 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Loop through attributes and display them in rows -->
+                <!-- Prechádzajte atribútmi a zobrazujte ich v riadkoch -->
                 {% for form in forms %}
                 <tr>
                     <td>{{ form.formular_nazov }}</td>
                     <td>
-                        <!-- Update button using a form with a hidden input -->
+                        <!-- Tlačidlo Aktualizovať pomocou formulára so skrytým vstupom -->
                         <form method="get" action="{% url 'user_forms_view' form.id %}" style="display: inline;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary btn-sm">
@@ -32,11 +32,10 @@
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>    
+        </table>
     </div>
 </div>
 
-<!-- Add Bootstrap JavaScript dependencies if needed -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 {% endblock %}
