@@ -42,7 +42,7 @@
         </tr>
     </thead>
     <tbody>
-        <!-- Prechádzajte používateľmi a zobrazujte ich v riadkoch -->
+        <!-- Prechádzajte užívateľmi a zobrazujte ich v riadkoch -->
         {% for user in users %}
             <tr>
                 <td>{{ user.id }}</td>
@@ -74,10 +74,10 @@
     </tbody>
 </table>
 
-<!-- Tlačidlo na prepínanie vstupných polí na pridanie nového používateľa -->
+<!-- Tlačidlo na prepínanie vstupných polí na pridanie nového užívateľa -->
 <button id="addUserButton" class="btn btn-success mb-4">Pridaj Užívateľa</button>
 
-<!-- Vstupné polia na pridanie nového používateľa (na začiatku skryté) -->
+<!-- Vstupné polia na pridanie nového užívateľa (na začiatku skryté) -->
 <div id="addUserFields" style="display: none">
     <form method="post" action="{% url 'admin_create_user' %}">
         {% csrf_token %}

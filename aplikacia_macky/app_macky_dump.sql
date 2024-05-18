@@ -694,6 +694,8 @@ COPY public.app_macky_hlas (id, vytvoreny, aktualizovany, typ_hlasu, user_id, za
 19	2024-05-14 13:19:54.800928+02	2024-05-14 13:19:54.800936+02	down	36	35
 20	2024-05-14 13:19:55.791878+02	2024-05-14 13:19:55.791891+02	down	36	37
 21	2024-05-14 13:19:56.424051+02	2024-05-14 13:19:56.424057+02	down	36	38
+23	2024-05-15 21:16:27.517686+02	2024-05-15 21:16:27.517699+02	up	38	40
+22	2024-05-15 21:16:26.56469+02	2024-05-15 21:16:26.564702+02	down	38	41
 \.
 
 
@@ -869,9 +871,9 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 COPY public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
 37	pbkdf2_sha256$600000$nNpD1wL0h49PCUVhtGC3BW$NA7AtG65JLOk4pP8ulYfq1OhaZr4qMcoJekWFxRFzzM=	2024-05-14 12:57:44.832334+02	f	matej			matej.lesny@gmail.com	f	t	2024-05-14 12:29:54.539005+02
 39	pbkdf2_sha256$600000$jVcQ8JSwqDLikAPAQaHuox$+M0Ss9OssJNrgxB76iHrUfQP7X91j25sdWc6izgQjhY=	2024-05-14 13:12:10.934164+02	f	jozef			jozef.plosky@pokec.sk	f	t	2024-05-14 12:31:23.812258+02
-38	pbkdf2_sha256$600000$nHmaAyryGC7glH08CbRgPX$m0Lq22oKtM7JD1D8R8TcCVofWmXV0T2PUhE2aLNqtw8=	2024-05-14 13:17:17.247195+02	f	martin			martin.klingac@pobox.sk	f	t	2024-05-14 12:30:21.677452+02
 36	pbkdf2_sha256$600000$ckWZghA6pzylddbSZJpsBW$eIhX6CaOTWBBy+6D4GF3gkO691vMsolOSGwbu90GG2U=	2024-05-14 13:19:21.641053+02	f	adam			adam.melikant@gmail.com	f	t	2024-05-14 12:29:24.036967+02
-24	pbkdf2_sha256$600000$wqmYyppYBgP1RLDvvBW0p5$wwn5OF2H2NaSEHxo/YBz58JgT+pPCZbPTs44t4PfF+o=	2024-05-14 13:20:04.707808+02	f	admin	Admin	Adminový	adam.melikan@gmail.com	f	t	2024-05-03 22:08:47.28962+02
+38	pbkdf2_sha256$600000$nHmaAyryGC7glH08CbRgPX$m0Lq22oKtM7JD1D8R8TcCVofWmXV0T2PUhE2aLNqtw8=	2024-05-15 21:24:27.276621+02	f	martin			martin.klingac@pobox.sk	f	t	2024-05-14 12:30:21.677452+02
+24	pbkdf2_sha256$600000$wqmYyppYBgP1RLDvvBW0p5$wwn5OF2H2NaSEHxo/YBz58JgT+pPCZbPTs44t4PfF+o=	2024-05-18 21:34:04.96335+02	f	admin	Admin	Adminový	adam.melikan@gmail.com	f	t	2024-05-03 22:08:47.28962+02
 \.
 
 
@@ -988,6 +990,8 @@ wrxb9v6bi6oeh7dwdk965wfaj3n4z4bv	eyJhZG1pbl92aWV3IjpmYWxzZX0:1s6XnI:pJNl7Vngz3LD
 0lt6a9csze48z8ypgd3v70yllqx5wyiw	.eJxVjEEOgjAQRe_StSGdFoSydO8NTMi0M0gVqaEtJhrvriRs2P73_vsIpIefusXzS7RpznwQHeY0dDny3HkSrVCl2I0W3Z2nldANp2soXJjS7G2xKsVGY3EOxONpc3eBAeOwvktNpXWyPkJtKwtAsleVg8oAaKnRaENGoiRX1kqxNsZp0KYCVMY23PyjzxAzvcOCiS9ZgmbR9jhG_v4ATaBG1Q:1s6qCS:WjuPznQndwXQnTZ8P2SCU8Z4ZwrtD35uC2-HTbg-LTQ	2024-05-14 14:20:04.711489+02
 l6kt66xy4dfegvt4npnm3b2uus4clumw	.eJxVjEEOgjAQRe_StSGdFoSydO8NTMi0M0gVqaEtJhrvriRs2P73_vsIpIefusXzS7RpznwQHeY0dDny3HkSrVCl2I0W3Z2nldANp2soXJjS7G2xKsVGY3EOxONpc3eBAeOwvktNpXWyPkJtKwtAsleVg8oAaKnRaENGoiRX1kqxNsZp0KYCVMY23PyjzxAzvcOCiS9ZgmbR9jhG_v4ATaBG1Q:1s6YB6:iVxfPIBREWAcUPQMWMjQcc6YvfEOEVC7CkXsScnzxJI	2024-05-13 19:05:28.658192+02
 pas0hotzv776xkxf3pnjzqzgy14xem9a	.eJxVjEEOgjAQRe_StSGdFoSydO8NTMi0M0gVqaEtJhrvriRs2P73_vsIpIefusXzS7RpznwQHeY0dDny3HkSrVCl2I0W3Z2nldANp2soXJjS7G2xKsVGY3EOxONpc3eBAeOwvktNpXWyPkJtKwtAsleVg8oAaKnRaENGoiRX1kqxNsZp0KYCVMY23PyjzxAzvcOCiS9ZgmbR9jhG_v4ATaBG1Q:1s6ZBR:v53tFBeCsUB1TUCQCbd9R0kB0vvDgLpQcQ-xsc2_5Ak	2024-05-13 20:09:53.621809+02
+vtdw0nmw2lxnahowddjt2utag6neqpar	.eJxVj80KgzAQhN8l5yKm2Rjjsfe-QUE27qban6QYY6Gl714FL17nm_lgvgLpOYR2HvgtGo-PxAfRYp76Nice24FEI1QtdqHD7s5hJXTDcI1FF8M0Dq5YK8VGU3GOxI_T1t0Jekz9sjbmaMA6TY5qIGNdrZRnRKkBPGmLVCH4UjrQDIzWdUZ5qcBVmqDyZpG-Ysr0iTNOfMmlVLyd-P0B4UpImQ:1s7KEl:SVMJRKcG4NRaxgg-m1dHqLs3rIrmjQ01gYK2HrywO48	2024-05-15 22:24:27.280695+02
+5feua5ypbzet6s4ruo2q6wx3i1qtwhkj	eyJhZG1pbl92aWV3IjpmYWxzZX0:1s8Pp1:EeVg28011uRm3hIeVXUVdGh3Q-q_2Uy-2A_sTlSFiTU	2024-05-18 22:34:23.948332+02
 rhuvmo43ppjtmrhnh3kpk77abazvhvde	.eJxVjEEOgjAQRe_StSGdFoSydO8NTMi0M0gVqaEtJhrvriRs2P73_vsIpIefusXzS7RpznwQHeY0dDny3HkSrVCl2I0W3Z2nldANp2soXJjS7G2xKsVGY3EOxONpc3eBAeOwvktNpXWyPkJtKwtAsleVg8oAaKnRaENGoiRX1kqxNsZp0KYCVMY23PyjzxAzvcOCiS9ZgmbR9jhG_v4ATaBG1Q:1s6cjd:f6XNfLszjYkWbDEs3uyICgAfDZPg1GMX01NQVUx6stc	2024-05-13 23:57:25.286121+02
 5baqnlqu6vlgdzgls125zaj34lir18mr	.eJxVjEEOgjAQRe_StSGdFoSydO8NTMi0M0gVqaEtJhrvriRs2P73_vsIpIefusXzS7RpznwQHeY0dDny3HkSrVCl2I0W3Z2nldANp2soXJjS7G2xKsVGY3EOxONpc3eBAeOwvktNpXWyPkJtKwtAsleVg8oAaKnRaENGoiRX1kqxNsZp0KYCVMY23PyjzxAzvcOCiS9ZgmbR9jhG_v4ATaBG1Q:1s6n8E:9x342yP7Gn2YQRAudmD9RAQ3GQ1YHmHGz-wZ04fqih4	2024-05-14 11:03:30.801301+02
 \.
@@ -1032,7 +1036,7 @@ SELECT pg_catalog.setval('public.app_macky_galeria_id_seq', 18, true);
 -- Name: app_macky_hlas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.app_macky_hlas_id_seq', 21, true);
+SELECT pg_catalog.setval('public.app_macky_hlas_id_seq', 23, true);
 
 
 --

@@ -23,10 +23,10 @@ View funkcie (zobrazovacie funkcie) sú kľúčovou súčasťou Django framework
 Základný princíp:
 
     URL vzor: V súbore urls.py definujete URL vzor, ktorý spája konkrétnu URL adresu s view funkciou. Napríklad URL vzor / by mohol smerovať na view funkciu index.
-    Požiadavka: Keď používateľ navštívi URL adresu, ktorá zodpovedá URL vzoru, Django odošle HTTP požiadavku do príslušnej view funkcie.
+    Požiadavka: Keď užívateľ navštívi URL adresu, ktorá zodpovedá URL vzoru, Django odošle HTTP požiadavku do príslušnej view funkcie.
     Spracovanie požiadavky: View funkcia prijme objekt request, ktorý obsahuje informácie o požiadavke, ako napríklad metóda požiadavky (GET, POST), hlavičky, parametre URL a telo požiadavky.
     Logika: View funkcia spracuje požiadavku a vykoná požadovanú akciu. Môže to zahŕňať načítanie dát z databázy, spracovanie formulárových dát, generovanie HTML kódu alebo presmerovanie na inú URL adresu.
-    Vrátenie odpovede: View funkcia vráti objekt HttpResponse, ktorý obsahuje HTML kód, ktorý sa odošle späť prehliadaču používateľa.
+    Vrátenie odpovede: View funkcia vráti objekt HttpResponse, ktorý obsahuje HTML kód, ktorý sa odošle späť prehliadaču užívateľa.
 
 """
 
@@ -184,13 +184,13 @@ def login_view(request):
         if user is not None:
             login(request, user)
 
-            # Načítame skupiny používateľa
+            # Načítame skupiny užívateľa
             user_groups = user.groups.all()
             #for group in user_groups:
                 #print("group: ", group)
 
             # rôzne presmerovania pre rôzne skupiny užívateľov
-            # používame premenné v relácií pre indikáciu skupiny používateľa
+            # používame premenné v relácií pre indikáciu skupiny užívateľa
             if any(group.name == "admin" for group in user_groups):
                 request.session['admin_view'] = True
                 request.session['posudzovateľ'] = False
@@ -229,7 +229,7 @@ def registration_view(request):
         email = request.POST.get('email')
         username = request.POST.get('username')
         
-        # nastavíme skupinu používateľa
+        # nastavíme skupinu užívateľa
         group = Group.objects.get(name="prihlásený použivateľ")
 
         if password != confirm_password:
@@ -237,7 +237,7 @@ def registration_view(request):
             return render(request, 'registration.html')
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Používateľské meno už je obsadené.")
+            messages.error(request, "užívateľské meno už je obsadené.")
             return render(request, 'registration.html')
 
         if User.objects.filter(email=email).exists():
@@ -245,7 +245,7 @@ def registration_view(request):
             clear_messages(request)  # vyčistíme správy a presmerujeme
             return render(request, 'registration.html')
 
-        # vytvorenie nového používateľa
+        # vytvorenie nového užívateľa
         user = User.objects.create_user(username=username, email=email, password=password)
         user.groups.add(group)
         user.save()
@@ -422,33 +422,33 @@ def admin_create_user(request):
 
         # Check if username or email already exist
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Používateľské meno už je obsadené.")
+            messages.error(request, "užívateľské meno už je obsadené.")
             return redirect('admin_users')
         
         if User.objects.filter(email=email).exists():
             messages.error(request, "E-mail je už zaregistrovaný.")
             return redirect('admin_users')
 
-        # Vytvorte a uložte nového používateľa
+        # Vytvorte a uložte nového užívateľa
         try:
             user2 = User.objects.create_user(username=username, email=email, password=password)
             user2.groups.add(group)  # Pridáme ho do skupiny
-            messages.success(request, "Používateľ bol úspešne vytvorený.")
+            messages.success(request, "užívateľ bol úspešne vytvorený.")
             return redirect('admin_users')
         except Exception as e:
             error_message = str(e)
-            messages.error(request, f'Chyba pri vytváraní používateľa: {error_message}')
+            messages.error(request, f'Chyba pri vytváraní užívateľa: {error_message}')
 
     return redirect('admin_users')
 
 # pre vytvorenie nového hesla
 from django.contrib.auth.hashers import make_password
 
-""" Úprava používateľa """
+""" Úprava užívateľa """
 def admin_edit_user(request, user_id):
     # user1, pretože user premenná je už v request-e a v indexe
     user1 = get_object_or_404(User, pk=user_id)
-    groups = Group.objects.all()  # všetky skupiny používateľa
+    groups = Group.objects.all()  # všetky skupiny užívateľa
 
     if request.method == 'POST':
         # user1 details update
@@ -457,7 +457,7 @@ def admin_edit_user(request, user_id):
     
         new_password = request.POST.get('password')
         if new_password:
-            user1.password = make_password(new_password)  # hešovanie hesla používateľa
+            user1.password = make_password(new_password)  # hešovanie hesla užívateľa
 
         # spracovanie skupiny
         selected_group_name = request.POST.get('role')
@@ -467,9 +467,9 @@ def admin_edit_user(request, user_id):
         
         try:
             user1.save()
-            messages.success(request, 'Používateľ bol úspešne aktualizovaný.')
+            messages.success(request, 'užívateľ bol úspešne aktualizovaný.')
         except Exception as e:
-            messages.error(request, f'Chyba pri aktualizácii používateľa: {str(e)}')
+            messages.error(request, f'Chyba pri aktualizácii užívateľa: {str(e)}')
 
         return redirect('admin_users')
     else:
@@ -477,7 +477,7 @@ def admin_edit_user(request, user_id):
         existing_group = user1.groups.first() if user1.groups.exists() else None
         return render(request, 'admin_edit_user.html', {'user1': user1, 'groups': groups, 'existing_group': existing_group})
 
-""" Vymazanie používateľa """
+""" Vymazanie užívateľa """
 def admin_delete_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
 
@@ -486,7 +486,7 @@ def admin_delete_user(request, user_id):
         for record in records:
             user_record_delete(request, record.id)
         user.delete()
-        messages.success(request, f'Používateľ {user.username} bol úspešne odstránený.')
+        messages.success(request, f'užívateľ {user.username} bol úspešne odstránený.')
         return redirect('admin_users')
 
     return render(request, 'admin_delete_user.html', {'user': user})
@@ -952,7 +952,7 @@ def user_record_update(request, record_id, for_user):
             messages.success(request, 'Váš komentár bol pridaný.')
         
 
-        # komentár ktorý nie je schválený adminom (povoleny_adminom=False), neprihlásený používateľ (user=None)
+        # komentár ktorý nie je schválený adminom (povoleny_adminom=False), neprihlásený užívateľ (user=None)
         commentU = request.POST.get('commentU')
         if commentU:
             """  user = None"""
@@ -968,7 +968,7 @@ def user_record_update(request, record_id, for_user):
 """ Vymazanie komentára """
 def remove_comment(request, comment_id, for_user):
     comment = get_object_or_404(Zaznam_Komentar, pk=comment_id)
-    # komentár patrí danému používateľovi
+    # komentár patrí danému užívateľovi
     if request.session.get('admin_view', False) or for_user or (request.user.is_authenticated and comment.user == request.user):
         comment.delete()
         messages.success(request, 'Komentár bol úspešne odstránený.')
@@ -1049,7 +1049,7 @@ def user_galery_view(request, gallery_id):
         obrazok_url = record_attributes.filter(formular_atribut__atribut__typ='obrazok_url').first()
         obrazok_url = obrazok_url.hodnota if obrazok_url else None
 
-        # Skontrolume existujúce hlasovanie používateľa
+        # Skontrolume existujúce hlasovanie užívateľa
         user_vote = None
         if request.user.is_authenticated:
             user_vote_obj = Hlas.objects.filter(user=request.user, zaznam=record).first()
@@ -1088,7 +1088,7 @@ def vote(request, record_id, typ_hlasu):
     record = get_object_or_404(Zaznam, pk=record_id)
     user = request.user
     
-    # Skontrolume, či používateľ už o tomto zázname hlasoval
+    # Skontrolume, či užívateľ už o tomto zázname hlasoval
     existing_vote = Hlas.objects.filter(user=user, zaznam=record).first()
 
     # Aktualizume alebo vytvorte hlasovanie

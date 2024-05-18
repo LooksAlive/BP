@@ -100,7 +100,7 @@
                     <textarea id="formName" name="record_description" class="form-control mb-3" rows="4">{{ record.opis }}</textarea> <!--required-->
                 </div>
                 
-                <!-- zobrazenie atribútov a ich hodnôt pre záznam v rôznych prípadoch používateľov a ich skupín -->
+                <!-- zobrazenie atribútov a ich hodnôt pre záznam v rôznych prípadoch užívateľov a ich skupín -->
 
                 {% for attribute in form_attributes %}
                 {% if attribute.formular_atribut.atribut.typ == "obrazok_url" %}
