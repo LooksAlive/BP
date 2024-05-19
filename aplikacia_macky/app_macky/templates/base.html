@@ -60,10 +60,10 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Domov</a></li>
                         {% if user.is_authenticated %}
                             {% if request.session.admin_view %}
-                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_attributes' %}">Admin Atribúty</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_users' %}">Admin Užívatelia</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_forms' %}">Admin Formuláre</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_galeries' %}">Admin Galérie</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_attributes' %}">Správa atribútov</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_users' %}">Správa užívateľov</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_forms' %}">Správa formulárov</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_galeries' %}">Správa galérií</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{% url 'admin_all_records' %}">Všetky Záznamy</a></li>
                             {% endif %}
 

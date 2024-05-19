@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Užívatelia{% endblock %}
+{% block title %}Správa užívateľov{% endblock %}
 
 {% block content %}
 <style>
@@ -27,7 +27,7 @@
         box-sizing: border-box; 
     }
 </style>
-<h1 class="mb-4">Admin Užívatelia</h1>
+<h1 class="mb-4 text-center">Správa užívateľov</h1>
 
 <!-- Add Table for displaying users -->
 <table class="table table-striped">
@@ -75,7 +75,7 @@
 </table>
 
 <!-- Tlačidlo na prepínanie vstupných polí na pridanie nového užívateľa -->
-<button id="addUserButton" class="btn btn-success mb-4">Pridaj Užívateľa</button>
+<button id="addUserButton" class="btn btn-success mb-4">Pridať Užívateľa</button>
 
 <!-- Vstupné polia na pridanie nového užívateľa (na začiatku skryté) -->
 <div id="addUserFields" style="display: none">
@@ -84,15 +84,15 @@
         
         <div class="form-group">
             <label for="username">Meno</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" value="" required>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Sem napíšte meno" value="" required>
         </div>
         <div class="form-group">
             <label for="password">Heslo</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Enter a new password">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Sem napíšte heslo">
         </div>     
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" value="" placeholder="Enter email" required>
+            <input type="email" class="form-control" id="email" name="email" value="" placeholder="Sem napíšte email" required>
         </div>   
         <div class="form-group">
             <label for="group">Rola</label>

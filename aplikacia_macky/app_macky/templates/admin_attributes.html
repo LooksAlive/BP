@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Atribúty{% endblock %}
+{% block title %}Správa atribútov{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4">Admin Atribúty</h1>
+    <h1 class="mb-4 text-center">Správa atribútov</h1>
 
     <!-- Zobrazte atribúty v dobre štruktúrovanej tabuľke -->
     <table class="table table-striped">
@@ -29,13 +29,13 @@
                     <!-- Tlačidlo Aktualizovať pomocou formulára so skrytým vstupom -->
                     <form method="get" action="{% url 'admin_edit_attribute' attribute.id %}" style="display: inline;">
                         {% csrf_token %}
-                        <input type="submit" class="btn btn-primary btn-sm" value="Edit">
+                        <input type="submit" class="btn btn-primary btn-sm" value="Upraviť">
                     </form>
 
                     <!-- Tlačidlo vymazať pomocou formulára so skrytým vstupom -->
-                    <form method="post" action="{% url 'admin_delete_attribute' attribute.id %}" style="display: inline;"  onclick="return confirm('Are you sure?');">
+                    <form method="post" action="{% url 'admin_delete_attribute' attribute.id %}" style="display: inline;"  onclick="return confirm('Potvrďte akciu:');">
                         {% csrf_token %}
-                        <input type="submit" class="btn btn-danger btn-sm" value="Delete">
+                        <input type="submit" class="btn btn-danger btn-sm" value="Vymazať">
                     </form>
                 </td>
             </tr>
@@ -62,7 +62,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="submit" class="btn btn-success">Potvrdiť</button>
         </form>
         
     </div>    

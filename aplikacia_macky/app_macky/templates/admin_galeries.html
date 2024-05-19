@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Galérie{% endblock %}
+{% block title %}Správa galérií{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Admin Galérie</h1>
+<h1 class="mb-4 text-center">Správa galérií</h1>
 
 <table class="table table-striped">
     <thead class="thead-light">
@@ -25,11 +25,11 @@
             <td>{{ gallery.vytvoreny }}</td>
             <td>{{ gallery.aktualizovany }}</td>
             <td>
-                <a href="{% url 'admin_create_galery' gallery.id %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'admin_create_galery' gallery.id %}" class="btn btn-primary btn-sm">Upraviť</a>
 
                 <form method="post" action="{% url 'admin_delete_galery' gallery.id %}" style="display: inline;">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-danger btn-sm" value="Vymaž" onclick="return confirm('Potvrďte akciu:');">
+                    <input type="submit" class="btn btn-danger btn-sm" value="Vymazať" onclick="return confirm('Potvrďte akciu:');">
                 </form>
             </td>
         </tr>
@@ -38,6 +38,6 @@
 </table>
 
 <!-- Odkaz na vytvorenie novej galérie zvyčajne vyžaduje výber formulára, takže na to možno budete potrebovať samostatnú stránku -->
-<a href="{% url 'admin_create_galery' %}" class="btn btn-success">Pridaj Galériu</a>
+<a href="{% url 'admin_create_galery' %}" class="btn btn-success">Pridať Galériu</a>
 
 {% endblock %}

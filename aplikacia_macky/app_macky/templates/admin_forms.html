@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Formuláre{% endblock %}
+{% block title %}Správa formulárov{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Admin Formuláre</h1>
+<h1 class="mb-4 text-center">Správa formulárov</h1>
 
 <!-- Zobrazte formuláre v dobre štruktúrovanej tabuľke-->
 <table class="table table-striped">
@@ -42,7 +42,7 @@
     </tbody>
 </table>
 
-<a href="{% url 'admin_create_form' %}" class="btn btn-success">Pridaj fomrmulár</a>
+<a href="{% url 'admin_create_form' %}" class="btn btn-success">Pridať fomrmulár</a>
 
 
 

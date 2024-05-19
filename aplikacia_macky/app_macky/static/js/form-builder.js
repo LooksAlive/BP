@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <td>
         <button type="button" class="btn btn-secondary move-up-btn">↑</button>
         <button type="button" class="btn btn-secondary move-down-btn">↓</button>
-        <button type="button" class="btn btn-danger remove-attribute-btn">Remove</button>
+        <button type="button" class="btn btn-danger remove-attribute-btn">Odstrániť</button>
         <input type="hidden" name="attribute_${attributeId}" value="${attributeId}">
       </td>
     `;

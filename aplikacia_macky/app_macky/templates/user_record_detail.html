@@ -84,7 +84,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <h2 class="mb-4">Detail Záznamu</h2>
         {% if request.session.admin_view or for_user %}
-            <a href="{% url 'user_record_delete' record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Vymaž Záznam</a>
+            <a href="{% url 'user_record_delete' record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Potvrďte vymazanie:');">Vymaž Záznam</a>
         {% endif %}
     </div>
 <div class="card mb-4">
@@ -178,7 +178,7 @@
     <!-- komentáre, znova rôzne správanie pre rôzne skupiny, povolenia a podobne. -->
     
     <div class="comments-section">
-        <h5>Comments</h5>
+        <h5>Komentáre</h5>
         <div class="comment-card" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; padding-top: 10px;">
             {% for comment in record_comments %}
                 <form method="post" action="{% url 'user_record_update' record.id for_user %}">
@@ -189,14 +189,14 @@
                     <div class="comment-meta" style="font-size: 0.8em; color: #666;">
                         Komentoval {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.vytvoreny|date:"Y-m-d H:i" }}
                     </div>
-                    <button type="submit" class="btn btn-primary btn-sm mt-2">Aktualizuj komentár</button>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">Aktualizovať komentár</button>
                 {% elif user.is_authenticated and comment.user == request.user and comment.povoleny_adminom %}
                     <input type="hidden" name="comment_{{ comment.id }}" value="{{ comment.komentar }}">
                     <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required>{{ comment.komentar }}</textarea>
                     <div class="comment-meta" style="font-size: 0.8em; color: #666;">
                         Komentoval {% if comment.user.username %}{{ comment.user.username }}{% else %} Anonym {% endif %} on {{ comment.vytvoreny|date:"Y-m-d H:i" }}
                     </div>
-                    <button type="submit" class="btn btn-primary btn-sm mt-2">Aktualizuj komentár</button>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">Aktualizovať komentár</button>
                 {% elif comment.povoleny_adminom %}
                     <textarea id="formName" name="comment_{{ comment.id }}" class="form-control mb-3" rows="4" required readonly>{{ comment.komentar }}</textarea>
                     <div class="comment-meta" style="font-size: 0.8em; color: #666;">
@@ -231,15 +231,15 @@
         </div>
     </div>
     {% if record.user != request.user or request.session.admin_view %} <!--  or for_user -->
-        <button id="addCommentBtn" class="btn btn-secondary mb-3 add-comment-btn">Pridaj komentár</button>
+        <button id="addCommentBtn" class="btn btn-secondary mb-3 add-comment-btn">Pridať komentár</button>
         <div id="commentForm" style="display:none;">
             <form method="post" action="{% url 'user_record_update' record.id for_user %}">
                 {% csrf_token %}
                 <div class="form-group">
                     {% if request.user.is_authenticated %}
-                    <textarea name="comment" class="form-control" placeholder="Enter your comment here..."></textarea>
+                    <textarea name="comment" class="form-control" placeholder="Sem napíš komentár ..."></textarea>
                     {% else %}
-                    <textarea name="commentU" class="form-control" placeholder="Enter your comment here..."></textarea>
+                    <textarea name="commentU" class="form-control" placeholder="Sem napíš komentár ..."></textarea>
                     {% endif %}
                 </div>
                 <button type="submit" class="btn btn-primary">Potvrď Komentár</button>

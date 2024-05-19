@@ -592,18 +592,18 @@ COPY public.app_macky_formular_atribut (id, vytvoreny, aktualizovany, povinny, z
 --
 
 COPY public.app_macky_formular_atribut_udaje (id, vytvoreny, aktualizovany, hodnota, formular_atribut_id, zaznam_id) FROM stdin;
+89	2024-05-14 12:56:05.108793+02	2024-05-14 12:56:05.108809+02	5	180	32
+90	2024-05-14 12:56:05.11459+02	2024-05-14 12:56:05.1146+02	7	181	32
+91	2024-05-14 12:56:05.119999+02	2024-05-14 12:56:05.12001+02	nie	182	32
+93	2024-05-14 12:56:49.190136+02	2024-05-14 12:56:49.190143+02	4	180	33
+94	2024-05-14 12:56:49.193774+02	2024-05-14 12:56:49.19378+02	8	181	33
+95	2024-05-14 12:56:49.196606+02	2024-05-14 12:56:49.196612+02	nie	182	33
 84	2024-05-14 12:45:49.180189+02	2024-05-14 12:45:49.180202+02	/media/OIP.jpeg	179	30
 85	2024-05-14 12:55:42.438589+02	2024-05-14 12:55:42.438597+02	4	180	31
 86	2024-05-14 12:55:42.441932+02	2024-05-14 12:55:42.441939+02	6	181	31
 87	2024-05-14 12:55:42.445189+02	2024-05-14 12:55:42.445196+02	áno	182	31
 88	2024-05-14 12:55:42.451488+02	2024-05-14 12:55:42.451503+02	/media/OIP1.jpeg	179	31
-89	2024-05-14 12:56:05.108793+02	2024-05-14 12:56:05.108809+02	5	180	32
-90	2024-05-14 12:56:05.11459+02	2024-05-14 12:56:05.1146+02	7	181	32
-91	2024-05-14 12:56:05.119999+02	2024-05-14 12:56:05.12001+02	nie	182	32
 92	2024-05-14 12:56:05.127343+02	2024-05-14 12:56:05.127363+02	/media/OIP2.jpeg	179	32
-93	2024-05-14 12:56:49.190136+02	2024-05-14 12:56:49.190143+02	4	180	33
-94	2024-05-14 12:56:49.193774+02	2024-05-14 12:56:49.19378+02	8	181	33
-95	2024-05-14 12:56:49.196606+02	2024-05-14 12:56:49.196612+02	nie	182	33
 96	2024-05-14 12:56:49.2003+02	2024-05-14 12:56:49.200307+02	/media/OIP3.jpeg	179	33
 81	2024-05-14 12:45:49.162134+02	2024-05-14 12:45:49.162149+02	3	180	30
 82	2024-05-14 12:45:49.168509+02	2024-05-14 12:45:49.168522+02	6	181	30
@@ -620,11 +620,6 @@ COPY public.app_macky_formular_atribut_udaje (id, vytvoreny, aktualizovany, hodn
 111	2024-05-14 13:07:33.187556+02	2024-05-14 13:07:33.18757+02	nie	196	37
 112	2024-05-14 13:07:33.194439+02	2024-05-14 13:07:33.194451+02	7	197	37
 113	2024-05-14 13:07:33.201401+02	2024-05-14 13:07:33.201412+02	/media/R1.jpeg	194	37
-114	2024-05-14 13:08:05.960284+02	2024-05-14 13:08:05.960297+02	3	192	38
-115	2024-05-14 13:08:05.968665+02	2024-05-14 13:08:05.968676+02	2024-06-05	193	38
-116	2024-05-14 13:08:05.975443+02	2024-05-14 13:08:05.975454+02	svetlá	195	38
-117	2024-05-14 13:08:05.98307+02	2024-05-14 13:08:05.983088+02	nie	196	38
-118	2024-05-14 13:08:05.990767+02	2024-05-14 13:08:05.99078+02	1	197	38
 119	2024-05-14 13:08:05.999054+02	2024-05-14 13:08:05.999072+02	/media/OIP_O34TeWx.jpeg	194	38
 120	2024-05-14 13:08:44.108376+02	2024-05-14 13:08:44.108388+02	3	192	39
 121	2024-05-14 13:08:44.11675+02	2024-05-14 13:08:44.116763+02	2024-02-03	193	39
@@ -663,6 +658,11 @@ COPY public.app_macky_formular_atribut_udaje (id, vytvoreny, aktualizovany, hodn
 154	2024-05-14 13:19:14.217851+02	2024-05-14 13:19:14.217863+02	áno	185	47
 155	2024-05-14 13:19:14.225106+02	2024-05-14 13:19:14.225118+02	5	186	47
 156	2024-05-14 13:19:14.232076+02	2024-05-14 13:19:14.232088+02	/media/OIP_USeqx3m.jpeg	183	47
+114	2024-05-14 13:08:05.960284+02	2024-05-14 13:08:05.960297+02	4	192	38
+115	2024-05-14 13:08:05.968665+02	2024-05-14 13:08:05.968676+02	2024-06-05	193	38
+116	2024-05-14 13:08:05.975443+02	2024-05-14 13:08:05.975454+02	svetlá	195	38
+117	2024-05-14 13:08:05.98307+02	2024-05-14 13:08:05.983088+02	nie	196	38
+118	2024-05-14 13:08:05.990767+02	2024-05-14 13:08:05.99078+02	1	197	38
 \.
 
 
@@ -695,7 +695,11 @@ COPY public.app_macky_hlas (id, vytvoreny, aktualizovany, typ_hlasu, user_id, za
 20	2024-05-14 13:19:55.791878+02	2024-05-14 13:19:55.791891+02	down	36	37
 21	2024-05-14 13:19:56.424051+02	2024-05-14 13:19:56.424057+02	down	36	38
 23	2024-05-15 21:16:27.517686+02	2024-05-15 21:16:27.517699+02	up	38	40
-22	2024-05-15 21:16:26.56469+02	2024-05-15 21:16:26.564702+02	down	38	41
+24	2024-05-19 17:38:14.128781+02	2024-05-19 17:38:14.128796+02	up	37	43
+26	2024-05-19 17:38:15.937833+02	2024-05-19 17:38:15.937847+02	down	37	42
+25	2024-05-19 17:38:15.165918+02	2024-05-19 17:38:15.165929+02	up	37	44
+22	2024-05-15 21:16:26.56469+02	2024-05-15 21:16:26.564702+02	up	38	41
+27	2024-05-19 20:13:49.744857+02	2024-05-19 20:13:49.744873+02	down	24	42
 \.
 
 
@@ -704,22 +708,22 @@ COPY public.app_macky_hlas (id, vytvoreny, aktualizovany, typ_hlasu, user_id, za
 --
 
 COPY public.app_macky_zaznam (id, vytvoreny, aktualizovany, opis, formular_id, user_id) FROM stdin;
-31	2024-05-14 12:55:42.433129+02	2024-05-14 12:55:42.433136+02		\N	37
-32	2024-05-14 12:56:05.097557+02	2024-05-14 12:56:05.09757+02	vyhrieva sa na strome.	9	37
-33	2024-05-14 12:56:49.182242+02	2024-05-14 12:56:49.182249+02	malý lovec.	9	37
+38	2024-05-14 13:08:05.949761+02	2024-05-14 13:08:05.949779+02		12	38
+45	2024-05-14 13:18:06.49823+02	2024-05-14 13:18:06.498242+02		10	38
+43	2024-05-14 13:16:06.163605+02	2024-05-14 13:16:06.16361+02		13	39
 30	2024-05-14 12:45:49.151106+02	2024-05-14 12:45:49.151122+02	Kastrovaná bombajská.	9	37
 35	2024-05-14 13:04:56.969381+02	2024-05-14 13:04:56.969388+02	biela s čiernym pásikom	12	38
 37	2024-05-14 13:07:33.156018+02	2024-05-14 13:07:33.156033+02	číha na potravu	12	38
-38	2024-05-14 13:08:05.949761+02	2024-05-14 13:08:05.949779+02		\N	38
 39	2024-05-14 13:08:44.093769+02	2024-05-14 13:08:44.093784+02	kastrovaná mladá micka.	12	38
 40	2024-05-14 13:13:31.421277+02	2024-05-14 13:13:31.421284+02	namosúrená, nedostala obed.	11	39
 41	2024-05-14 13:14:23.543761+02	2024-05-14 13:14:23.543774+02	mladý kocúr.	11	39
 42	2024-05-14 13:15:52.799792+02	2024-05-14 13:15:52.799799+02	neposlušná, stále trhá závesy.	13	39
-43	2024-05-14 13:16:06.163605+02	2024-05-14 13:16:06.16361+02		\N	39
 44	2024-05-14 13:16:33.178552+02	2024-05-14 13:16:33.178559+02	často sa vyhrieva, sledujo ľudí okolo.	13	39
-45	2024-05-14 13:18:06.49823+02	2024-05-14 13:18:06.498242+02		\N	38
 46	2024-05-14 13:18:38.867786+02	2024-05-14 13:18:38.867799+02	bielá s čiernými pásikami, ako zebra.	10	38
 47	2024-05-14 13:19:14.197217+02	2024-05-14 13:19:14.197229+02	Neustále unavená, lenivá ale niekedy chití mišku.	10	38
+32	2024-05-14 12:56:05.097557+02	2024-05-14 12:56:05.09757+02	vyhrieva sa na strome...	9	37
+33	2024-05-14 12:56:49.182242+02	2024-05-14 12:56:49.182249+02	malý lovec.	9	37
+31	2024-05-14 12:55:42.433129+02	2024-05-14 12:55:42.433136+02		9	37
 \.
 
 
@@ -728,12 +732,13 @@ COPY public.app_macky_zaznam (id, vytvoreny, aktualizovany, opis, formular_id, u
 --
 
 COPY public.app_macky_zaznam_komentar (id, vytvoreny, aktualizovany, komentar, povoleny_adminom, user_id, zaznam_id) FROM stdin;
-28	2024-05-14 12:55:42.453935+02	2024-05-14 12:55:42.45395+02	pekná	t	37	31
+41	2024-05-19 20:12:19.779206+02	2024-05-19 20:12:19.779216+02	neschválený komentár.	f	\N	42
 29	2024-05-14 13:01:06.975622+02	2024-05-14 13:01:06.97564+02	kukuč :)	t	24	31
 30	2024-05-14 13:01:27.55391+02	2024-05-14 13:01:27.553921+02	lenivá	t	\N	32
 31	2024-05-14 13:02:44.48334+02	2024-05-14 13:02:44.483358+02	pravda.	t	24	32
 32	2024-05-14 13:11:48.519661+02	2024-05-14 13:11:48.519677+02	nema kde spať len na posteli :)	t	38	30
 34	2024-05-14 13:19:50.207701+02	2024-05-14 13:19:50.207708+02	Takú chcem.	t	36	47
+28	2024-05-14 12:55:42.453935+02	2024-05-14 12:55:42.45395+02	pekná	t	37	31
 \.
 
 
@@ -869,11 +874,11 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 --
 
 COPY public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
-37	pbkdf2_sha256$600000$nNpD1wL0h49PCUVhtGC3BW$NA7AtG65JLOk4pP8ulYfq1OhaZr4qMcoJekWFxRFzzM=	2024-05-14 12:57:44.832334+02	f	matej			matej.lesny@gmail.com	f	t	2024-05-14 12:29:54.539005+02
-39	pbkdf2_sha256$600000$jVcQ8JSwqDLikAPAQaHuox$+M0Ss9OssJNrgxB76iHrUfQP7X91j25sdWc6izgQjhY=	2024-05-14 13:12:10.934164+02	f	jozef			jozef.plosky@pokec.sk	f	t	2024-05-14 12:31:23.812258+02
+38	pbkdf2_sha256$600000$nHmaAyryGC7glH08CbRgPX$m0Lq22oKtM7JD1D8R8TcCVofWmXV0T2PUhE2aLNqtw8=	2024-05-19 19:05:31.782512+02	f	martin			martin.klingac@pobox.sk	f	t	2024-05-14 12:30:21.677452+02
+24	pbkdf2_sha256$600000$wqmYyppYBgP1RLDvvBW0p5$wwn5OF2H2NaSEHxo/YBz58JgT+pPCZbPTs44t4PfF+o=	2024-05-19 20:28:30.515744+02	f	admin	Admin	Adminový	adam.melikan@gmail.com	f	t	2024-05-03 22:08:47.28962+02
 36	pbkdf2_sha256$600000$ckWZghA6pzylddbSZJpsBW$eIhX6CaOTWBBy+6D4GF3gkO691vMsolOSGwbu90GG2U=	2024-05-14 13:19:21.641053+02	f	adam			adam.melikant@gmail.com	f	t	2024-05-14 12:29:24.036967+02
-38	pbkdf2_sha256$600000$nHmaAyryGC7glH08CbRgPX$m0Lq22oKtM7JD1D8R8TcCVofWmXV0T2PUhE2aLNqtw8=	2024-05-15 21:24:27.276621+02	f	martin			martin.klingac@pobox.sk	f	t	2024-05-14 12:30:21.677452+02
-24	pbkdf2_sha256$600000$wqmYyppYBgP1RLDvvBW0p5$wwn5OF2H2NaSEHxo/YBz58JgT+pPCZbPTs44t4PfF+o=	2024-05-18 21:34:04.96335+02	f	admin	Admin	Adminový	adam.melikan@gmail.com	f	t	2024-05-03 22:08:47.28962+02
+37	pbkdf2_sha256$600000$nNpD1wL0h49PCUVhtGC3BW$NA7AtG65JLOk4pP8ulYfq1OhaZr4qMcoJekWFxRFzzM=	2024-05-19 17:34:28.522874+02	f	matej			matej.lesny@gmail.com	f	t	2024-05-14 12:29:54.539005+02
+39	pbkdf2_sha256$600000$jVcQ8JSwqDLikAPAQaHuox$+M0Ss9OssJNrgxB76iHrUfQP7X91j25sdWc6izgQjhY=	2024-05-19 18:00:42.486652+02	f	jozef			jozef.plosky@pokec.sk	f	t	2024-05-14 12:31:23.812258+02
 \.
 
 
@@ -988,6 +993,8 @@ COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
 ycapi051e19kr5qu4jkanpp5vs048tpq	.eJxVjDkOwjAQRe8yNbI8XkgmJX3OYI09hpjFkbJAgbg7ipQm7X_v_S-wvEoN75I_0C3Tmk8QeF2GsM55CkWgA-PgMEZOj1w3Ineut1GlsS5TiWpT1E5n1Y-Sn5fdPRwMPA9b7ay4mHRzxib6iCj6anxCT4hWWyZLQpq1JNcYky1RsmjJIxuKbW7h9weRwD2S:1s6TOe:z0Gh87LZlQLTLr6cQszGQzz8GyxwlBgXlxycAxHGA0s	2024-05-13 13:59:08.400539+02
 wrxb9v6bi6oeh7dwdk965wfaj3n4z4bv	eyJhZG1pbl92aWV3IjpmYWxzZX0:1s6XnI:pJNl7Vngz3LDod3zSw8b3pLZN0NuiJaoWteiS9gzGNU	2024-05-13 18:40:52.574667+02
 0lt6a9csze48z8ypgd3v70yllqx5wyiw	.eJxVjEEOgjAQRe_StSGdFoSydO8NTMi0M0gVqaEtJhrvriRs2P73_vsIpIefusXzS7RpznwQHeY0dDny3HkSrVCl2I0W3Z2nldANp2soXJjS7G2xKsVGY3EOxONpc3eBAeOwvktNpXWyPkJtKwtAsleVg8oAaKnRaENGoiRX1kqxNsZp0KYCVMY23PyjzxAzvcOCiS9ZgmbR9jhG_v4ATaBG1Q:1s6qCS:WjuPznQndwXQnTZ8P2SCU8Z4ZwrtD35uC2-HTbg-LTQ	2024-05-14 14:20:04.711489+02
+ajyed3y5v5rnyccddqybowk43p9verka	.eJxVjEEOgjAQRe_StSGdFoSydO8NTMi0M0gVqaEtJhrvriRs2P73_vsIpIefusXzS7RpznwQHeY0dDny3HkSrVCl2I0W3Z2nldANp2soXJjS7G2xKsVGY3EOxONpc3eBAeOwvktNpXWyPkJtKwtAsleVg8oAaKnRaENGoiRX1kqxNsZp0KYCVMY23PyjzxAzvcOCiS9ZgmbR9jhG_v4ATaBG1Q:1s8lEs:yTj02xzTMgyLCHXH2_14Vhfeo4GAERyxWR4NWnBy_ok	2024-05-19 21:26:30.360717+02
+b8tah9mgxaavotb5jpbvs3l3seodycas	.eJxVjMsOgjAQRf-la9J0WhDK0r1_YEKmnUHqgxpKMdH470rCQrf3nHteosM8D11OPHWBRCt0KYrf0aG_8LgSOuN4itLHcZ6Ck6siN5rkIRJf95v7FxgwDeu7NFQ6r-od1K5yAKR6XXmoLIBRBq2xZBUq8mWtNRtrvQFjK0BtXcPNN4p0C2O3BH6Idp4yF-IeU6ZnXHDmY1ZgWLQ9XhO_P71SRtU:1s8lGo:f71-ti53ngH5mLPRkkhrjhk4utismmuZaGajbs0AHaw	2024-05-19 21:28:30.522109+02
 l6kt66xy4dfegvt4npnm3b2uus4clumw	.eJxVjEEOgjAQRe_StSGdFoSydO8NTMi0M0gVqaEtJhrvriRs2P73_vsIpIefusXzS7RpznwQHeY0dDny3HkSrVCl2I0W3Z2nldANp2soXJjS7G2xKsVGY3EOxONpc3eBAeOwvktNpXWyPkJtKwtAsleVg8oAaKnRaENGoiRX1kqxNsZp0KYCVMY23PyjzxAzvcOCiS9ZgmbR9jhG_v4ATaBG1Q:1s6YB6:iVxfPIBREWAcUPQMWMjQcc6YvfEOEVC7CkXsScnzxJI	2024-05-13 19:05:28.658192+02
 pas0hotzv776xkxf3pnjzqzgy14xem9a	.eJxVjEEOgjAQRe_StSGdFoSydO8NTMi0M0gVqaEtJhrvriRs2P73_vsIpIefusXzS7RpznwQHeY0dDny3HkSrVCl2I0W3Z2nldANp2soXJjS7G2xKsVGY3EOxONpc3eBAeOwvktNpXWyPkJtKwtAsleVg8oAaKnRaENGoiRX1kqxNsZp0KYCVMY23PyjzxAzvcOCiS9ZgmbR9jhG_v4ATaBG1Q:1s6ZBR:v53tFBeCsUB1TUCQCbd9R0kB0vvDgLpQcQ-xsc2_5Ak	2024-05-13 20:09:53.621809+02
 vtdw0nmw2lxnahowddjt2utag6neqpar	.eJxVj80KgzAQhN8l5yKm2Rjjsfe-QUE27qban6QYY6Gl714FL17nm_lgvgLpOYR2HvgtGo-PxAfRYp76Nice24FEI1QtdqHD7s5hJXTDcI1FF8M0Dq5YK8VGU3GOxI_T1t0Jekz9sjbmaMA6TY5qIGNdrZRnRKkBPGmLVCH4UjrQDIzWdUZ5qcBVmqDyZpG-Ysr0iTNOfMmlVLyd-P0B4UpImQ:1s7KEl:SVMJRKcG4NRaxgg-m1dHqLs3rIrmjQ01gYK2HrywO48	2024-05-15 22:24:27.280695+02
@@ -1008,49 +1015,49 @@ SELECT pg_catalog.setval('public.app_macky_atribut_id_seq', 16, true);
 -- Name: app_macky_formular_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.app_macky_formular_id_seq', 13, true);
+SELECT pg_catalog.setval('public.app_macky_formular_id_seq', 14, true);
 
 
 --
 -- Name: app_macky_formularatribut_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.app_macky_formularatribut_id_seq', 201, true);
+SELECT pg_catalog.setval('public.app_macky_formularatribut_id_seq', 206, true);
 
 
 --
 -- Name: app_macky_formularatributudaje_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.app_macky_formularatributudaje_id_seq', 156, true);
+SELECT pg_catalog.setval('public.app_macky_formularatributudaje_id_seq', 176, true);
 
 
 --
 -- Name: app_macky_galeria_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.app_macky_galeria_id_seq', 18, true);
+SELECT pg_catalog.setval('public.app_macky_galeria_id_seq', 19, true);
 
 
 --
 -- Name: app_macky_hlas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.app_macky_hlas_id_seq', 23, true);
+SELECT pg_catalog.setval('public.app_macky_hlas_id_seq', 27, true);
 
 
 --
 -- Name: app_macky_zaznam_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.app_macky_zaznam_id_seq', 47, true);
+SELECT pg_catalog.setval('public.app_macky_zaznam_id_seq', 52, true);
 
 
 --
 -- Name: app_macky_zaznamkomentar_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.app_macky_zaznamkomentar_id_seq', 34, true);
+SELECT pg_catalog.setval('public.app_macky_zaznamkomentar_id_seq', 43, true);
 
 
 --

@@ -692,8 +692,8 @@ def user_forms_view(request, form_id):
 def user_forms_record_add(request, form_id):
     if request.method == 'POST':
         user = request.user
-        record = Zaznam.objects.create(user=user)
-        record.formular = Formular.objects.get(id=form_id)
+        f = Formular.objects.get(id=form_id)
+        record = Zaznam.objects.create(user=user, formular=f)
         
         # Opis
         desc = request.POST.get('description', '')
@@ -942,7 +942,7 @@ def user_record_update(request, record_id, for_user):
         messages.success(request, "Zaznam bol aktualizovaný.")
         
         descr = request.POST.get('record_description')
-        if descr:
+        if descr != None:
             record.opis = descr
             record.save()
     
