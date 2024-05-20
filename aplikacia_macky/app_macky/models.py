@@ -33,6 +33,9 @@ class CasovyModel(models.Model):
 class Atribut(CasovyModel):
     nazov = models.CharField(max_length=255)
     typ = models.CharField(max_length=100)
+    
+    class Meta:
+        db_table = 'atribut'
 
     def __str__(self):
         return self.nazov
@@ -41,6 +44,9 @@ class Formular(CasovyModel):
     formular_nazov = models.CharField(max_length=255)
     # Nové pole na označenie, či je formulár zobrazený v nejakej galérií
     zobrazit_v_galerii = models.BooleanField(default=False)
+    
+    class Meta:
+        db_table = 'formular'
 
     def __str__(self):
         return self.formular_nazov
@@ -62,6 +68,15 @@ class Zaznam(CasovyModel):
         
     def get_comments(self):
         return Zaznam_Komentar.objects.filter(record=self).order_by('-created_at')
+    
+    class Meta:
+        # Môžeme použit index_together pre viacero stĺpcov
+        # index_together = [['user', 'formular']]
+        # vytvorenie samostatného indexu
+        indexes = [
+            models.Index(fields=['user'])
+        ]
+        db_table = 'zaznam'
 
     def __str__(self):
         return f'Record {self.id}'
@@ -83,6 +98,10 @@ class Hlas(CasovyModel):
 
     class Meta:
         unique_together = ('user', 'zaznam')  # Zabráni viacnásobnému hlasovaniu v rovnakom zázname tým istým používateľom
+        indexes = [
+            models.Index(fields=['zaznam']),
+        ]
+        db_table = 'hlas'
 
 
 class Zaznam_Komentar(CasovyModel):
@@ -91,6 +110,12 @@ class Zaznam_Komentar(CasovyModel):
     # Prepojenie každého komentára s používateľom
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     povoleny_adminom = models.BooleanField(default=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['zaznam']),
+        ]
+        db_table = 'zaznam_komentar'
 
     def __str__(self):
         return f'Comment by {self.user.username} on Record {self.zaznam.id}'
@@ -103,6 +128,12 @@ class Formular_Atribut(CasovyModel):
     povinny = models.BooleanField(default=True)
     # Nové pole na označenie, či sa má atribút zobraziť v galérii
     zobrazit_v_galerii = models.BooleanField(default=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['formular']),
+        ]
+        db_table = 'formular_atribut'
 
     def __str__(self):
         return f'{self.atribut.nazov} in {self.formular.formular_nazov}'
@@ -111,6 +142,12 @@ class Formular_Atribut_Udaje(CasovyModel):
     zaznam = models.ForeignKey(Zaznam, on_delete=models.CASCADE, null=True)
     formular_atribut = models.ForeignKey(Formular_Atribut, on_delete=models.CASCADE)
     hodnota = models.CharField(max_length=512, blank=True, null=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['zaznam']),
+        ]
+        db_table = 'formular_atribut_udaje'
     
     def __str__(self):
         return self.hodnota
@@ -125,5 +162,6 @@ class Galeria(CasovyModel):
 
     class Meta:
         unique_together = ('formular', 'vytvoreny')  # Zabezpečuje, že každá galéria je jedinečná pre formulár v danom čase vytvorenia
+        db_table = 'galeria'
 
 
