@@ -30,6 +30,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# pre bezpečnosť používame ssl
+#SECURE_SSL_REDIRECT = False
+# v prípade proxy
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+#SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+
 SESSION_COOKIE_AGE = 3600  # 1 hour
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
@@ -45,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',    
+    #'django_extensions'
 ]
 
 MIDDLEWARE = [
