@@ -53,8 +53,92 @@ Cieľom tejto práce je vytvorenie aplikácie, ktorá umožní efektívny zber �
 
 podobne projekty:
 https://opac.crzp.sk/?fn=detailBiblioFormChildCAQSN&sid=E3687F1EB992092CBFA5C5B527E2&seo=CRZP-detail-kniha
-https://opac.crzp.sk/?fn=detailBiblioFormChildGCBJ4&sid=FD287398550734C843B615BBBA89&seo=CRZP-detail-kniha
+https://opac.crzp.sk/?fn=detailBiblioFormChildC94PL&sid=23A5A917B76C11E744AAEF80CF65&seo=CRZP-detail-kniha
 https://opac.crzp.sk/?fn=detailBiblioFormChildABVCO&sid=FD287398550734C843B615BBBA89&seo=CRZP-detail-kniha
 https://opac.crzp.sk/?fn=detailBiblioFormChildECG99&sid=1CA5CDFA2DE8D61E31A7EC494D97&seo=CRZP-detail-kniha
 https://opac.crzp.sk/?fn=detailBiblioFormChildSD0EL&sid=233ADDCA5EB56A100CE93931D49A&seo=CRZP-detail-kniha
+
+
+
+
+
+
+
+Bakalársku prácu budem robif v distribučnej firme ZAEX. Firma sa zaoberá distribúciou náboženskej literatúry. Má významné postavenie na trhu. Skladové hospodárstvo je neoddelitePnou súčastou aktivít každej distribučnej spoločnosti, čo vyžaduje najmä v súčasnosti prepracovaný informačný systém. Systém, ktorý spoloc̆ne s inými modernými technológiami ušetrí vela času, zefektívni prácu a ửahčí rozhodovanie.  
+  
+Zákonnou povinnostou každej firmy je vykonávat aspoň raz ročne inventúru. Inventúra v tejto firme je zároveň aj prínosom najmä pre đ’alšie bezproblémové fungovanie. Firma používa informačný systém, pre účely skladového hospodárstva. Informačný systém nedisponuje funkciou pre spracovanie inventúry. Administrátor informačného systému nemá žiadny záujem o pridávanie nových funkcionalít.  
+  
+Zistila som, že majitel firmy stráca vela času inventúrou a potrebuje đ’alších brigádnikov, ktorých musí zaplatit. Pri inventúre sa údaje zapisujú ručne, potom sa spočítavajú a na záver sa nahadzujú do informačného systému. Zamestnanci prepisujú dlhé kódy, pri čom vzniká vela chýb. Čím dlhšie inventúra trvá, tým dlhšie je pozastavená bežná aktivita vo firme. Táto práca mi pripadala neefektívna. Proces inventúry je pomalý, čo som mala možnost' spozorovat ako vypomáhajúca brigádnička.  
+  
+Kedže študujem aplikovanú informatiku, v mysli som popri mravenčej práci v sklade hradala riešenia. Rozhodla som sa firme pomôct.' Skúmala som rôzne existujúce aplikácie a testovala ich. Našla som viacero možností, ale v každej z nich som videla nedostatky. Rozhodla som sa pre nich vytvorif vlastnú aplikáciu. Skúsim si celý proces od tvorby požiadaviek cez návrh, implementáciu, testovanie až po údržbu a zlepšovanie. Pomôžem firme a zefektívnim ich prácu. Údaje budú lepšie spracovatelnné a zabráni sa chybám pri prepisovaní. Aplikácia môže mat viacero využití, prípadne môže bye použitá pre viacero firiem s podobným zameraním.  
+  
+Tě̌ila som sa svojmu zámeru vytvorit aplikáciu o to viac, že som pomýšfala súčasne na bakalársku prácu. Navyše pomôžem známym, ktorí firmu vlastnia a snád’ budú aplikáciu ešte dlho využívat.  
+  
+Bakalárska práca má pät hlavných kapitol. V prvej kapitole približime súčasný stav firmy ZAEX, podobné existujúce systémy našej aplikácie a technológie potrebné na implementáciu. Druhá kapitola obsahuje súhrn požiadaviek na aplikáciu. Ďalšou je kapitola Návrh, kde opisujeme riešenie bakalárskej práce. Za ňou nasleduje kapitola
+
+Implementácia, kde popisujeme implementačné detaily niektorých častí aplikácie. $\mathrm{Na}$ záver je kapitola Testovanie a evaluácia, kde zhodnotíme aplikáciu, popís̃eme skúsenosti používatelov a výsledky po reálnom nasadení do prevádzky.
+
+
+Bakalárska práca modernizuje proces spracovania inventúry v distribučnej firme. Vytvorením webovej aplikácie sa nám podarilo vylepšit inventúru vo firme a zároven̆ ulahčit prácu zamestnancom. Pri návrhu aplikácie sme sa inšpirovali podobnými mobilnými aplikáciami. Aplikácia je lokálne nasadená priamo vo firme. Má dve verzie. Jedna je pre desktopové prehliadače, kde sa využíva na zber údajov čítačka čiarových kódov pripojená k notebooku alebo stolovému počítaču. Druhá verzia je pre smartfóny, kde sa dajú čiarové kódy snímat priamo vo webovej aplikácí́. Aplikáciu sa nám podarilo otestovat a nasadit do prevádzky, kde dosiahla pozitívne výsledky.
+
+
+
+
+
+
+
+Ciel’om záverečnej práce je vytvorenie webovej aplikácie, ktorá bude poskytovat' informácie o energetickej kapacite - možnostiach daných oblasti na základe nameraných alebo vypočitaných veličín obnoviteľných zdrojov energie. Práca je rozdelená do 4 kapitol. Obsahuje 50 obrázkov, 2 tabulky a 1 prílohu. Prvá kapitola je venovaná všeobecným základným faktom o obnovitel'ných zdrojoch energie, popisu aplikácií venujúcim sa OZE na Slovensku, analýze zdrojov dát pre túto aplikáciu. V d’alšej kapitole je charakterizovaný ciel' tejto záverečnej práce rozdelený do čiastkových ciel’ov. Tretia kapitola je venovaná nástrojom a metódam použitel'ných na tvorbu takejto aplikácie. Záverečná kapitola sa zaoberá životným cyklom tejto aplikácie, opisom jej inicializácie, naprogramovania, tvorby databázy a konkrétnymi príkladmi fungovania tejto aplikácie. Výsledkom riešenia danej problematiky je funkčná webová aplikácie energetickej kapacity oblasti OZE regiónov SR.
+
+V živote by sme sa mali chovat' podl'a sloganu udržatelného rozvoja „Zem sme nezdedili po našich predkoch, ale požičali sme si ju od našich deti. " (Indiánske príslovie). Ak sme si teda našu Zem požičali od našich potomkov, je nielen našou morálnou povinnostou starat sa o ňu tak dobre, aby sme ju vrátili budúcim generáciám v nepoškodenom stave. K najvýznamnejక̌im výzvam pre našu civilizáciu v tretom tisicroči patrí nesporne vyriešenie problémov energetiky. Dopyt na energie bude narastat dovtedy, kým budú narastat' požiadavky luudi na vyšši životný štandard. Prechod na obnoviteľné zdroje energie sa stane pre budúce generácie nevyhnutným, sice nie l'ahko uskutočniteľným procesom.  
+  
+Využitie OZE získava v súčasnosti stále väčši význam, dokonca sú často považované za zdroje budúcnosti. Predstavujú reálnu alternatívu fosílnym palivám, ktorých zásoby sú obmedzené, nedoplňajú sa a dnes sa vysokou rýchlostou miňajú. Spracovanie fosilnych paliv od t'ažby až po spal'ovanie produkuje množstvo emisii škodlivých látok nielen pre životné prostredie, ale aj pre zdravie človeka. Navyše sú z velkej časti zodpovedné za globálne oteplovanie, ktoré dnes spôsobuje problémy po celom svete. Účinky obnovitelných zdrojov na klimu sú minimálne.  
+  
+Pokial' OZE nahradia fosílne zdroje, znižia množstvo emisii škodlivých látok vrátane lažkých kovov. Ich využivanie je schopné zabezpečil trvalo udržateľný rozvoj. Hoci existujú mnohé výhrady na využivanie obnoviteľných zdrojov, majú množstvo výhod, no napriek nim je ich rozvoj u nás stále pomalý a blokovaný mnohými bariérami.  
+  
+Vývoj v posledných rokoch Čoraz viac vyžaduje prehodnotenie doterajక̌ieho pristupu Yudstva v oblasti využivania energie a energetických zdrojov. Zvyšujúci sa deficit zásob fosilnych zdrojov, ktoré predstavujú dôležitú súčast' energetickej zmesi v Európskej únii aj v mnohých d'alšich energetikách, neustály rast ich ceny a nestabilné pomery v oblastiach ich hlavných ložisk determinujú smerovanie energetiky. Štáty Európskej únie, OECD, aj ostatné vyspelé štáty sveta si uvedomujú problémy, pred ktorými v tejto oblasti stoja. Ich energetická politika sa preto v čoraz vāčŠej miere orientuje na znižovanie závislosti od dovozu primárnych energetických zdrojov, na zvyšovanie účinnosti výroby energie a na motiváciu spotrebitel'ov $\mathrm{k}$ racionálnejšiemu využivaniu energie.  
+  
+Slovensko by v tomto smere nemalo zaostávat už len z toho dôvodu, že viac ako 90 \% všetkých energetických zdrojov dovážame. K výraznému zniženiu závislosti od dovozu môže pomôct' využivanie OZE vo vä̌̌̌om rozsahu. Vǎč̌ina krajin si uvedomuje potrebuväčšej orientácie na obnovitel'né zdroje energie, ktoré predstavujú environmentálne prijatel'né riešenie v súlade s viziami trvalo udržateľného rozvoja. Zameriava sa preto na výskum a možnosti d’aľ̌ieho využitia obnoviteľných zdrojov. Jedným z ciel’ov EÚ je zvýšit' podiel OZE na celkovej spotrebe energie. EÚ chce takisto výrazne zvýšit' financovanie výskumu a vývoja v energetickej oblasti.  
+  
+Ekonomická výkonnost' a blahobyt spoločnosti závisia od bezpečnej, dostupnej a cenovo výhodnej dodávky energie. Najvāčšou výzvou dnešnej doby je dlhodobé riešenie problémov týkajúcich sa energii, tzn. vytvorenie udržatel'ných energetických systémov. Znamená to na strane spotreby vedomé šetrenie energiou, na strane ponuky zase zaručenie bezpečnosti dodávok [1].  
+  
+Hlavne z vyššie spominaných dôvodov sme sa v tejto práci rozhodli vytvorit' webovú aplikáciu energetickej oblasti OZE regiónov SR v cloude a popisat' postup tvorby takejto aplikácie, ktorá pracuje online s aktuálnymi dátami z externého zdroja, ktorá na Slovensku jednoducho neexistuje.  
+  
+Zásadnou otázkou pred začatim vývoja aplikácie, bol výber externého poskytovatel'a dát, cloudových služieb a programovacích prostriedkov.
+
+
+
+
+
+
+Hlavným zámerom tejto práce je vytvorenie webovej aplikácie v runtime JavaScript engine nazývanom Node.js. Taktiež nim je aj porovnanie vo vytvoreni podobnej aplikácie bez použitia tohto nástroja a jemu prislúchajúcich knižnic  
+  
+Prvá kapitola práce obsahuje teoretické znalosti, ktoré sú potrebné pre vytvorenie webovej aplikácie v engine Node.js. Popisujú sa tu aj ostatné knižnice a nástroje, ktoré spolupracujú s týmto enginom.  
+  
+Druhá kapitola je venovaná porovnaniu vývoja webovej aplikácie bez tohto enginu a pomocou klasického JavaScriptu a jazyka PHP. Dôraz sa kladie na klady a zápory vývoja aplikácie v Node.js a PHP.  
+  
+Tretia kapitola predstavuje praktickú čast' práce, v ktorej je popísaný vývoj aplikácie v konkrétnon prostredí. Nachádzajú sa v nej aj úryvky kódu, ku ktorým je pridaný adekvátny popis.
+
+V súčasnosti sa vývoj aplikácii sústred'uje na mobilné zariadenia a na web. Pracuje sa s nástrojmi ako WordPress a pomocou predinštalovaných tém, plug-inov a nástrojov je vytvorenie webovej stránky, či aplikácie veľmi jednoduché a zvládne to aj lajk. V mojej práci sa ale chcem zamerat' presne na inovativne technológie a nástroje, ktoré umož̌̌ujú vývojarom vytvorenie takýchto aplikácií. Jeden z najpopulámejšich je práve runtime JavaScript engine nazývaný Node.js. Jeho ekosystém baličkov nazývaný NPM je totiž najvāČŠim open-source ekosystémom knižnic na svete. Je vel'mi efektivny a rýchly v porovaní s vývojom webových aplikácif v tzv. Vanilla JavaScripte. Okrem iného v práci použijem aj veľmi známu JavaScript knižnicu nazývanú React, v ktorej je naprogramovaná aj najznámejక̌ia sociálna siel', Facebook. Tá totiž dokáže zobrazovat' rôzne komponenty veľmi efektivnym a rýchlym spôsobom, čo znamená, že ich načitavanie sa zredukuje na minimum. React totižz zobrazuje len ten obsah, ktorý mu špecifikujeme. Práve preto má Facebook takú rýchlu odozvu pri prepinani rôznych okien. Všetko sa totiž deje na jednej stránke a nic je nutné načitavanie d’alšich.  
+  
+V práci je taktiež zobrazené porovnanie vývoja webovej aplikácie bez použitia Node.js a prislušných knižnic, či nástrojov s vývojom, ktorý Node.js zahrňuje a neskôr aj uvedené vyhodnotenie tohto porovnávacieho procesu. Porovnanie kladov a záporov je položené do kontrastu so skriptovacím jazykom PHP.  
+  
+V tretej a záverečnej kapitole práce bude popisaný postup vytvorenia tejto aplikácie a samozrejme aj uvedené a popísané príklady zo samotného kódu pre lepšie pochopenie celého procesu. Tento proces bude zahájený vytvorenim štruktúry, následnou inštaláciou všetkých potrebných nástrojov a knižnic a nakoniec samotným naprogramovaním vybranej aplikácie. V priebehu jej vývoja bude nutné kód niekol’kokrát upravit' z dôvodu pridávania knižnic a nadobúdania nových poznatkov pre zaručenie čo najlepšieho výkonu. Štruktúra aplikácie bude nakoniec celkom zložitá, no bude vytvorená pod「a najnovšich konvencii a pre vzdelávacie účely je ako stvorená.
+
+
+
+
+
+
+
+Cielom bakalárskej práce je navrhnút a vytvorit webovú aplikáciu na získanie prehّadu o závadách cestnej infraštruktúry a jej súčastí formou zberu podnetov od verejnosti a priradenie identifikovaných problémov konkrétnym zodpovedným pracovníkom. V práci sa nachádza analýza funkcionálnych požiadaviek, pozitív projektu, rámcov ċi mapových API, na základe ktorých boli vytvorené výsledné požiadavky na webovú aplikíciu a navrhnuté riešenie zberu údajov o závadách cestnej infras̆truktúry a jej súčastí formou crowdsourcingu, ako aj možnosti zobrazenia a editácie jednotlivých problémov na základe používatelskej roly v systéme. Pri návrhu aplikácie sa prihliadalo na použitelnost' a zrozumitel'nost použitia aplikácie a jej použivatel'ského rozhrania, ako aj rýchle zlepšenie používatelskej skúsenosti pri dodržaní definovaných funkěných požiadaviek. Výsledkom práce je funkčná webová aplikácia 8 responzívnym dizajnom, umožňujúca zber údajov o závadách cestnej infraštruktúry a jej súčastí formou zberu podnetov od verejnosti s využitím interaktívnej mapy. Aplikácia taktiež umožňuje zobrazenie, editáciu či detailný náh「َad získaných údajov prostredníctvom webového rozhrania. Implementovaná webová aplikácia bola priebežne testovaná a jej funkcionality overené.
+
+Jedným z problémov, ktorý trápi každû samosprávu, sú poškodené cesty, poškodené alebo nesprávne osadené dopravné značenie, zničené zvodidlá a prerastená zeleň popri cestných komunikáciách. Správa a údržba ciest Trnavského samosprávneho kraja (dalej len 'SÚC TTSK") si uvedomila, že najefektívnejším spôsobom ako zhromaždovat informácie o závadách cestných komunikácii, je získavanie podnetov od ich používatelov, verejnosti, a to formou tzv. crowdsourcingu (Crowdsourcing je zhromažđovanie dát, informácí́ a názorov velkej skupiny Iudí, ktorí nahlasujú ich dáta cez internet, sociálne siete a telefónne aplikácie) [16]. Takto vznikol nápad na vytvorenie webovej aplikácie, ktorá by umožñovala verejnosti nahlasovat poruchy, nedostatky a zlý stav cestnej infras̆truktúry a jej súčastí (d'alej iba "problém"), a zároven̆ umoz̆nila zamestnancom organizácie zodpovednej za správu ciest tieto podnety zhromaždovat', spracúvaf, editovaf a na ich základe prerozdelovat prácu pracovníkom, ktorí sú zodpovední za vykonanie údržby a opravy cestných komunikácif.
+
+
+
+
+
+
+
+
 
